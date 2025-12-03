@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, Target, Flame, Trophy, TrendingUp, Star, Award, Lock } from 'lucide-react-native';
 
 const { width: screenWidth } = Dimensions.get('window');
-const cardWidth = (screenWidth - 48 - 24) / 3; // padding (24*2) + gaps (12*2) / 3 columns
+const cardWidth = (screenWidth - 48 - 28) / 3; // padding (24*2) + gaps (14*2) / 3 columns
 
 export default function AchievementScreen() {
   const router = useRouter();
@@ -106,7 +106,7 @@ export default function AchievementScreen() {
               return (
                 <View key={badge.id} style={[styles.badgeCard, { backgroundColor: badge.bgColor }]}>
                   <View style={[styles.badgeIconContainer, { backgroundColor: badge.iconBg }]}>
-                    <IconComponent size={36} color={badge.iconColor} strokeWidth={2} />
+                    <IconComponent size={40} color={badge.iconColor} strokeWidth={2.2} />
                   </View>
                   <Text style={styles.badgeTitle}>{badge.title}</Text>
                   <Text style={styles.badgeDate}>{badge.date}</Text>
@@ -129,7 +129,7 @@ export default function AchievementScreen() {
               return (
                 <View key={badge.id} style={styles.lockedBadgeCard}>
                   <View style={styles.lockedBadgeIconContainer}>
-                    <IconComponent size={36} color="#6B7280" strokeWidth={2} />
+                    <IconComponent size={40} color="#6B7280" strokeWidth={2.2} />
                   </View>
                   <Text style={styles.lockedBadgeTitle}>{badge.title}</Text>
                   <Text style={styles.lockedBadgeStatus}>{badge.status}</Text>
@@ -210,110 +210,115 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-    gap: 8,
+    marginBottom: 18,
+    gap: 10,
   },
   sectionIcon: {
-    fontSize: 20,
+    fontSize: 22,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     color: '#1a1625',
   },
   badgesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 14,
   },
   badgeCard: {
     width: cardWidth,
-    aspectRatio: 0.85,
-    borderRadius: 24,
-    padding: 16,
+    aspectRatio: 0.9,
+    borderRadius: 28,
+    padding: 18,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 5,
+  },
+  badgeIconContainer: {
+    width: 72,
+    height: 72,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 14,
+  },
+  badgeTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1a1625',
+    textAlign: 'center',
+    marginBottom: 6,
+    letterSpacing: -0.3,
+  },
+  badgeDate: {
+    fontSize: 13,
+    color: '#666',
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  lockedBadgeCard: {
+    width: cardWidth,
+    aspectRatio: 0.9,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 28,
+    padding: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  lockedBadgeIconContainer: {
+    width: 72,
+    height: 72,
+    borderRadius: 22,
+    backgroundColor: '#3C4455',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 14,
+  },
+  lockedBadgeTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 6,
+    letterSpacing: -0.3,
+  },
+  lockedBadgeStatus: {
+    fontSize: 13,
+    color: '#999',
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  motivationCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 28,
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
     elevation: 4,
   },
-  badgeIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  badgeTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1a1625',
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  badgeDate: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
-  },
-  lockedBadgeCard: {
-    width: cardWidth,
-    aspectRatio: 0.85,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 3,
-  },
-  lockedBadgeIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
-    backgroundColor: '#3C4455',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  lockedBadgeTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  lockedBadgeStatus: {
-    fontSize: 12,
-    color: '#999',
-    textAlign: 'center',
-  },
-  motivationCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
   motivationEmoji: {
-    fontSize: 48,
-    marginBottom: 12,
+    fontSize: 56,
+    marginBottom: 16,
   },
   motivationText: {
-    fontSize: 15,
+    fontSize: 16,
     color: '#666',
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 24,
+    fontWeight: '500',
   },
 });
