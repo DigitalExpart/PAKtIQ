@@ -96,28 +96,28 @@ export default function DashboardScreen() {
             onPress={() => router.push('/category-selection')}
           >
             <Text style={styles.actionIcon}>➕</Text>
-            <Text style={styles.actionText}>New Pakt</Text>
+            <Text style={styles.actionText} numberOfLines={1}>New Pakt</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.actionButton}
             onPress={() => router.push('/templates')}
           >
             <Text style={styles.actionIcon}>📋</Text>
-            <Text style={styles.actionText}>Templates</Text>
+            <Text style={styles.actionText} numberOfLines={1}>Templates</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.actionButton}
             onPress={() => router.push('/insights')}
           >
             <Text style={styles.actionIcon}>📊</Text>
-            <Text style={styles.actionText}>Insights</Text>
+            <Text style={styles.actionText} numberOfLines={1}>Insights</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.actionButton}
             onPress={() => router.push('/achievements')}
           >
             <Text style={styles.actionIcon}>🏆</Text>
-            <Text style={styles.actionText}>Awards</Text>
+            <Text style={styles.actionText} numberOfLines={1}>Awards</Text>
           </TouchableOpacity>
         </View>
 
@@ -324,17 +324,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 16,
+    padding: 12,
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 90,
   },
   actionIcon: {
-    fontSize: 28,
+    fontSize: 32,
     marginBottom: 8,
   },
   actionText: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#666',
     fontWeight: '500',
+    textAlign: 'center',
   },
   section: {
     padding: 16,
