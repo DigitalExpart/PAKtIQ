@@ -44,48 +44,48 @@ export default function WelcomeScreen() {
         {/* Progress Circle Icon */}
         <View style={styles.progressIconContainer}>
           <Svg width="240" height="240" viewBox="0 0 240 240">
-            {/* Green/Teal Arc (left side) */}
+            {/* Yellow/Orange Arc (outer top-left to bottom-right) */}
             <Path
-              d="M 120 20 A 100 100 0 0 0 30 170"
-              stroke="#95E1D3"
-              strokeWidth="18"
-              fill="none"
-              strokeLinecap="round"
-            />
-            {/* Yellow/Orange Arc (right side) */}
-            <Path
-              d="M 120 20 A 100 100 0 0 1 210 170"
+              d="M 45 60 A 100 100 0 0 1 195 180"
               stroke="#FFD88A"
               strokeWidth="18"
               fill="none"
               strokeLinecap="round"
             />
-            {/* Inner Light Purple Arc (left bottom) */}
+            {/* Green/Teal Arc (inner top-left to right side) */}
             <Path
-              d="M 70 185 A 60 60 0 0 1 55 125"
+              d="M 60 75 A 85 85 0 0 1 180 165"
+              stroke="#95E1D3"
+              strokeWidth="18"
+              fill="none"
+              strokeLinecap="round"
+            />
+            {/* Light Purple Arc (bottom-right inner) */}
+            <Path
+              d="M 155 190 A 70 70 0 0 1 210 135"
               stroke="#B8A1E8"
-              strokeWidth="14"
+              strokeWidth="16"
               fill="none"
               strokeLinecap="round"
               opacity="0.5"
             />
-            {/* Inner Light Purple Arc (right bottom) */}
+            {/* Light Purple Arc (bottom-left inner) */}
             <Path
-              d="M 170 185 A 60 60 0 0 0 185 125"
+              d="M 85 190 A 70 70 0 0 0 30 135"
               stroke="#B8A1E8"
-              strokeWidth="14"
+              strokeWidth="16"
               fill="none"
               strokeLinecap="round"
               opacity="0.5"
             />
-            {/* Large Sparkle */}
+            {/* Large Sparkle (center-right) */}
             <Path
-              d="M 165 60 L 173 80 L 193 88 L 173 96 L 165 116 L 157 96 L 137 88 L 157 80 Z"
+              d="M 155 90 L 163 110 L 183 118 L 163 126 L 155 146 L 147 126 L 127 118 L 147 110 Z"
               fill="#FFD88A"
             />
             {/* Small Sparkle */}
             <Path
-              d="M 185 105 L 190 116 L 201 121 L 190 126 L 185 137 L 180 126 L 169 121 L 180 116 Z"
+              d="M 175 125 L 180 136 L 191 141 L 180 146 L 175 157 L 170 146 L 159 141 L 170 136 Z"
               fill="#FFD88A"
             />
           </Svg>
