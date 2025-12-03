@@ -9,34 +9,13 @@ export default function WelcomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Progress Circle Icon */}
+        {/* Target/Bullseye Icon */}
         <View style={styles.iconContainer}>
-          <Svg width="160" height="160" viewBox="0 0 180 180">
-            {/* Yellow Arc */}
-            <Path
-              d="M 90 20 A 70 70 0 0 1 150 140"
-              stroke="#FFD88A"
-              strokeWidth="12"
-              fill="none"
-              strokeLinecap="round"
-            />
-            {/* Green Arc */}
-            <Path
-              d="M 90 20 A 70 70 0 0 0 30 140"
-              stroke="#95E1D3"
-              strokeWidth="12"
-              fill="none"
-              strokeLinecap="round"
-            />
-            {/* Sparkle */}
-            <Path
-              d="M 140 50 L 145 60 L 155 65 L 145 70 L 140 80 L 135 70 L 125 65 L 135 60 Z"
-              fill="#FFD88A"
-            />
-            <Path
-              d="M 150 75 L 153 80 L 158 83 L 153 86 L 150 91 L 147 86 L 142 83 L 147 80 Z"
-              fill="#FFD88A"
-            />
+          <Svg width="120" height="120" viewBox="0 0 120 120">
+            <Circle cx="60" cy="60" r="55" stroke="#FFFFFF" strokeWidth="5" fill="none" opacity="0.8" />
+            <Circle cx="60" cy="60" r="40" stroke="#FFFFFF" strokeWidth="5" fill="none" opacity="0.9" />
+            <Circle cx="60" cy="60" r="25" stroke="#FFFFFF" strokeWidth="5" fill="none" />
+            <Circle cx="60" cy="60" r="12" fill="#FFFFFF" />
           </Svg>
         </View>
 
