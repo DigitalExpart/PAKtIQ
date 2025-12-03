@@ -56,12 +56,20 @@ export default function DashboardScreen() {
             <Text style={styles.greeting}>Welcome back! 👋</Text>
             <Text style={styles.name}>Keep up the great work</Text>
           </View>
-          <TouchableOpacity 
-            style={styles.settingsButton}
-            onPress={() => router.push('/settings')}
-          >
-            <Text style={styles.settingsIcon}>⚙️</Text>
-          </TouchableOpacity>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity 
+              style={styles.profileButton}
+              onPress={() => router.push('/profile')}
+            >
+              <Text style={styles.profileIcon}>👤</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.settingsButton}
+              onPress={() => router.push('/settings')}
+            >
+              <Text style={styles.settingsIcon}>⚙️</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.statsContainer}>
@@ -219,10 +227,10 @@ export default function DashboardScreen() {
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.navItem}
-          onPress={() => router.push('/settings')}
+          onPress={() => router.push('/profile')}
         >
-          <Text style={styles.navIcon}>⚙️</Text>
-          <Text style={styles.navLabel}>Settings</Text>
+          <Text style={styles.navIcon}>👤</Text>
+          <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -253,6 +261,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#3C2B63',
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  profileButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F4F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileIcon: {
+    fontSize: 20,
   },
   settingsButton: {
     width: 40,
