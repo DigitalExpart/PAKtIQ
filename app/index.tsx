@@ -41,6 +41,54 @@ export default function WelcomeScreen() {
           </View>
         </View>
 
+        {/* Progress Circle Icon */}
+        <View style={styles.progressIconContainer}>
+          <Svg width="200" height="200" viewBox="0 0 200 200">
+            {/* Yellow/Orange Arc (top right) */}
+            <Path
+              d="M 100 20 A 80 80 0 0 1 170 150"
+              stroke="#FFD88A"
+              strokeWidth="14"
+              fill="none"
+              strokeLinecap="round"
+            />
+            {/* Green Arc (top left) */}
+            <Path
+              d="M 100 20 A 80 80 0 0 0 30 150"
+              stroke="#95E1D3"
+              strokeWidth="14"
+              fill="none"
+              strokeLinecap="round"
+            />
+            {/* Inner Purple Arc (bottom right) */}
+            <Path
+              d="M 130 165 A 50 50 0 0 0 155 100"
+              stroke="#B8A1E8"
+              strokeWidth="12"
+              fill="none"
+              strokeLinecap="round"
+            />
+            {/* Inner Purple Arc (bottom left) */}
+            <Path
+              d="M 70 165 A 50 50 0 0 1 45 100"
+              stroke="#B8A1E8"
+              strokeWidth="12"
+              fill="none"
+              strokeLinecap="round"
+            />
+            {/* Large Sparkle */}
+            <Path
+              d="M 145 55 L 152 70 L 167 77 L 152 84 L 145 99 L 138 84 L 123 77 L 138 70 Z"
+              fill="#FFD88A"
+            />
+            {/* Small Sparkle */}
+            <Path
+              d="M 162 90 L 166 98 L 174 102 L 166 106 L 162 114 L 158 106 L 150 102 L 158 98 Z"
+              fill="#FFD88A"
+            />
+          </Svg>
+        </View>
+
         {/* Buttons */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity 
@@ -156,6 +204,12 @@ const styles = StyleSheet.create({
     opacity: 0.85,
     textAlign: 'center',
     lineHeight: 14,
+  },
+  progressIconContainer: {
+    marginBottom: 32,
+    marginTop: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonContainer: {
     width: '100%',
