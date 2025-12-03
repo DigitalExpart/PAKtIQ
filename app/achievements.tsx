@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Target, Flame, Trophy, TrendingUp, Star, Award, Lock } from 'lucide-react-native';
+
+const { width: screenWidth } = Dimensions.get('window');
+const cardWidth = (screenWidth - 48 - 24) / 3; // padding (24*2) + gaps (12*2) / 3 columns
 
 export default function AchievementScreen() {
   const router = useRouter();
@@ -221,10 +224,11 @@ const styles = StyleSheet.create({
   badgesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
+    justifyContent: 'space-between',
+    gap: 12,
   },
   badgeCard: {
-    width: '30%',
+    width: cardWidth,
     aspectRatio: 0.85,
     borderRadius: 20,
     padding: 16,
@@ -257,7 +261,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   lockedBadgeCard: {
-    width: '30%',
+    width: cardWidth,
     aspectRatio: 0.85,
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
