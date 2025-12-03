@@ -9,69 +9,83 @@ export default function WelcomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Stats Cards at TOP */}
+        {/* Target Icon at TOP */}
+        <View style={styles.iconContainer}>
+          <Svg width="120" height="120" viewBox="0 0 120 120">
+            <Circle cx="60" cy="60" r="55" stroke="#FFFFFF" strokeWidth="5" fill="none" opacity="0.8" />
+            <Circle cx="60" cy="60" r="40" stroke="#FFFFFF" strokeWidth="5" fill="none" opacity="0.9" />
+            <Circle cx="60" cy="60" r="25" stroke="#FFFFFF" strokeWidth="5" fill="none" />
+            <Circle cx="60" cy="60" r="12" fill="#FFFFFF" />
+          </Svg>
+        </View>
+
+        <Text style={styles.title}>PaktIQ</Text>
+        <Text style={styles.subtitle}>Smart Commitment Tracking</Text>
+        <Text style={styles.description}>
+          Make commitments. Track progress. Achieve your goals{'\n'}with intelligence.
+        </Text>
+
+        {/* Stats Cards */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
-            <Text style={styles.statValue}>10K</Text>
-            <Text style={styles.statPlus}>+</Text>
+            <Text style={styles.statValue}>10K+</Text>
             <Text style={styles.statLabel}>Active Users</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statValue}>50K</Text>
-            <Text style={styles.statPlus}>+</Text>
-            <Text style={styles.statLabel}>Pakts{'\n'}Achieved</Text>
+            <Text style={styles.statValue}>50K+</Text>
+            <Text style={styles.statLabel}>Pakts Achieved</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>95%</Text>
-            <Text style={styles.statLabel}>Success{'\n'}Rate</Text>
+            <Text style={styles.statLabel}>Success Rate</Text>
           </View>
         </View>
 
-        {/* Progress Circle Icon in MIDDLE */}
+        {/* Progress Circle Icon */}
         <View style={styles.progressIconContainer}>
-          <Svg width="280" height="280" viewBox="0 0 280 280">
+          <Svg width="240" height="240" viewBox="0 0 240 240">
             {/* Green/Teal Arc (left side) */}
             <Path
-              d="M 140 30 A 110 110 0 0 0 40 190"
+              d="M 120 20 A 100 100 0 0 0 30 170"
               stroke="#95E1D3"
-              strokeWidth="20"
+              strokeWidth="18"
               fill="none"
               strokeLinecap="round"
             />
             {/* Yellow/Orange Arc (right side) */}
             <Path
-              d="M 140 30 A 110 110 0 0 1 240 190"
+              d="M 120 20 A 100 100 0 0 1 210 170"
               stroke="#FFD88A"
-              strokeWidth="20"
+              strokeWidth="18"
               fill="none"
               strokeLinecap="round"
             />
             {/* Inner Light Purple Arc (left bottom) */}
             <Path
-              d="M 80 210 A 70 70 0 0 1 60 140"
+              d="M 70 185 A 60 60 0 0 1 55 125"
               stroke="#B8A1E8"
-              strokeWidth="16"
+              strokeWidth="14"
               fill="none"
               strokeLinecap="round"
-              opacity="0.6"
+              opacity="0.5"
             />
             {/* Inner Light Purple Arc (right bottom) */}
             <Path
-              d="M 200 210 A 70 70 0 0 0 220 140"
+              d="M 170 185 A 60 60 0 0 0 185 125"
               stroke="#B8A1E8"
-              strokeWidth="16"
+              strokeWidth="14"
               fill="none"
               strokeLinecap="round"
-              opacity="0.6"
+              opacity="0.5"
             />
             {/* Large Sparkle */}
             <Path
-              d="M 190 80 L 200 105 L 225 115 L 200 125 L 190 150 L 180 125 L 155 115 L 180 105 Z"
+              d="M 165 60 L 173 80 L 193 88 L 173 96 L 165 116 L 157 96 L 137 88 L 157 80 Z"
               fill="#FFD88A"
             />
             {/* Small Sparkle */}
             <Path
-              d="M 215 125 L 221 138 L 234 144 L 221 150 L 215 163 L 209 150 L 196 144 L 209 138 Z"
+              d="M 185 105 L 190 116 L 201 121 L 190 126 L 185 137 L 180 126 L 169 121 L 180 116 Z"
               fill="#FFD88A"
             />
           </Svg>
@@ -129,57 +143,80 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: 20,
     paddingBottom: 100,
+  },
+  iconContainer: {
+    marginTop: 10,
+    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 52,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 8,
+    letterSpacing: -1,
+  },
+  subtitle: {
+    fontSize: 20,
+    color: '#FFD88A',
+    marginBottom: 12,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  description: {
+    fontSize: 15,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 28,
+    opacity: 0.95,
+    lineHeight: 22,
+    paddingHorizontal: 30,
   },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 24,
     paddingHorizontal: 8,
   },
   statCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 24,
-    paddingVertical: 32,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
+    paddingVertical: 24,
     paddingHorizontal: 12,
     flex: 1,
     marginHorizontal: 6,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: 'rgba(255, 255, 255, 0.12)',
   },
   statValue: {
-    fontSize: 38,
+    fontSize: 32,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    letterSpacing: -1,
-  },
-  statPlus: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginVertical: 4,
+    marginBottom: 8,
+    letterSpacing: -0.5,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#FFFFFF',
-    opacity: 0.8,
+    opacity: 0.85,
     textAlign: 'center',
-    lineHeight: 16,
-    marginTop: 8,
+    lineHeight: 14,
   },
   progressIconContainer: {
-    marginVertical: 24,
+    marginVertical: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonContainer: {
     width: '100%',
     paddingHorizontal: 20,
-    marginTop: 16,
-    marginBottom: 32,
+    marginTop: 12,
+    marginBottom: 28,
   },
   gradientButton: {
     backgroundColor: '#FFD88A',
@@ -225,11 +262,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   featureIcon: {
-    fontSize: 44,
-    marginBottom: 10,
+    fontSize: 40,
+    marginBottom: 8,
   },
   featureText: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#FFFFFF',
     fontWeight: '500',
   },
