@@ -1,186 +1,149 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
+import { ArrowLeft, Sun, Bell, Globe, CreditCard, Shield, FileText, LogOut, ChevronRight } from 'lucide-react-native';
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
-  const [weeklyReport, setWeeklyReport] = useState(true);
-  const [soundEffects, setSoundEffects] = useState(true);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      {/* Header with gradient */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backButton}>← Back</Text>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <ArrowLeft size={24} color="#FFFFFF" />
         </TouchableOpacity>
-        <Text style={styles.title}>Settings</Text>
+        
+        <View style={styles.headerContent}>
+          <Text style={styles.headerTitle}>Settings</Text>
+          <Text style={styles.headerSubtitle}>Customize your experience</Text>
+        </View>
       </View>
 
-      <ScrollView style={styles.content}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Notifications</Text>
-          
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>Push Notifications</Text>
-              <Text style={styles.settingDescription}>Get reminders about your pakts</Text>
-            </View>
-            <Switch
-              value={notifications}
-              onValueChange={setNotifications}
-              trackColor={{ false: '#CCC', true: '#9163F2' }}
-              thumbColor="#FFFFFF"
-            />
-          </View>
-
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>Weekly Progress Report</Text>
-              <Text style={styles.settingDescription}>Receive weekly summaries</Text>
-            </View>
-            <Switch
-              value={weeklyReport}
-              onValueChange={setWeeklyReport}
-              trackColor={{ false: '#CCC', true: '#9163F2' }}
-              thumbColor="#FFFFFF"
-            />
-          </View>
-        </View>
-
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Appearance Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Appearance</Text>
           
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>Dark Mode</Text>
-              <Text style={styles.settingDescription}>Use dark theme</Text>
+          <View style={styles.card}>
+            <View style={styles.settingRow}>
+              <View style={styles.settingLeft}>
+                <Sun size={20} color="#666" />
+                <Text style={styles.settingText}>Dark Mode</Text>
+              </View>
+              <Switch
+                value={darkMode}
+                onValueChange={setDarkMode}
+                trackColor={{ false: '#E5E5E5', true: '#9163F2' }}
+                thumbColor="#FFFFFF"
+                ios_backgroundColor="#E5E5E5"
+              />
             </View>
-            <Switch
-              value={darkMode}
-              onValueChange={setDarkMode}
-              trackColor={{ false: '#CCC', true: '#9163F2' }}
-              thumbColor="#FFFFFF"
-            />
-          </View>
-
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>Sound Effects</Text>
-              <Text style={styles.settingDescription}>Play sounds for actions</Text>
-            </View>
-            <Switch
-              value={soundEffects}
-              onValueChange={setSoundEffects}
-              trackColor={{ false: '#CCC', true: '#9163F2' }}
-              thumbColor="#FFFFFF"
-            />
           </View>
         </View>
 
+        {/* Preferences Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account</Text>
+          <Text style={styles.sectionTitle}>Preferences</Text>
           
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Edit Profile</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Privacy Settings</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Data & Storage</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Connected Apps</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Subscription</Text>
-          
-          <View style={styles.premiumCard}>
-            <View style={styles.premiumHeader}>
-              <Text style={styles.premiumBadge}>⭐ FREE PLAN</Text>
-            </View>
-            <Text style={styles.premiumText}>
-              Upgrade to Premium for unlimited pakts and advanced features
-            </Text>
+          <View style={styles.card}>
             <TouchableOpacity 
-              style={styles.upgradeButton}
-              onPress={() => router.push('/premium')}
+              style={[styles.menuRow, styles.menuRowBorder]}
+              onPress={() => router.push('/notifications')}
             >
-              <Text style={styles.upgradeButtonText}>View Premium Features</Text>
+              <View style={styles.menuLeft}>
+                <Bell size={20} color="#666" />
+                <Text style={styles.menuText}>Notifications</Text>
+              </View>
+              <ChevronRight size={20} color="#CCC" />
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.menuRow}
+              onPress={() => {/* Navigate to language */}}
+            >
+              <View style={styles.menuLeft}>
+                <Globe size={20} color="#666" />
+                <Text style={styles.menuText}>Language</Text>
+              </View>
+              <View style={styles.menuRight}>
+                <Text style={styles.languageText}>English</Text>
+                <ChevronRight size={20} color="#CCC" />
+              </View>
             </TouchableOpacity>
           </View>
         </View>
 
+        {/* Account Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Support</Text>
+          <Text style={styles.sectionTitle}>Account</Text>
           
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Help Center</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
-          </TouchableOpacity>
+          <View style={styles.card}>
+            <TouchableOpacity 
+              style={[styles.menuRow, styles.menuRowBorder]}
+              onPress={() => router.push('/premium')}
+            >
+              <View style={styles.menuLeft}>
+                <CreditCard size={20} color="#666" />
+                <Text style={styles.menuText}>Manage Subscription</Text>
+              </View>
+              <ChevronRight size={20} color="#CCC" />
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Contact Support</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
-          </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.menuRow, styles.menuRowBorder]}
+              onPress={() => {/* Navigate to privacy */}}
+            >
+              <View style={styles.menuLeft}>
+                <Shield size={20} color="#666" />
+                <Text style={styles.menuText}>Privacy</Text>
+              </View>
+              <ChevronRight size={20} color="#CCC" />
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Report a Bug</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Rate Us</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
-          </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.menuRow}
+              onPress={() => {/* Navigate to terms */}}
+            >
+              <View style={styles.menuLeft}>
+                <FileText size={20} color="#666" />
+                <Text style={styles.menuText}>Terms of Service</Text>
+              </View>
+              <ChevronRight size={20} color="#CCC" />
+            </TouchableOpacity>
+          </View>
         </View>
 
+        {/* Actions Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Legal</Text>
+          <Text style={styles.sectionTitle}>Actions</Text>
           
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Terms of Service</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Privacy Policy</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.settingButton}>
-            <Text style={styles.settingButtonText}>Licenses</Text>
-            <Text style={styles.settingButtonIcon}>›</Text>
+          <TouchableOpacity 
+            style={styles.logoutCard}
+            onPress={() => {/* Handle logout */}}
+          >
+            <LogOut size={20} color="#FF6B6B" />
+            <Text style={styles.logoutText}>Log Out</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.dangerSection}>
-          <TouchableOpacity style={styles.dangerButton}>
-            <Text style={styles.dangerButtonText}>Log Out</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.dangerButton}>
-            <Text style={styles.dangerButtonText}>Delete Account</Text>
-          </TouchableOpacity>
+        {/* Version Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerTitle}>PaktIQ Pro</Text>
+          <Text style={styles.footerVersion}>Version 1.0.0</Text>
         </View>
 
-        <View style={styles.versionSection}>
-          <Text style={styles.versionText}>PaktIQ v1.0.0</Text>
-          <Text style={styles.versionSubtext}>Made with ❤️ for achievers</Text>
-        </View>
+        <View style={{ height: 40 }} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -190,134 +153,138 @@ const styles = StyleSheet.create({
     backgroundColor: '#F4F4F6',
   },
   header: {
-    padding: 24,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#9163F2',
+    paddingTop: 60,
+    paddingBottom: 32,
+    paddingHorizontal: 24,
+    position: 'relative',
   },
   backButton: {
-    fontSize: 16,
-    color: '#9163F2',
-    marginBottom: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
   },
-  title: {
-    fontSize: 28,
+  headerContent: {
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#3C2B63',
+    color: '#FFFFFF',
+    marginBottom: 8,
   },
-  content: {
+  headerSubtitle: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.9)',
+  },
+  scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingTop: 24,
   },
   section: {
-    marginTop: 24,
     paddingHorizontal: 24,
+    marginBottom: 32,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 20,
     fontWeight: '600',
-    color: '#999',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 12,
-  },
-  settingItem: {
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-  settingInfo: {
-    flex: 1,
-  },
-  settingLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
-    marginBottom: 4,
-  },
-  settingDescription: {
-    fontSize: 14,
     color: '#666',
-  },
-  settingButton: {
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-  settingButtonText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  settingButtonIcon: {
-    fontSize: 24,
-    color: '#CCC',
-  },
-  premiumCard: {
-    backgroundColor: '#9163F2',
-    borderRadius: 12,
-    padding: 20,
-  },
-  premiumHeader: {
-    marginBottom: 12,
-  },
-  premiumBadge: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#FFD88A',
-  },
-  premiumText: {
-    fontSize: 15,
-    color: '#FFFFFF',
-    lineHeight: 22,
     marginBottom: 16,
   },
-  upgradeButton: {
-    backgroundColor: '#FFD88A',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  upgradeButtonText: {
-    color: '#3C2B63',
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  settingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  settingText: {
+    fontSize: 16,
+    color: '#1a1625',
+    fontWeight: '500',
+  },
+  menuRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  menuRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  menuLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    flex: 1,
+  },
+  menuText: {
+    fontSize: 16,
+    color: '#1a1625',
+    fontWeight: '400',
+  },
+  menuRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  languageText: {
+    fontSize: 15,
+    color: '#666',
+  },
+  logoutCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  logoutText: {
+    fontSize: 16,
+    color: '#FF6B6B',
+    fontWeight: '500',
+  },
+  footer: {
+    alignItems: 'center',
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  footerTitle: {
     fontSize: 16,
     fontWeight: '600',
-  },
-  dangerSection: {
-    marginTop: 24,
-    paddingHorizontal: 24,
-  },
-  dangerButton: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#FF6B6B',
-  },
-  dangerButtonText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#FF6B6B',
-  },
-  versionSection: {
-    marginTop: 32,
-    marginBottom: 48,
-    alignItems: 'center',
-  },
-  versionText: {
-    fontSize: 14,
-    color: '#999',
+    color: '#666',
     marginBottom: 4,
   },
-  versionSubtext: {
-    fontSize: 12,
-    color: '#CCC',
+  footerVersion: {
+    fontSize: 14,
+    color: '#999',
   },
 });
 
