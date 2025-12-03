@@ -1,0 +1,14 @@
+{
+  "appId": "com.resolutionstracker.app",
+  "appName": "New Year Resolutions Tracker",
+  "webDir": "build",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#F4F4F6"
+    }
+  }
+}
