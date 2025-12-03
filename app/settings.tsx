@@ -68,7 +68,7 @@ export default function SettingsScreen() {
 
             <TouchableOpacity 
               style={styles.menuRow}
-              onPress={() => {/* Navigate to language */}}
+              onPress={() => router.push('/language')}
             >
               <View style={styles.menuLeft}>
                 <Globe size={20} color="#666" />
