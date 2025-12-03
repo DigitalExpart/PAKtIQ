@@ -9,81 +9,69 @@ export default function WelcomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Target/Bullseye Icon */}
-        <View style={styles.iconContainer}>
-          <Svg width="120" height="120" viewBox="0 0 120 120">
-            <Circle cx="60" cy="60" r="55" stroke="#FFFFFF" strokeWidth="5" fill="none" opacity="0.8" />
-            <Circle cx="60" cy="60" r="40" stroke="#FFFFFF" strokeWidth="5" fill="none" opacity="0.9" />
-            <Circle cx="60" cy="60" r="25" stroke="#FFFFFF" strokeWidth="5" fill="none" />
-            <Circle cx="60" cy="60" r="12" fill="#FFFFFF" />
-          </Svg>
-        </View>
-
-        <Text style={styles.title}>PaktIQ</Text>
-        <Text style={styles.subtitle}>Smart Commitment Tracking</Text>
-        <Text style={styles.description}>
-          Make commitments. Track progress. Achieve your goals with intelligence.
-        </Text>
-
-        {/* Stats Cards */}
+        {/* Stats Cards at TOP */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
-            <Text style={styles.statValue}>10K+</Text>
+            <Text style={styles.statValue}>10K</Text>
+            <Text style={styles.statPlus}>+</Text>
             <Text style={styles.statLabel}>Active Users</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statValue}>50K+</Text>
-            <Text style={styles.statLabel}>Pakts Achieved</Text>
+            <Text style={styles.statValue}>50K</Text>
+            <Text style={styles.statPlus}>+</Text>
+            <Text style={styles.statLabel}>Pakts{'\n'}Achieved</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>95%</Text>
-            <Text style={styles.statLabel}>Success Rate</Text>
+            <Text style={styles.statLabel}>Success{'\n'}Rate</Text>
           </View>
         </View>
 
-        {/* Progress Circle Icon */}
+        {/* Progress Circle Icon in MIDDLE */}
         <View style={styles.progressIconContainer}>
-          <Svg width="200" height="200" viewBox="0 0 200 200">
-            {/* Yellow/Orange Arc (top right) */}
+          <Svg width="280" height="280" viewBox="0 0 280 280">
+            {/* Green/Teal Arc (left side) */}
             <Path
-              d="M 100 20 A 80 80 0 0 1 170 150"
-              stroke="#FFD88A"
-              strokeWidth="14"
-              fill="none"
-              strokeLinecap="round"
-            />
-            {/* Green Arc (top left) */}
-            <Path
-              d="M 100 20 A 80 80 0 0 0 30 150"
+              d="M 140 30 A 110 110 0 0 0 40 190"
               stroke="#95E1D3"
-              strokeWidth="14"
+              strokeWidth="20"
               fill="none"
               strokeLinecap="round"
             />
-            {/* Inner Purple Arc (bottom right) */}
+            {/* Yellow/Orange Arc (right side) */}
             <Path
-              d="M 130 165 A 50 50 0 0 0 155 100"
-              stroke="#B8A1E8"
-              strokeWidth="12"
+              d="M 140 30 A 110 110 0 0 1 240 190"
+              stroke="#FFD88A"
+              strokeWidth="20"
               fill="none"
               strokeLinecap="round"
             />
-            {/* Inner Purple Arc (bottom left) */}
+            {/* Inner Light Purple Arc (left bottom) */}
             <Path
-              d="M 70 165 A 50 50 0 0 1 45 100"
+              d="M 80 210 A 70 70 0 0 1 60 140"
               stroke="#B8A1E8"
-              strokeWidth="12"
+              strokeWidth="16"
               fill="none"
               strokeLinecap="round"
+              opacity="0.6"
+            />
+            {/* Inner Light Purple Arc (right bottom) */}
+            <Path
+              d="M 200 210 A 70 70 0 0 0 220 140"
+              stroke="#B8A1E8"
+              strokeWidth="16"
+              fill="none"
+              strokeLinecap="round"
+              opacity="0.6"
             />
             {/* Large Sparkle */}
             <Path
-              d="M 145 55 L 152 70 L 167 77 L 152 84 L 145 99 L 138 84 L 123 77 L 138 70 Z"
+              d="M 190 80 L 200 105 L 225 115 L 200 125 L 190 150 L 180 125 L 155 115 L 180 105 Z"
               fill="#FFD88A"
             />
             {/* Small Sparkle */}
             <Path
-              d="M 162 90 L 166 98 L 174 102 L 166 106 L 162 114 L 158 106 L 150 102 L 158 98 Z"
+              d="M 215 125 L 221 138 L 234 144 L 221 150 L 215 163 L 209 150 L 196 144 L 209 138 Z"
               fill="#FFD88A"
             />
           </Svg>
@@ -95,7 +83,7 @@ export default function WelcomeScreen() {
             style={styles.gradientButton} 
             onPress={() => router.push('/onboarding')}
           >
-            <Text style={styles.gradientButtonText}>Start My First Pakt →</Text>
+            <Text style={styles.gradientButtonText}>Start My First Pakt 'n</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
@@ -106,10 +94,10 @@ export default function WelcomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Feature Icons */}
+        {/* Feature Icons at BOTTOM */}
         <View style={styles.featuresContainer}>
           <View style={styles.featureItem}>
-            <Text style={styles.featureIcon}>📈</Text>
+            <Text style={styles.featureIcon}>📊</Text>
             <Text style={styles.featureText}>Track Progress</Text>
           </View>
           <View style={styles.featureItem}>
@@ -140,81 +128,58 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 40,
-    paddingBottom: 100,
-  },
-  iconContainer: {
-    marginBottom: 24,
-    marginTop: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 56,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 4,
-    letterSpacing: -1,
-  },
-  subtitle: {
-    fontSize: 20,
-    color: '#FFD88A',
-    marginBottom: 16,
-    textAlign: 'center',
-    fontWeight: '500',
-  },
-  description: {
-    fontSize: 15,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    marginBottom: 36,
-    opacity: 0.95,
-    lineHeight: 22,
     paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 100,
   },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginBottom: 32,
-    paddingHorizontal: 4,
+    marginBottom: 20,
+    paddingHorizontal: 8,
   },
   statCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
-    borderRadius: 20,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 24,
+    paddingVertical: 32,
+    paddingHorizontal: 12,
     flex: 1,
     marginHorizontal: 6,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   statValue: {
-    fontSize: 32,
+    fontSize: 38,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 8,
-    letterSpacing: -0.5,
+    letterSpacing: -1,
+  },
+  statPlus: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginVertical: 4,
   },
   statLabel: {
-    fontSize: 11,
+    fontSize: 12,
     color: '#FFFFFF',
-    opacity: 0.85,
+    opacity: 0.8,
     textAlign: 'center',
-    lineHeight: 14,
+    lineHeight: 16,
+    marginTop: 8,
   },
   progressIconContainer: {
-    marginBottom: 32,
-    marginTop: 8,
+    marginVertical: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonContainer: {
     width: '100%',
-    paddingHorizontal: 16,
-    marginBottom: 40,
+    paddingHorizontal: 20,
+    marginTop: 16,
+    marginBottom: 32,
   },
   gradientButton: {
     backgroundColor: '#FFD88A',
@@ -231,9 +196,9 @@ const styles = StyleSheet.create({
   },
   gradientButtonText: {
     color: '#3C2B63',
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: '600',
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
   },
   outlineButton: {
     backgroundColor: 'transparent',
@@ -241,48 +206,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 32,
     borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
+    borderColor: 'rgba(255, 255, 255, 0.35)',
     alignItems: 'center',
   },
   outlineButtonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: '600',
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
   },
   featuresContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    paddingHorizontal: 40,
+    paddingHorizontal: 30,
   },
   featureItem: {
     alignItems: 'center',
   },
   featureIcon: {
-    fontSize: 36,
-    marginBottom: 8,
+    fontSize: 44,
+    marginBottom: 10,
   },
   featureText: {
-    fontSize: 13,
+    fontSize: 14,
     color: '#FFFFFF',
     fontWeight: '500',
   },
   helpButton: {
     position: 'absolute',
-    bottom: 24,
-    right: 24,
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+    bottom: 28,
+    right: 28,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(96, 77, 148, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   helpButtonText: {
     color: '#FFFFFF',
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: '600',
   },
 });
-
