@@ -1,289 +1,559 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Circle } from 'react-native-svg';
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  
+  // Animation values matching web version
+  const glowAnim1 = useRef(new Animated.Value(1)).current;
+  const glowAnim2 = useRef(new Animated.Value(1)).current;
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const logoTranslate = useRef(new Animated.Value(-20)).current;
+  const heroOpacity = useRef(new Animated.Value(0)).current;
+  const heroTranslate = useRef(new Animated.Value(20)).current;
+  const statsOpacity = useRef(new Animated.Value(0)).current;
+  const statsTranslate = useRef(new Animated.Value(20)).current;
+  const illustrationOpacity = useRef(new Animated.Value(0)).current;
+  const illustrationScale = useRef(new Animated.Value(0.8)).current;
+  const circleProgress1 = useRef(new Animated.Value(502)).current;
+  const circleProgress2 = useRef(new Animated.Value(377)).current;
+  const buttonsOpacity = useRef(new Animated.Value(0)).current;
+  const buttonsTranslate = useRef(new Animated.Value(20)).current;
+  const featuresOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Background glow animations (continuous loops)
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim1, {
+          toValue: 1.2,
+          duration: 4000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowAnim1, {
+          toValue: 1,
+          duration: 4000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim2, {
+          toValue: 1.3,
+          duration: 5000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowAnim2, {
+          toValue: 1,
+          duration: 5000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    // Sequential entrance animations matching web version
+    // Logo animation (initial)
+    Animated.parallel([
+      Animated.timing(logoOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(logoTranslate, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Hero text (delay: 0.2s = 200ms)
+    Animated.parallel([
+      Animated.timing(heroOpacity, {
+        toValue: 1,
+        duration: 500,
+        delay: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(heroTranslate, {
+        toValue: 0,
+        duration: 500,
+        delay: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Stats (delay: 0.4s = 400ms)
+    Animated.parallel([
+      Animated.timing(statsOpacity, {
+        toValue: 1,
+        duration: 500,
+        delay: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(statsTranslate, {
+        toValue: 0,
+        duration: 500,
+        delay: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Illustration (delay: 0.6s = 600ms)
+    Animated.parallel([
+      Animated.timing(illustrationOpacity, {
+        toValue: 1,
+        duration: 500,
+        delay: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(illustrationScale, {
+        toValue: 1,
+        duration: 500,
+        delay: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Circle progress animations (delay: 0.8s and 1s)
+    Animated.timing(circleProgress1, {
+        toValue: 125,
+        duration: 2000,
+        delay: 800,
+        useNativeDriver: true,
+    }).start();
+
+    Animated.timing(circleProgress2, {
+        toValue: 94,
+        duration: 2000,
+        delay: 1000,
+        useNativeDriver: true,
+    }).start();
+
+    // Buttons (delay: 1s = 1000ms)
+    Animated.parallel([
+      Animated.timing(buttonsOpacity, {
+        toValue: 1,
+        duration: 500,
+        delay: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonsTranslate, {
+        toValue: 0,
+        duration: 500,
+        delay: 1000,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Features (delay: 1.2s = 1200ms)
+    Animated.timing(featuresOpacity, {
+      toValue: 1,
+      duration: 500,
+      delay: 1200,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Target Icon at TOP */}
-        <View style={styles.iconContainer}>
-          <Svg width="120" height="120" viewBox="0 0 120 120">
-            <Circle cx="60" cy="60" r="55" stroke="#FFFFFF" strokeWidth="5" fill="none" opacity="0.8" />
-            <Circle cx="60" cy="60" r="40" stroke="#FFFFFF" strokeWidth="5" fill="none" opacity="0.9" />
-            <Circle cx="60" cy="60" r="25" stroke="#FFFFFF" strokeWidth="5" fill="none" />
-            <Circle cx="60" cy="60" r="12" fill="#FFFFFF" />
-          </Svg>
-        </View>
+    <View style={styles.container}>
+      {/* Animated Background Glows */}
+      <Animated.View 
+        style={[
+          styles.glowBubble1,
+          {
+            transform: [{ scale: glowAnim1 }],
+            opacity: glowAnim1.interpolate({
+              inputRange: [1, 1.2],
+              outputRange: [0.2, 0.3],
+            }),
+          }
+        ]} 
+      />
+      <Animated.View 
+        style={[
+          styles.glowBubble2,
+          {
+            transform: [{ scale: glowAnim2 }],
+            opacity: glowAnim2.interpolate({
+              inputRange: [1, 1.3],
+              outputRange: [0.2, 0.3],
+            }),
+          }
+        ]} 
+      />
 
-        <Text style={styles.title}>PaktIQ</Text>
-        <Text style={styles.subtitle}>Smart Commitment Tracking</Text>
-        <Text style={styles.description}>
-          Make commitments. Track progress. Achieve your goals{'\n'}with intelligence.
-        </Text>
-
-        {/* Stats Cards */}
-        <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>10K+</Text>
-            <Text style={styles.statLabel}>Active Users</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>50K+</Text>
-            <Text style={styles.statLabel}>Pakts Achieved</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>95%</Text>
-            <Text style={styles.statLabel}>Success Rate</Text>
-          </View>
-        </View>
-
-        {/* Progress Circle Icon */}
-        <View style={styles.progressIconContainer}>
-          <Svg width="240" height="240" viewBox="0 0 240 240">
-            {/* Yellow/Orange Arc (outer top-left to bottom-right) */}
-            <Path
-              d="M 45 60 A 100 100 0 0 1 195 180"
-              stroke="#FFD88A"
-              strokeWidth="18"
-              fill="none"
-              strokeLinecap="round"
-            />
-            {/* Green/Teal Arc (inner top-left to right side) */}
-            <Path
-              d="M 60 75 A 85 85 0 0 1 180 165"
-              stroke="#95E1D3"
-              strokeWidth="18"
-              fill="none"
-              strokeLinecap="round"
-            />
-            {/* Light Purple Arc (bottom-right inner) */}
-            <Path
-              d="M 155 190 A 70 70 0 0 1 210 135"
-              stroke="#B8A1E8"
-              strokeWidth="16"
-              fill="none"
-              strokeLinecap="round"
-              opacity="0.5"
-            />
-            {/* Light Purple Arc (bottom-left inner) */}
-            <Path
-              d="M 85 190 A 70 70 0 0 0 30 135"
-              stroke="#B8A1E8"
-              strokeWidth="16"
-              fill="none"
-              strokeLinecap="round"
-              opacity="0.5"
-            />
-            {/* Large Sparkle (center-right) */}
-            <Path
-              d="M 155 90 L 163 110 L 183 118 L 163 126 L 155 146 L 147 126 L 127 118 L 147 110 Z"
-              fill="#FFD88A"
-            />
-            {/* Small Sparkle */}
-            <Path
-              d="M 175 125 L 180 136 L 191 141 L 180 146 L 175 157 L 170 146 L 159 141 L 170 136 Z"
-              fill="#FFD88A"
-            />
-          </Svg>
-        </View>
-
-        {/* Buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={styles.gradientButton} 
-            onPress={() => router.push('/onboarding')}
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent} 
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Logo/Target Icon */}
+          <Animated.View 
+            style={[
+              styles.logoContainer, 
+              { 
+                opacity: logoOpacity, 
+                transform: [{ translateY: logoTranslate }] 
+              }
+            ]}
           >
-            <Text style={styles.gradientButtonText}>Start My First Pakt 'n</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.outlineButton} 
-            onPress={() => router.push('/dashboard')}
+            <View style={styles.logoWrapper}>
+              <Animated.View 
+                style={[
+                  styles.logoGlow,
+                  {
+                    transform: [{ 
+                      scale: glowAnim1.interpolate({
+                        inputRange: [1, 1.2],
+                        outputRange: [1, 1.1],
+                      })
+                    }],
+                  }
+                ]}
+              />
+              <Text style={styles.targetIcon}>🎯</Text>
+            </View>
+          </Animated.View>
+
+          {/* Hero Text */}
+          <Animated.View 
+            style={[
+              styles.heroContainer, 
+              { 
+                opacity: heroOpacity, 
+                transform: [{ translateY: heroTranslate }] 
+              }
+            ]}
           >
-            <Text style={styles.outlineButtonText}>Explore Features</Text>
-          </TouchableOpacity>
-        </View>
+            <Text style={styles.title}>PaktIQ</Text>
+            <Text style={styles.subtitle}>Smart Commitment Tracking</Text>
+            <Text style={styles.description}>
+              Make commitments. Track progress. Achieve your goals with intelligence.
+            </Text>
+          </Animated.View>
 
-        {/* Feature Icons at BOTTOM */}
-        <View style={styles.featuresContainer}>
-          <View style={styles.featureItem}>
-            <Text style={styles.featureIcon}>📊</Text>
-            <Text style={styles.featureText}>Track Progress</Text>
-          </View>
-          <View style={styles.featureItem}>
-            <Text style={styles.featureIcon}>🏅</Text>
-            <Text style={styles.featureText}>Earn Badges</Text>
-          </View>
-          <View style={styles.featureItem}>
-            <Text style={styles.featureIcon}>🎯</Text>
-            <Text style={styles.featureText}>Hit Goals</Text>
-          </View>
-        </View>
-      </ScrollView>
+          {/* Stats Cards */}
+          <Animated.View 
+            style={[
+              styles.statsContainer, 
+              { 
+                opacity: statsOpacity, 
+                transform: [{ translateY: statsTranslate }] 
+              }
+            ]}
+          >
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>10K+</Text>
+              <Text style={styles.statLabel}>Active Users</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>50K+</Text>
+              <Text style={styles.statLabel}>Pakts Achieved</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>95%</Text>
+              <Text style={styles.statLabel}>Success Rate</Text>
+            </View>
+          </Animated.View>
 
-      {/* Help Button */}
-      <TouchableOpacity style={styles.helpButton}>
-        <Text style={styles.helpButtonText}>?</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+          {/* Illustration - Progress Circles */}
+          <Animated.View 
+            style={[
+              styles.illustrationContainer, 
+              { 
+                opacity: illustrationOpacity, 
+                transform: [{ scale: illustrationScale }] 
+              }
+            ]}
+          >
+            <View style={styles.progressCircles}>
+              <Svg width="256" height="256" viewBox="0 0 200 200">
+                {/* Outer circle */}
+                <Circle
+                  cx="100"
+                  cy="100"
+                  r="80"
+                  stroke="#FFD88A"
+                  strokeWidth="8"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray="502"
+                  strokeDashoffset="125"
+                />
+                {/* Inner circle */}
+                <Circle
+                  cx="100"
+                  cy="100"
+                  r="60"
+                  stroke="#96E6B3"
+                  strokeWidth="6"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray="377"
+                  strokeDashoffset="94"
+                />
+              </Svg>
+              <View style={styles.sparkleCenter}>
+                <Text style={styles.sparkleIcon}>✨</Text>
+              </View>
+            </View>
+          </Animated.View>
+
+          {/* CTA Buttons */}
+          <Animated.View 
+            style={[
+              styles.buttonContainer, 
+              { 
+                opacity: buttonsOpacity, 
+                transform: [{ translateY: buttonsTranslate }] 
+              }
+            ]}
+          >
+            <TouchableOpacity 
+              style={styles.primaryButton} 
+              onPress={() => router.push('/onboarding')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.primaryButtonText}>Start My First Pakt</Text>
+              <Text style={styles.arrow}>→</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.secondaryButton} 
+              onPress={() => router.push('/templates')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.secondaryButtonText}>Explore Features</Text>
+            </TouchableOpacity>
+          </Animated.View>
+
+          {/* Features Highlight */}
+          <Animated.View 
+            style={[
+              styles.featuresContainer, 
+              { opacity: featuresOpacity }
+            ]}
+          >
+            <View style={styles.featureItem}>
+              <Text style={[styles.featureIcon, { color: '#96E6B3' }]}>📈</Text>
+              <Text style={styles.featureText}>Track Progress</Text>
+            </View>
+            <View style={styles.featureItem}>
+              <Text style={[styles.featureIcon, { color: '#FFD88A' }]}>🏆</Text>
+              <Text style={styles.featureText}>Earn Badges</Text>
+            </View>
+            <View style={styles.featureItem}>
+              <Text style={[styles.featureIcon, { color: '#FF6A6A' }]}>🎯</Text>
+              <Text style={styles.featureText}>Hit Goals</Text>
+            </View>
+          </Animated.View>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#9163F2',
+    backgroundColor: '#3C2B63',
+  },
+  glowBubble1: {
+    position: 'absolute',
+    top: 80,
+    left: 40,
+    width: 128,
+    height: 128,
+    backgroundColor: '#FFD88A',
+    borderRadius: 64,
+  },
+  glowBubble2: {
+    position: 'absolute',
+    bottom: 128,
+    right: 40,
+    width: 160,
+    height: 160,
+    backgroundColor: '#96E6B3',
+    borderRadius: 80,
+  },
+  safeArea: {
+    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'space-evenly',
+    paddingHorizontal: 24,
+    paddingTop: 48,
+    paddingBottom: 48,
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 100,
+    maxWidth: 448,
+    width: '100%',
+    alignSelf: 'center',
   },
-  iconContainer: {
-    marginTop: 10,
-    marginBottom: 20,
+  logoContainer: {
+    marginBottom: 32,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  logoWrapper: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoGlow: {
+    position: 'absolute',
+    width: 64,
+    height: 64,
+    backgroundColor: '#FFD88A',
+    borderRadius: 32,
+    opacity: 0.5,
+  },
+  targetIcon: {
+    fontSize: 64,
+    zIndex: 10,
+  },
+  heroContainer: {
+    alignItems: 'center',
+    marginBottom: 48,
+  },
   title: {
-    fontSize: 52,
+    fontSize: 48,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 8,
-    letterSpacing: -1,
+    marginBottom: 16,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 20,
+    fontSize: 24,
     color: '#FFD88A',
-    marginBottom: 12,
+    marginBottom: 16,
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: '600',
   },
   description: {
-    fontSize: 15,
+    fontSize: 18,
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 28,
-    opacity: 0.95,
-    lineHeight: 22,
-    paddingHorizontal: 30,
+    opacity: 0.9,
+    lineHeight: 28,
+    paddingHorizontal: 20,
   },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginBottom: 24,
-    paddingHorizontal: 8,
+    marginBottom: 48,
+    gap: 16,
   },
   statCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 20,
-    paddingVertical: 24,
+    borderRadius: 16,
+    paddingVertical: 16,
     paddingHorizontal: 12,
     flex: 1,
-    marginHorizontal: 6,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   statValue: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 8,
-    letterSpacing: -0.5,
+    marginBottom: 4,
   },
   statLabel: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#FFFFFF',
-    opacity: 0.85,
+    opacity: 0.8,
     textAlign: 'center',
-    lineHeight: 14,
   },
-  progressIconContainer: {
-    marginVertical: 20,
+  illustrationContainer: {
+    marginBottom: 48,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  progressCircles: {
+    width: 256,
+    height: 256,
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sparkleCenter: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -24 }, { translateY: -24 }],
+  },
+  sparkleIcon: {
+    fontSize: 48,
   },
   buttonContainer: {
     width: '100%',
-    paddingHorizontal: 20,
-    marginTop: 12,
-    marginBottom: 28,
+    marginBottom: 48,
+    gap: 16,
   },
-  gradientButton: {
+  primaryButton: {
     backgroundColor: '#FFD88A',
-    paddingVertical: 20,
+    paddingVertical: 16,
     paddingHorizontal: 32,
-    borderRadius: 32,
-    marginBottom: 16,
+    borderRadius: 16,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 6,
+    elevation: 8,
   },
-  gradientButtonText: {
+  primaryButtonText: {
     color: '#3C2B63',
-    fontSize: 19,
-    fontWeight: '600',
-    letterSpacing: 0.2,
+    fontSize: 18,
+    fontWeight: '700',
+    marginRight: 12,
   },
-  outlineButton: {
-    backgroundColor: 'transparent',
-    paddingVertical: 20,
+  arrow: {
+    color: '#3C2B63',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  secondaryButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    paddingVertical: 16,
     paddingHorizontal: 32,
-    borderRadius: 32,
+    borderRadius: 16,
     borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.35)',
+    borderColor: 'rgba(255, 255, 255, 0.3)',
     alignItems: 'center',
   },
-  outlineButtonText: {
+  secondaryButtonText: {
     color: '#FFFFFF',
-    fontSize: 19,
-    fontWeight: '600',
-    letterSpacing: 0.2,
+    fontSize: 18,
+    fontWeight: '700',
   },
   featuresContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
+    gap: 16,
   },
   featureItem: {
+    flex: 1,
     alignItems: 'center',
+    gap: 8,
   },
   featureIcon: {
-    fontSize: 40,
-    marginBottom: 8,
+    fontSize: 24,
   },
   featureText: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#FFFFFF',
-    fontWeight: '500',
-  },
-  helpButton: {
-    position: 'absolute',
-    bottom: 28,
-    right: 28,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: 'rgba(96, 77, 148, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  helpButtonText: {
-    color: '#FFFFFF',
-    fontSize: 28,
-    fontWeight: '600',
+    opacity: 0.8,
+    textAlign: 'center',
   },
 });
