@@ -120,52 +120,74 @@ export default function ProfileScreen() {
           ))}
         </View>
 
-        {/* Account Settings */}
+        {/* Quick Menu Items */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account Settings</Text>
-          
           <TouchableOpacity 
-            style={styles.settingItem}
+            style={styles.menuCard}
+            onPress={() => router.push('/insights')}
+          >
+            <View style={styles.menuLeft}>
+              <View style={[styles.menuIcon, { backgroundColor: '#E0F2FE' }]}>
+                <TrendingUp size={20} color="#0EA5E9" />
+              </View>
+              <View>
+                <Text style={styles.menuTitle}>View Insights</Text>
+                <Text style={styles.menuSubtitle}>Track your analytics</Text>
+              </View>
+            </View>
+            <ChevronRight size={20} color="#999" />
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.menuCard}
             onPress={() => router.push('/settings')}
           >
-            <Text style={styles.settingText}>App Settings</Text>
+            <View style={styles.menuLeft}>
+              <View style={[styles.menuIcon, { backgroundColor: '#F3E8FF' }]}>
+                <Text style={{ fontSize: 20 }}>⚙️</Text>
+              </View>
+              <View>
+                <Text style={styles.menuTitle}>Settings</Text>
+                <Text style={styles.menuSubtitle}>Manage preferences</Text>
+              </View>
+            </View>
             <ChevronRight size={20} color="#999" />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.settingItem}
-            onPress={() => router.push('/premium')}
-          >
-            <Text style={styles.settingText}>Upgrade to Pro</Text>
-            <ChevronRight size={20} color="#999" />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.settingItem}
-            onPress={() => {/* Handle privacy */}}
-          >
-            <Text style={styles.settingText}>Privacy Policy</Text>
-            <ChevronRight size={20} color="#999" />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.settingItem}
-            onPress={() => {/* Handle terms */}}
-          >
-            <Text style={styles.settingText}>Terms of Service</Text>
-            <ChevronRight size={20} color="#999" />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={[styles.settingItem, styles.dangerItem]}
-            onPress={() => {/* Handle logout */}}
-          >
-            <Text style={styles.dangerText}>Log Out</Text>
           </TouchableOpacity>
         </View>
 
+        {/* My Pakts Section */}
+        <View style={styles.paktsSection}>
+          <View style={styles.paktsSectionCard}>
+            <View style={styles.paktsHeader}>
+              <Text style={styles.paktsTitle}>My Pakts</Text>
+              <Text style={styles.paktsTotal}>0 total</Text>
+            </View>
+
+            {/* Tabs */}
+            <View style={styles.tabsContainer}>
+              <TouchableOpacity style={[styles.tab, styles.activeTab]}>
+                <Text style={styles.activeTabText}>Active (0)</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.tab}>
+                <Text style={styles.tabText}>Done (0)</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.tab}>
+                <Text style={styles.tabText}>All</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Empty State */}
+            <View style={styles.emptyState}>
+              <View style={styles.emptyIconContainer}>
+                <Target size={48} color="#CCC" strokeWidth={1.5} />
+              </View>
+              <Text style={styles.emptyText}>No Pakts in this category</Text>
+            </View>
+          </View>
+        </View>
+
         {/* Bottom Spacing */}
-        <View style={{ height: 40 }} />
+        <View style={{ height: 80 }} />
       </ScrollView>
 
       {/* Floating Back Button */}
@@ -175,6 +197,15 @@ export default function ProfileScreen() {
         activeOpacity={0.8}
       >
         <Text style={styles.backButtonText}>←</Text>
+      </TouchableOpacity>
+
+      {/* Floating Add Button */}
+      <TouchableOpacity 
+        style={styles.fabButton}
+        onPress={() => router.push('/category-selection')}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.fabIcon}>+</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -394,6 +425,130 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 24,
     fontWeight: 'bold',
+  },
+  menuCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  menuLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  menuIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1a1625',
+    marginBottom: 2,
+  },
+  menuSubtitle: {
+    fontSize: 13,
+    color: '#666',
+  },
+  paktsSection: {
+    paddingHorizontal: 24,
+    marginBottom: 24,
+  },
+  paktsSectionCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  paktsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  paktsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1a1625',
+  },
+  paktsTotal: {
+    fontSize: 14,
+    color: '#666',
+  },
+  tabsContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#F4F4F6',
+    borderRadius: 12,
+    padding: 4,
+    marginBottom: 24,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  activeTab: {
+    backgroundColor: '#9163F2',
+  },
+  tabText: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+  },
+  activeTabText: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 48,
+  },
+  emptyIconContainer: {
+    marginBottom: 16,
+  },
+  emptyText: {
+    fontSize: 15,
+    color: '#999',
+    textAlign: 'center',
+  },
+  fabButton: {
+    position: 'absolute',
+    bottom: 32,
+    right: 32,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#9163F2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#9163F2',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  fabIcon: {
+    color: '#FFFFFF',
+    fontSize: 32,
+    fontWeight: '300',
   },
 });
 
