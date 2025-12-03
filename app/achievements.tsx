@@ -106,7 +106,7 @@ export default function AchievementScreen() {
               return (
                 <View key={badge.id} style={[styles.badgeCard, { backgroundColor: badge.bgColor }]}>
                   <View style={[styles.badgeIconContainer, { backgroundColor: badge.iconBg }]}>
-                    <IconComponent size={32} color={badge.iconColor} strokeWidth={2.5} />
+                    <IconComponent size={36} color={badge.iconColor} strokeWidth={2} />
                   </View>
                   <Text style={styles.badgeTitle}>{badge.title}</Text>
                   <Text style={styles.badgeDate}>{badge.date}</Text>
@@ -129,7 +129,7 @@ export default function AchievementScreen() {
               return (
                 <View key={badge.id} style={styles.lockedBadgeCard}>
                   <View style={styles.lockedBadgeIconContainer}>
-                    <IconComponent size={32} color="#4A5568" strokeWidth={2} />
+                    <IconComponent size={36} color="#6B7280" strokeWidth={2} />
                   </View>
                   <Text style={styles.lockedBadgeTitle}>{badge.title}</Text>
                   <Text style={styles.lockedBadgeStatus}>{badge.status}</Text>
@@ -230,20 +230,20 @@ const styles = StyleSheet.create({
   badgeCard: {
     width: cardWidth,
     aspectRatio: 0.85,
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowRadius: 12,
+    elevation: 4,
   },
   badgeIconContainer: {
     width: 64,
     height: 64,
-    borderRadius: 16,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
@@ -264,20 +264,20 @@ const styles = StyleSheet.create({
     width: cardWidth,
     aspectRatio: 0.85,
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 3,
   },
   lockedBadgeIconContainer: {
     width: 64,
     height: 64,
-    borderRadius: 16,
+    borderRadius: 20,
     backgroundColor: '#3C4455',
     alignItems: 'center',
     justifyContent: 'center',
