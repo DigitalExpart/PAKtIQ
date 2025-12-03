@@ -1,81 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import Svg, { Circle, Path } from 'react-native-svg';
 
-const { width, height } = Dimensions.get('window');
-
 export default function WelcomeScreen() {
   const router = useRouter();
-  const [currentPage, setCurrentPage] = useState(0);
-
-  if (currentPage === 0) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <TouchableOpacity 
-          style={styles.skipButton}
-          onPress={() => setCurrentPage(1)}
-        >
-          <Text style={styles.skipText}>Skip</Text>
-        </TouchableOpacity>
-        
-        <View style={styles.content}>
-          {/* Target Icon */}
-          <View style={styles.iconContainer}>
-            <Svg width="120" height="120" viewBox="0 0 120 120">
-              <Circle cx="60" cy="60" r="55" stroke="#FFFFFF" strokeWidth="4" fill="none" />
-              <Circle cx="60" cy="60" r="40" stroke="#FFFFFF" strokeWidth="4" fill="none" />
-              <Circle cx="60" cy="60" r="25" stroke="#FFFFFF" strokeWidth="4" fill="none" />
-              <Circle cx="60" cy="60" r="12" fill="#FFFFFF" />
-            </Svg>
-          </View>
-
-          <Text style={styles.title}>PaktIQ</Text>
-          <Text style={styles.subtitle}>Smart Commitment Tracking</Text>
-          <Text style={styles.description}>
-            Make commitments. Track progress. Achieve your goals with intelligence.
-          </Text>
-
-          {/* Stats Cards */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statCard}>
-              <Text style={styles.statValue}>10K+</Text>
-              <Text style={styles.statLabel}>Active Users</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statValue}>50K+</Text>
-              <Text style={styles.statLabel}>Pakts Achieved</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statValue}>95%</Text>
-              <Text style={styles.statLabel}>Success Rate</Text>
-            </View>
-          </View>
-        </View>
-
-        <TouchableOpacity 
-          style={styles.nextButton}
-          onPress={() => setCurrentPage(1)}
-        >
-          <Text style={styles.nextButtonText}>Next</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity 
-        style={styles.skipButton}
-        onPress={() => router.push('/dashboard')}
-      >
-        <Text style={styles.skipText}>Skip</Text>
-      </TouchableOpacity>
-
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Progress Circle Icon */}
         <View style={styles.iconContainer}>
-          <Svg width="180" height="180" viewBox="0 0 180 180">
+          <Svg width="160" height="160" viewBox="0 0 180 180">
             {/* Yellow Arc */}
             <Path
               d="M 90 20 A 70 70 0 0 1 150 140"
@@ -102,6 +38,28 @@ export default function WelcomeScreen() {
               fill="#FFD88A"
             />
           </Svg>
+        </View>
+
+        <Text style={styles.title}>PaktIQ</Text>
+        <Text style={styles.subtitle}>Smart Commitment Tracking</Text>
+        <Text style={styles.description}>
+          Make commitments. Track progress. Achieve your goals with intelligence.
+        </Text>
+
+        {/* Stats Cards */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>10K+</Text>
+            <Text style={styles.statLabel}>Active Users</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>50K+</Text>
+            <Text style={styles.statLabel}>Pakts Achieved</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>95%</Text>
+            <Text style={styles.statLabel}>Success Rate</Text>
+          </View>
         </View>
 
         {/* Buttons */}
@@ -136,7 +94,7 @@ export default function WelcomeScreen() {
             <Text style={styles.featureText}>Hit Goals</Text>
           </View>
         </View>
-      </View>
+      </ScrollView>
 
       {/* Help Button */}
       <TouchableOpacity style={styles.helpButton}>
@@ -151,26 +109,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#9163F2',
   },
-  skipButton: {
-    position: 'absolute',
-    top: 50,
-    right: 24,
-    zIndex: 10,
-  },
-  skipText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  content: {
-    flex: 1,
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
-    paddingTop: 80,
+    paddingTop: 60,
+    paddingBottom: 100,
   },
   iconContainer: {
-    marginBottom: 40,
+    marginBottom: 30,
+    marginTop: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -178,75 +127,63 @@ const styles = StyleSheet.create({
     fontSize: 48,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   subtitle: {
-    fontSize: 24,
+    fontSize: 22,
     color: '#FFD88A',
-    marginBottom: 16,
+    marginBottom: 12,
     textAlign: 'center',
   },
   description: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: 32,
     opacity: 0.9,
-    lineHeight: 24,
-    paddingHorizontal: 20,
+    lineHeight: 22,
+    paddingHorizontal: 30,
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     width: '100%',
-    marginTop: 20,
+    marginBottom: 40,
+    paddingHorizontal: 10,
   },
   statCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     borderRadius: 16,
-    padding: 20,
-    minWidth: 100,
+    padding: 18,
+    flex: 1,
+    marginHorizontal: 6,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   statValue: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#FFFFFF',
     opacity: 0.9,
     textAlign: 'center',
   },
-  nextButton: {
-    backgroundColor: '#FFD88A',
-    paddingVertical: 16,
-    paddingHorizontal: 48,
-    borderRadius: 12,
-    marginBottom: 40,
-    alignSelf: 'center',
-  },
-  nextButtonText: {
-    color: '#3C2B63',
-    fontSize: 18,
-    fontWeight: '600',
-  },
   buttonContainer: {
     width: '100%',
-    paddingHorizontal: 24,
-    marginBottom: 40,
+    paddingHorizontal: 20,
+    marginBottom: 32,
   },
   gradientButton: {
-    background: 'linear-gradient(90deg, #FFD88A 0%, #95E1D3 100%)',
     backgroundColor: '#FFD88A',
     paddingVertical: 18,
     paddingHorizontal: 32,
     borderRadius: 30,
-    marginBottom: 16,
+    marginBottom: 14,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -256,7 +193,7 @@ const styles = StyleSheet.create({
   },
   gradientButtonText: {
     color: '#3C2B63',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '600',
   },
   outlineButton: {
@@ -270,30 +207,31 @@ const styles = StyleSheet.create({
   },
   outlineButtonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '600',
   },
   featuresContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    paddingHorizontal: 40,
+    paddingHorizontal: 50,
+    marginTop: 8,
   },
   featureItem: {
     alignItems: 'center',
   },
   featureIcon: {
-    fontSize: 32,
-    marginBottom: 8,
+    fontSize: 30,
+    marginBottom: 6,
   },
   featureText: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#FFFFFF',
     fontWeight: '500',
   },
   helpButton: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 30,
     right: 24,
     width: 48,
     height: 48,
