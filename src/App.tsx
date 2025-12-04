@@ -12,6 +12,7 @@ import ReminderSetupLive from './components/paktiq/ReminderSetupLive';
 import PaktDashboard from './components/paktiq/PaktDashboard';
 import PaktDashboardLive from './components/paktiq/PaktDashboardLive';
 import AchievementBoard from './components/paktiq/AchievementBoard';
+import AchievementBoardLive from './components/paktiq/AchievementBoardLive';
 import InsightsOverview from './components/paktiq/InsightsOverview';
 import InsightsOverviewLive from './components/paktiq/InsightsOverviewLive';
 import TemplateLibrary from './components/paktiq/TemplateLibrary';
@@ -156,7 +157,7 @@ function AppContent() {
       case 'dashboard':
         return <PaktDashboardLive onNavigate={navigate} isDarkMode={isDarkMode} />;
       case 'achievements':
-        return <AchievementBoard onBack={() => navigate('dashboard')} isDarkMode={isDarkMode} />;
+        return <AchievementBoardLive onBack={() => navigate('dashboard')} isDarkMode={isDarkMode} />;
       case 'insights':
         return <InsightsOverviewLive onBack={() => navigate('dashboard')} isDarkMode={isDarkMode} />;
       case 'templates':

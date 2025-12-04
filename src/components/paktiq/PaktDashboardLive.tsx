@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Plus, Target, Flame, Trophy, TrendingUp, CheckCircle2, Circle, Edit, Settings, Award, BarChart3, Library } from 'lucide-react';
-import { usePakts, useMilestones, useAchievements } from '../../hooks';
+import { usePakts, useMilestones, useAchievements, useAnalytics } from '../../hooks';
 import { MilestoneService, ActivityService, AchievementService } from '../../services';
 import { useAuth } from '../../contexts/AuthContext';
 import type { Screen } from '../../types';
@@ -16,6 +16,7 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
   const { user } = useAuth();
   const { pakts, loading: paktsLoading, refetch: refetchPakts } = usePakts();
   const { achievements } = useAchievements();
+  const { analytics, loading: analyticsLoading } = useAnalytics();
   const [selectedPaktId, setSelectedPaktId] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const { sendMilestoneNotification, sendPaktCompletionNotification } = useNotifications();
@@ -80,20 +81,17 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
 
   // Calculate stats from real data
   const activePakts = pakts.filter(p => p.status === 'active');
-  const totalMilestones = pakts.reduce((sum, p) => {
-    // We need to count from milestones table, but for now use pakts data
-    return sum;
-  }, 0);
-
-  const completedToday = 5; // Calculate from activity_log
-  const currentStreak = 12; // Calculate from activity_log
+  
+  // Get real analytics data
+  const completedToday = analytics?.milestones_completed_today || 0;
+  const currentStreak = analytics?.current_streak || 0;
 
   const bgColor = isDarkMode ? 'bg-[#1a1625]' : 'bg-[#F4F4F6]';
   const cardBg = isDarkMode ? 'bg-[#2a1f3d]' : 'bg-white';
   const textPrimary = isDarkMode ? 'text-white' : 'text-[#3C2B63]';
   const textSecondary = isDarkMode ? 'text-white/70' : 'text-[#3C2B63]/70';
 
-  if (paktsLoading) {
+  if (paktsLoading || analyticsLoading) {
     return (
       <div className={`min-h-screen ${bgColor} flex items-center justify-center`}>
         <motion.div

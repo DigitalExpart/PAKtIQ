@@ -9,6 +9,7 @@ export { ActivityService } from './activity.service';
 export { NotificationService } from './notification.service';
 export { SettingsService } from './settings.service';
 export { AnalyticsService } from './analytics.service';
+export { TemplateService } from './template.service';
 
 // Re-export types
 export type { SignUpData, SignInData } from './auth.service';

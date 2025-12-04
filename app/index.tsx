@@ -315,7 +315,7 @@ export default function WelcomeScreen() {
           >
             <TouchableOpacity 
               style={styles.primaryButton} 
-              onPress={() => router.push('/onboarding')}
+              onPress={() => router.push('/auth')}
               activeOpacity={0.8}
             >
               <Text style={styles.primaryButtonText}>Start My First Pakt</Text>
@@ -324,7 +324,7 @@ export default function WelcomeScreen() {
             
             <TouchableOpacity 
               style={styles.secondaryButton} 
-              onPress={() => router.push('/templates')}
+              onPress={() => router.push('/auth')}
               activeOpacity={0.8}
             >
               <Text style={styles.secondaryButtonText}>Explore Features</Text>

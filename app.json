@@ -31,6 +31,10 @@
     "scheme": "resolutionstracker",
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "supabaseUrl": "https://mirpnmrsjjmmiqbbawab.supabase.co",
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pcnBubXJzamptbWlxYmJhd2FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MjQ5NDcsImV4cCI6MjA4MDMwMDk0N30.0INXVgxZsdjsD0DL8Ot_Q3RfYPqwBwz5O1_E6Lu4q9g"
+    }
   }
 }

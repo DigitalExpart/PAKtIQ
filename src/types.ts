@@ -3,6 +3,7 @@ import type { Database } from './types/database';
 // Screen navigation types
 export type Screen = 
   | 'welcome'
+  | 'auth'
   | 'onboarding'
   | 'categorySelection'
   | 'paktNaming'
