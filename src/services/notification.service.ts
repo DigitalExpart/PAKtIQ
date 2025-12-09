@@ -1,257 +1,386 @@
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-import { Platform } from 'react-native';
-import Constants from 'expo-constants';
+import { supabase } from '../lib/supabase';
 
-// Configure how notifications are handled when app is foregrounded
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
+export type NotificationType = 
+  | 'password_changed'
+  | 'pakt_created'
+  | 'milestone_achieved'
+  | 'milestone_missed'
+  | 'milestone_upcoming'
+  | 'pakt_completed'
+  | 'achievement'
+  | 'reminder'
+  | 'streak_milestone'
+  | 'welcome'
+  | 'daily_habit_reminder'
+  | 'daily_habit_completed'
+  | 'daily_habit_missed';
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  read: boolean;
+  metadata?: any;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateNotificationData {
+  user_id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  metadata?: any;
+}
 
 export class NotificationService {
   /**
-   * Request notification permissions from user
+   * Create a new notification
    */
-  static async requestPermissions(): Promise<boolean> {
-    if (!Device.isDevice) {
-      console.log('Must use physical device for push notifications');
-      return false;
-    }
+  static async createNotification(data: CreateNotificationData): Promise<Notification> {
+    const { data: notification, error } = await supabase
+      .from('notifications')
+      .insert({
+        user_id: data.user_id,
+        type: data.type,
+        title: data.title,
+        message: data.message,
+        metadata: data.metadata || null,
+        read: false,
+      })
+      .select()
+      .single();
 
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-
-    if (finalStatus !== 'granted') {
-      console.log('Failed to get push notification permission');
-      return false;
-    }
-
-    return true;
+    if (error) throw error;
+    return notification;
   }
 
   /**
-   * Get push notification token
+   * Get user's notifications
    */
-  static async getPushToken(): Promise<string | null> {
-    try {
-      const projectId = Constants.expoConfig?.extra?.eas?.projectId;
-      
-      if (!projectId) {
-        console.warn('Project ID not found for push notifications');
-      }
+  static async getUserNotifications(userId: string, limit: number = 50): Promise<Notification[]> {
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
 
-      const token = await Notifications.getExpoPushTokenAsync({
-        projectId,
-      });
-
-      return token.data;
-    } catch (error) {
-      console.error('Error getting push token:', error);
-      return null;
-    }
+    if (error) throw error;
+    return data || [];
   }
 
   /**
-   * Schedule a daily reminder notification
+   * Mark notification as read
    */
-  static async scheduleDailyReminder(
-    paktName: string,
-    time: string, // Format: "HH:MM"
-    paktId: string
-  ): Promise<string> {
-    const [hours, minutes] = time.split(':').map(Number);
+  static async markAsRead(notificationId: string, userId: string): Promise<void> {
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('id', notificationId)
+      .eq('user_id', userId);
 
-    const trigger: Notifications.DailyTriggerInput = {
-      hour: hours,
-      minute: minutes,
-      repeats: true,
-    };
-
-    const identifier = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: '🎯 Pakt Reminder',
-        body: `Time to work on: ${paktName}`,
-        data: { paktId, type: 'daily_reminder' },
-        sound: true,
-      },
-      trigger,
-    });
-
-    return identifier;
+    if (error) throw error;
   }
 
   /**
-   * Schedule a weekly reminder notification
+   * Mark all notifications as read
    */
-  static async scheduleWeeklyReminder(
-    paktName: string,
-    time: string,
-    weekday: number, // 1=Sunday, 2=Monday, etc.
-    paktId: string
-  ): Promise<string> {
-    const [hours, minutes] = time.split(':').map(Number);
+  static async markAllAsRead(userId: string): Promise<void> {
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('user_id', userId)
+      .eq('read', false);
 
-    const trigger: Notifications.WeeklyTriggerInput = {
-      weekday,
-      hour: hours,
-      minute: minutes,
-      repeats: true,
-    };
-
-    const identifier = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: '🎯 Pakt Reminder',
-        body: `Time to work on: ${paktName}`,
-        data: { paktId, type: 'weekly_reminder' },
-        sound: true,
-      },
-      trigger,
-    });
-
-    return identifier;
+    if (error) throw error;
   }
 
   /**
-   * Schedule custom reminders for specific days
+   * Get unread notification count
    */
-  static async scheduleCustomReminders(
-    paktName: string,
-    time: string,
-    days: string[], // ['Mon', 'Tue', etc.]
-    paktId: string
-  ): Promise<string[]> {
-    const dayMap: Record<string, number> = {
-      Sun: 1,
-      Mon: 2,
-      Tue: 3,
-      Wed: 4,
-      Thu: 5,
-      Fri: 6,
-      Sat: 7,
-    };
+  static async getUnreadCount(userId: string): Promise<number> {
+    const { count, error } = await supabase
+      .from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('read', false);
 
-    const identifiers: string[] = [];
-
-    for (const day of days) {
-      const weekday = dayMap[day];
-      if (weekday) {
-        const identifier = await this.scheduleWeeklyReminder(
-          paktName,
-          time,
-          weekday,
-          paktId
-        );
-        identifiers.push(identifier);
-      }
-    }
-
-    return identifiers;
+    if (error) throw error;
+    return count || 0;
   }
 
   /**
-   * Cancel specific notification
+   * Delete notification
    */
-  static async cancelNotification(identifier: string): Promise<void> {
-    await Notifications.cancelScheduledNotificationAsync(identifier);
+  static async deleteNotification(notificationId: string, userId: string): Promise<void> {
+    const { error } = await supabase
+      .from('notifications')
+      .delete()
+      .eq('id', notificationId)
+      .eq('user_id', userId);
+
+    if (error) throw error;
   }
 
   /**
-   * Cancel all scheduled notifications
+   * Helper: Create welcome notification for new users
    */
-  static async cancelAllNotifications(): Promise<void> {
-    await Notifications.cancelAllScheduledNotificationsAsync();
-  }
-
-  /**
-   * Get all scheduled notifications
-   */
-  static async getAllScheduledNotifications() {
-    return await Notifications.getAllScheduledNotificationsAsync();
-  }
-
-  /**
-   * Send immediate notification (for testing or milestones)
-   */
-  static async sendImmediateNotification(
-    title: string,
-    body: string,
-    data?: any
-  ): Promise<string> {
-    return await Notifications.scheduleNotificationAsync({
-      content: {
-        title,
-        body,
-        data,
-        sound: true,
-      },
-      trigger: null, // Send immediately
+  static async notifyWelcome(userId: string, userName?: string): Promise<void> {
+    const name = userName || 'there';
+    await this.createNotification({
+      user_id: userId,
+      type: 'welcome',
+      title: '🎉 Welcome to PaktIQ!',
+      message: `Hi ${name}! Welcome to PaktIQ. We're excited to help you achieve your goals. Start by creating your first Pakt and breaking it down into milestones. Let's make this year your best one yet! 💪`,
+      metadata: { welcome: true, created_at: new Date().toISOString() },
     });
   }
 
   /**
-   * Send milestone completion celebration
+   * Helper: Create password changed notification
    */
-  static async sendMilestoneCompletionNotification(
-    milestoneName: string,
-    paktName: string
+  static async notifyPasswordChanged(userId: string): Promise<void> {
+    await this.createNotification({
+      user_id: userId,
+      type: 'password_changed',
+      title: 'Password Changed',
+      message: 'Your password has been successfully changed.',
+    });
+  }
+
+  /**
+   * Helper: Create pakt created notification with congratulations and milestone info
+   */
+  static async notifyPaktCreated(
+    userId: string, 
+    paktName: string, 
+    paktId: string,
+    milestoneCount?: number
   ): Promise<void> {
-    await this.sendImmediateNotification(
-      '🎉 Milestone Completed!',
-      `Great job completing "${milestoneName}" in ${paktName}!`,
-      { type: 'milestone_complete' }
-    );
+    let message = `🎉 Congratulations! You've created a new Pakt: "${paktName}"`;
+    
+    if (milestoneCount && milestoneCount > 0) {
+      message += `\n\nYou've set up ${milestoneCount} milestone${milestoneCount > 1 ? 's' : ''} to help you achieve this goal. Keep up the momentum! 💪`;
+    } else {
+      message += `\n\nStart adding milestones to break down your goal into achievable steps! 🎯`;
+    }
+    
+    await this.createNotification({
+      user_id: userId,
+      type: 'pakt_created',
+      title: '🎊 New Pakt Created!',
+      message: message,
+      metadata: { pakt_id: paktId, milestone_count: milestoneCount || 0 },
+    });
   }
 
   /**
-   * Send pakt completion celebration
+   * Helper: Create milestone achieved notification
    */
-  static async sendPaktCompletionNotification(paktName: string): Promise<void> {
-    await this.sendImmediateNotification(
-      '🏆 Pakt Completed!',
-      `Congratulations! You completed "${paktName}"!`,
-      { type: 'pakt_complete' }
-    );
+  static async notifyMilestoneAchieved(
+    userId: string,
+    milestoneName: string,
+    paktName: string,
+    milestoneId: string,
+    paktId: string
+  ): Promise<void> {
+    await this.createNotification({
+      user_id: userId,
+      type: 'milestone_achieved',
+      title: 'Milestone Achieved! 🎉',
+      message: `You've completed "${milestoneName}" in "${paktName}"`,
+      metadata: { milestone_id: milestoneId, pakt_id: paktId },
+    });
   }
 
   /**
-   * Initialize notification listeners
+   * Helper: Create milestone missed notification
    */
-  static setupNotificationListeners(
-    onNotificationReceived?: (notification: Notifications.Notification) => void,
-    onNotificationResponse?: (response: Notifications.NotificationResponse) => void
-  ) {
-    // Handle notification received while app is foregrounded
-    const receivedSubscription = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        console.log('Notification received:', notification);
-        onNotificationReceived?.(notification);
-      }
-    );
+  static async notifyMilestoneMissed(
+    userId: string,
+    milestoneName: string,
+    paktName: string,
+    milestoneId: string,
+    paktId: string
+  ): Promise<void> {
+    await this.createNotification({
+      user_id: userId,
+      type: 'milestone_missed',
+      title: 'Milestone Missed',
+      message: `The deadline for "${milestoneName}" in "${paktName}" has passed.`,
+      metadata: { milestone_id: milestoneId, pakt_id: paktId },
+    });
+  }
 
-    // Handle user interaction with notification
-    const responseSubscription =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log('Notification response:', response);
-        onNotificationResponse?.(response);
-      });
+  /**
+   * Helper: Create milestone upcoming notification
+   */
+  static async notifyMilestoneUpcoming(
+    userId: string,
+    milestoneName: string,
+    paktName: string,
+    daysUntil: number,
+    milestoneId: string,
+    paktId: string
+  ): Promise<void> {
+    const message = daysUntil === 0
+      ? `"${milestoneName}" in "${paktName}" is due today!`
+      : `"${milestoneName}" in "${paktName}" is due in ${daysUntil} day${daysUntil > 1 ? 's' : ''}.`;
 
-    return {
-      receivedSubscription,
-      responseSubscription,
-      remove: () => {
-        receivedSubscription.remove();
-        responseSubscription.remove();
-      },
-    };
+    await this.createNotification({
+      user_id: userId,
+      type: 'milestone_upcoming',
+      title: 'Milestone Deadline Approaching',
+      message,
+      metadata: { milestone_id: milestoneId, pakt_id: paktId, days_until: daysUntil },
+    });
+  }
+
+  /**
+   * Helper: Create pakt completed notification
+   */
+  static async notifyPaktCompleted(userId: string, paktName: string, paktId: string): Promise<void> {
+    await this.createNotification({
+      user_id: userId,
+      type: 'pakt_completed',
+      title: 'Pakt Completed! 🎊',
+      message: `Congratulations! You've completed "${paktName}"`,
+      metadata: { pakt_id: paktId },
+    });
+  }
+
+  /**
+   * Helper: Create achievement earned notification
+   */
+  static async notifyAchievementEarned(
+    userId: string,
+    achievementTitle: string,
+    achievementDescription: string,
+    achievementIcon: string,
+    achievementId: string
+  ): Promise<void> {
+    await this.createNotification({
+      user_id: userId,
+      type: 'achievement',
+      title: `${achievementIcon} Achievement Unlocked!`,
+      message: `${achievementTitle}: ${achievementDescription}`,
+      metadata: { achievement_id: achievementId, icon: achievementIcon },
+    });
+  }
+
+  /**
+   * Helper: Create reminder notification
+   */
+  static async notifyReminder(
+    userId: string,
+    paktName: string,
+    message: string,
+    paktId: string
+  ): Promise<void> {
+    await this.createNotification({
+      user_id: userId,
+      type: 'reminder',
+      title: `Reminder: ${paktName}`,
+      message: message,
+      metadata: { pakt_id: paktId },
+    });
+  }
+
+  /**
+   * Helper: Create streak milestone notification
+   */
+  static async notifyStreakMilestone(
+    userId: string,
+    streakDays: number,
+    message: string
+  ): Promise<void> {
+    await this.createNotification({
+      user_id: userId,
+      type: 'streak_milestone',
+      title: `🔥 ${streakDays} Day Streak!`,
+      message: message,
+      metadata: { streak_days: streakDays },
+    });
+  }
+
+  /**
+   * Trigger notification processing (for manual/cron calls)
+   * This calls the database function that processes all notifications
+   */
+  static async processAllNotifications(): Promise<void> {
+    const { error } = await supabase.rpc('process_all_notifications');
+    if (error) throw error;
+  }
+
+  /**
+   * Trigger reminder notifications only
+   */
+  static async processReminderNotifications(): Promise<void> {
+    const { error } = await supabase.rpc('send_reminder_notifications');
+    if (error) throw error;
+  }
+
+  /**
+   * Trigger daily motivation
+   */
+  static async processDailyMotivation(): Promise<void> {
+    const { error } = await supabase.rpc('send_daily_motivation');
+    if (error) throw error;
+  }
+
+  /**
+   * Helper: Create daily habit reminder notification
+   */
+  static async notifyDailyHabitReminder(
+    userId: string,
+    habitName: string,
+    habitId: string,
+    scheduledTime: string
+  ): Promise<void> {
+    await this.createNotification({
+      user_id: userId,
+      type: 'daily_habit_reminder',
+      title: `⏰ Time for "${habitName}"`,
+      message: `Don't forget to complete your daily habit "${habitName}" scheduled for ${scheduledTime}`,
+      metadata: { habit_id: habitId, scheduled_time: scheduledTime },
+    });
+  }
+
+  /**
+   * Helper: Create daily habit completed notification
+   */
+  static async notifyDailyHabitCompleted(
+    userId: string,
+    habitName: string,
+    habitId: string
+  ): Promise<void> {
+    await this.createNotification({
+      user_id: userId,
+      type: 'daily_habit_completed',
+      title: `✅ "${habitName}" Completed!`,
+      message: `Great job! You've completed your daily habit "${habitName}" today. Keep up the momentum! 💪`,
+      metadata: { habit_id: habitId },
+    });
+  }
+
+  /**
+   * Helper: Create daily habit missed notification
+   */
+  static async notifyDailyHabitMissed(
+    userId: string,
+    habitName: string,
+    habitId: string
+  ): Promise<void> {
+    await this.createNotification({
+      user_id: userId,
+      type: 'daily_habit_missed',
+      title: `⏰ "${habitName}" Missed`,
+      message: `You missed your daily habit "${habitName}" today. Don't worry, you can get back on track tomorrow!`,
+      metadata: { habit_id: habitId },
+    });
   }
 }
 

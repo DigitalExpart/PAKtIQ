@@ -1,29 +1,36 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { X, Check } from 'lucide-react-native';
+import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
 
 type Language = {
-  code: string;
+  code: 'en' | 'es' | 'fr';
   name: string;
   flag: string;
 };
 
 export default function LanguageScreen() {
   const router = useRouter();
-  const [selectedLanguage, setSelectedLanguage] = useState('US');
+  const { colors } = useTheme();
+  const { currentLanguage, changeLanguage, t } = useLanguage();
+  const [selectedLanguage, setSelectedLanguage] = useState<'en' | 'es' | 'fr'>(currentLanguage);
 
+  useEffect(() => {
+    setSelectedLanguage(currentLanguage);
+  }, [currentLanguage]);
+
+  // Always show language names in English for clarity
   const languages: Language[] = [
-    { code: 'US', name: 'English', flag: '🇺🇸' },
-    { code: 'ES', name: 'Spanish', flag: '🇪🇸' },
-    { code: 'FR', name: 'French', flag: '🇫🇷' },
-    { code: 'DE', name: 'German', flag: '🇩🇪' },
-    { code: 'IT', name: 'Italian', flag: '🇮🇹' },
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Spanish', flag: '🇪🇸' },
+    { code: 'fr', name: 'French', flag: '🇫🇷' },
   ];
 
-  const handleSelectLanguage = (code: string) => {
+  const handleSelectLanguage = async (code: 'en' | 'es' | 'fr') => {
     setSelectedLanguage(code);
-    // Save language preference
+    await changeLanguage(code);
     setTimeout(() => {
       router.back();
     }, 300);
@@ -32,15 +39,15 @@ export default function LanguageScreen() {
   return (
     <View style={styles.overlay}>
       <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
+        <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>Select Language</Text>
+            <Text style={[styles.title, { color: colors.text }]}>{t('language.selectLanguage')}</Text>
             <TouchableOpacity 
               style={styles.closeButton}
               onPress={() => router.back()}
             >
-              <X size={24} color="#666" />
+              <X size={24} color={colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
@@ -53,6 +60,7 @@ export default function LanguageScreen() {
                   key={language.code}
                   style={[
                     styles.languageItem,
+                    { backgroundColor: colors.background },
                     isSelected && styles.languageItemSelected
                   ]}
                   onPress={() => handleSelectLanguage(language.code)}
@@ -61,12 +69,14 @@ export default function LanguageScreen() {
                   <View style={styles.languageLeft}>
                     <Text style={[
                       styles.languageCode,
+                      { color: colors.textSecondary },
                       isSelected && styles.languageCodeSelected
                     ]}>
                       {language.code}
                     </Text>
                     <Text style={[
                       styles.languageName,
+                      { color: colors.text },
                       isSelected && styles.languageNameSelected
                     ]}>
                       {language.name}

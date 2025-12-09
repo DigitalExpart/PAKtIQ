@@ -1,163 +1,171 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
+import BottomTabBar from '../src/components/BottomTabBar';
+
+export default function PremiumFeatures() {
+  const router = useRouter();
+  const { colors } = useTheme();
+  const { t } = useLanguage();
 
 const features = [
   {
     id: '1',
-    title: 'Advanced Analytics',
-    description: 'Get detailed insights into your progress with custom reports and trends',
+      title: t('premium.advancedAnalytics'),
+      description: t('premium.advancedAnalyticsDesc'),
     icon: '📊',
     included: false,
   },
   {
     id: '2',
-    title: 'Unlimited Pakts',
-    description: 'Create as many pakts as you want without restrictions',
+      title: t('premium.unlimitedPakts'),
+      description: t('premium.unlimitedPaktsDesc'),
     icon: '♾️',
     included: false,
   },
   {
     id: '3',
-    title: 'AI Coach',
-    description: 'Get personalized recommendations and motivation from AI',
+      title: t('premium.aiCoach'),
+      description: t('premium.aiCoachDesc'),
     icon: '🤖',
     included: false,
   },
   {
     id: '4',
-    title: 'Priority Support',
-    description: '24/7 premium customer support with faster response times',
+      title: t('premium.prioritySupport'),
+      description: t('premium.prioritySupportDesc'),
     icon: '💬',
     included: false,
   },
   {
     id: '5',
-    title: 'Custom Themes',
-    description: 'Personalize your app with exclusive themes and colors',
+      title: t('premium.customThemes'),
+      description: t('premium.customThemesDesc'),
     icon: '🎨',
     included: false,
   },
   {
     id: '6',
-    title: 'Export Data',
-    description: 'Export all your data in multiple formats (PDF, CSV, JSON)',
+      title: t('premium.exportData'),
+      description: t('premium.exportDataDesc'),
     icon: '📥',
     included: false,
   },
   {
     id: '7',
-    title: 'Team Collaboration',
-    description: 'Share pakts and collaborate with friends or team members',
+      title: t('premium.teamCollaboration'),
+      description: t('premium.teamCollaborationDesc'),
     icon: '👥',
     included: false,
   },
   {
     id: '8',
-    title: 'Ad-Free Experience',
-    description: 'Enjoy PaktIQ without any interruptions or advertisements',
+      title: t('premium.adFree'),
+      description: t('premium.adFreeDesc'),
     icon: '✨',
     included: false,
   },
 ];
 
-export default function PremiumFeatures() {
-  const router = useRouter();
-
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backButton}>← Back</Text>
+          <Text style={[styles.backButton, { color: colors.primary }]}>{t('common.back')}</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.content}>
-        <View style={styles.heroSection}>
-          <Text style={styles.badge}>⭐ PREMIUM</Text>
-          <Text style={styles.heroTitle}>Unlock Your Full Potential</Text>
+        <View style={[styles.heroSection, { backgroundColor: colors.primary }]}>
+          <Text style={[styles.badge, { backgroundColor: '#FFD88A', color: '#3C2B63' }]}>⭐ {t('premium.badge')}</Text>
+          <Text style={styles.heroTitle}>{t('premium.heroTitle')}</Text>
           <Text style={styles.heroSubtitle}>
-            Get access to powerful features designed to help you achieve more
+            {t('premium.heroSubtitle')}
           </Text>
         </View>
 
-        <View style={styles.pricingCard}>
+        <View style={[styles.pricingCard, { backgroundColor: colors.surface }]}>
           <View style={styles.pricingHeader}>
             <View>
-              <Text style={styles.pricingPrice}>$9.99</Text>
-              <Text style={styles.pricingPeriod}>per month</Text>
+              <Text style={[styles.pricingPrice, { color: colors.text }]}>{t('premium.pricingPrice')}</Text>
+              <Text style={[styles.pricingPeriod, { color: colors.textSecondary }]}>{t('premium.pricingPeriod')}</Text>
             </View>
-            <View style={styles.savingsBadge}>
-              <Text style={styles.savingsText}>Save 20%</Text>
+            <View style={[styles.savingsBadge, { backgroundColor: `${colors.primary}20` }]}>
+              <Text style={[styles.savingsText, { color: colors.primary }]}>{t('premium.save20')}</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.subscribeButton}>
-            <Text style={styles.subscribeButtonText}>Start Free Trial</Text>
+          <TouchableOpacity style={[styles.subscribeButton, { backgroundColor: colors.primary }]}>
+            <Text style={styles.subscribeButtonText}>{t('premium.startFreeTrial')}</Text>
           </TouchableOpacity>
-          <Text style={styles.trialText}>7-day free trial • Cancel anytime</Text>
+          <Text style={[styles.trialText, { color: colors.textSecondary }]}>{t('premium.trialText')}</Text>
         </View>
 
         <View style={styles.featuresSection}>
-          <Text style={styles.featuresTitle}>Premium Features</Text>
+          <Text style={[styles.featuresTitle, { color: colors.text }]}>{t('premium.featuresTitle')}</Text>
           {features.map((feature) => (
-            <View key={feature.id} style={styles.featureCard}>
-              <View style={styles.featureIcon}>
+            <View key={feature.id} style={[styles.featureCard, { backgroundColor: colors.surface }]}>
+              <View style={[styles.featureIcon, { backgroundColor: `${colors.primary}10` }]}>
                 <Text style={styles.featureIconText}>{feature.icon}</Text>
               </View>
               <View style={styles.featureContent}>
-                <Text style={styles.featureTitle}>{feature.title}</Text>
-                <Text style={styles.featureDescription}>{feature.description}</Text>
+                <Text style={[styles.featureTitle, { color: colors.text }]}>{feature.title}</Text>
+                <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>{feature.description}</Text>
               </View>
             </View>
           ))}
         </View>
 
-        <View style={styles.testimonialSection}>
-          <Text style={styles.testimonialTitle}>What Users Say</Text>
-          <View style={styles.testimonialCard}>
+        <View style={[styles.testimonialSection, { backgroundColor: `${colors.primary}10` }]}>
+          <Text style={[styles.testimonialTitle, { color: colors.text }]}>{t('premium.testimonialTitle')}</Text>
+          <View style={[styles.testimonialCard, { backgroundColor: colors.surface }]}>
             <Text style={styles.testimonialStars}>⭐⭐⭐⭐⭐</Text>
-            <Text style={styles.testimonialText}>
-              "Premium features helped me stay on track and achieve my goals faster than ever!"
+            <Text style={[styles.testimonialText, { color: colors.text }]}>
+              "{t('premium.testimonial1')}"
             </Text>
-            <Text style={styles.testimonialAuthor}>— Sarah K.</Text>
+            <Text style={[styles.testimonialAuthor, { color: colors.primary }]}>{t('premium.testimonial1Author')}</Text>
           </View>
-          <View style={styles.testimonialCard}>
+          <View style={[styles.testimonialCard, { backgroundColor: colors.surface }]}>
             <Text style={styles.testimonialStars}>⭐⭐⭐⭐⭐</Text>
-            <Text style={styles.testimonialText}>
-              "The AI coach is like having a personal mentor. Best investment I've made this year."
+            <Text style={[styles.testimonialText, { color: colors.text }]}>
+              "{t('premium.testimonial2')}"
             </Text>
-            <Text style={styles.testimonialAuthor}>— Michael R.</Text>
+            <Text style={[styles.testimonialAuthor, { color: colors.primary }]}>{t('premium.testimonial2Author')}</Text>
           </View>
         </View>
 
         <View style={styles.faqSection}>
-          <Text style={styles.faqTitle}>Frequently Asked Questions</Text>
-          <View style={styles.faqItem}>
-            <Text style={styles.faqQuestion}>Can I cancel anytime?</Text>
-            <Text style={styles.faqAnswer}>
-              Yes! You can cancel your subscription at any time with no penalties.
+          <Text style={[styles.faqTitle, { color: colors.text }]}>{t('premium.faqTitle')}</Text>
+          <View style={[styles.faqItem, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.faqQuestion, { color: colors.text }]}>{t('premium.faq1Question')}</Text>
+            <Text style={[styles.faqAnswer, { color: colors.textSecondary }]}>
+              {t('premium.faq1Answer')}
             </Text>
           </View>
-          <View style={styles.faqItem}>
-            <Text style={styles.faqQuestion}>Is there a free trial?</Text>
-            <Text style={styles.faqAnswer}>
-              Absolutely! Try Premium free for 7 days, no credit card required.
+          <View style={[styles.faqItem, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.faqQuestion, { color: colors.text }]}>{t('premium.faq2Question')}</Text>
+            <Text style={[styles.faqAnswer, { color: colors.textSecondary }]}>
+              {t('premium.faq2Answer')}
             </Text>
           </View>
-          <View style={styles.faqItem}>
-            <Text style={styles.faqQuestion}>What happens to my data?</Text>
-            <Text style={styles.faqAnswer}>
-              Your data is always yours. Even if you cancel, you keep all your pakts and progress.
+          <View style={[styles.faqItem, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.faqQuestion, { color: colors.text }]}>{t('premium.faq3Question')}</Text>
+            <Text style={[styles.faqAnswer, { color: colors.textSecondary }]}>
+              {t('premium.faq3Answer')}
             </Text>
           </View>
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Upgrade to Premium</Text>
+      <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+        <TouchableOpacity style={[styles.footerButton, { backgroundColor: colors.primary }]}>
+          <Text style={styles.footerButtonText}>{t('premium.upgradeToPremium')}</Text>
         </TouchableOpacity>
       </View>
+      
+      <BottomTabBar />
     </SafeAreaView>
   );
 }
@@ -165,15 +173,12 @@ export default function PremiumFeatures() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F6',
   },
   header: {
     padding: 24,
-    backgroundColor: '#FFFFFF',
   },
   backButton: {
     fontSize: 16,
-    color: '#9163F2',
   },
   content: {
     flex: 1,
@@ -207,7 +212,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   pricingCard: {
-    backgroundColor: '#FFFFFF',
     margin: 24,
     marginTop: -40,
     borderRadius: 16,
@@ -227,14 +231,11 @@ const styles = StyleSheet.create({
   pricingPrice: {
     fontSize: 40,
     fontWeight: 'bold',
-    color: '#3C2B63',
   },
   pricingPeriod: {
     fontSize: 16,
-    color: '#666',
   },
   savingsBadge: {
-    backgroundColor: '#E8DEFF',
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 12,
@@ -242,7 +243,6 @@ const styles = StyleSheet.create({
   savingsText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#9163F2',
   },
   subscribeButton: {
     backgroundColor: '#9163F2',
@@ -271,7 +271,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   featureCard: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
@@ -281,7 +280,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#F5F0FF',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -295,26 +293,21 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#3C2B63',
     marginBottom: 4,
   },
   featureDescription: {
     fontSize: 14,
-    color: '#666',
     lineHeight: 20,
   },
   testimonialSection: {
     padding: 24,
-    backgroundColor: '#F5F0FF',
   },
   testimonialTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#3C2B63',
     marginBottom: 16,
   },
   testimonialCard: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 20,
     marginBottom: 12,
@@ -325,13 +318,11 @@ const styles = StyleSheet.create({
   },
   testimonialText: {
     fontSize: 15,
-    color: '#333',
     lineHeight: 22,
     marginBottom: 8,
   },
   testimonialAuthor: {
     fontSize: 14,
-    color: '#9163F2',
     fontWeight: '500',
   },
   faqSection: {
@@ -340,11 +331,9 @@ const styles = StyleSheet.create({
   faqTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#3C2B63',
     marginBottom: 16,
   },
   faqItem: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -352,19 +341,15 @@ const styles = StyleSheet.create({
   faqQuestion: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#3C2B63',
     marginBottom: 8,
   },
   faqAnswer: {
     fontSize: 14,
-    color: '#666',
     lineHeight: 20,
   },
   footer: {
     padding: 24,
-    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
   },
   footerButton: {
     backgroundColor: '#9163F2',

@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import type { Database } from '../types/database';
 
@@ -19,17 +20,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.log('Environment:', isWeb ? 'Web' : 'Native');
   console.log('supabaseUrl:', supabaseUrl ? '✓ Found' : '✗ Missing');
   console.log('supabaseAnonKey:', supabaseAnonKey ? '✓ Found' : '✗ Missing');
+  console.log('Constants.expoConfig?.extra:', JSON.stringify(Constants.expoConfig?.extra));
   throw new Error('Missing Supabase environment variables. Check your .env.local or app.json');
 }
 
 console.log('✅ Supabase client initializing for:', isWeb ? 'Web' : 'Expo Native');
+console.log('✅ URL:', supabaseUrl);
+console.log('✅ Key loaded:', supabaseAnonKey ? 'YES' : 'NO');
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: true,
+    storage: isWeb ? window.localStorage : AsyncStorage,
     autoRefreshToken: true,
-    detectSessionInUrl: isWeb, // Only for web
-    storage: isWeb ? window.localStorage : undefined,
+    persistSession: true,
+    detectSessionInUrl: isWeb,
   },
 });
-

@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database';
+import { NotificationService } from './notification.service';
 
 type Achievement = Database['public']['Tables']['achievements']['Row'];
 type AchievementInsert = Database['public']['Tables']['achievements']['Insert'];
@@ -109,6 +110,20 @@ export class AchievementService {
             metadata: { milestones_completed: completedMilestonesCount },
           });
           newAchievements.push(achievement);
+          
+          // Send notification for achievement
+          try {
+            await NotificationService.notifyAchievementEarned(
+              userId,
+              achievement.title,
+              achievement.description,
+              achievement.icon,
+              achievement.id
+            );
+          } catch (notifError) {
+            console.error('Error creating achievement notification:', notifError);
+            // Don't fail achievement award if notification fails
+          }
         }
       }
     }
@@ -145,6 +160,20 @@ export class AchievementService {
             metadata: { pakts_completed: completedPaktsCount },
           });
           newAchievements.push(achievement);
+          
+          // Send notification for achievement
+          try {
+            await NotificationService.notifyAchievementEarned(
+              userId,
+              achievement.title,
+              achievement.description,
+              achievement.icon,
+              achievement.id
+            );
+          } catch (notifError) {
+            console.error('Error creating achievement notification:', notifError);
+            // Don't fail achievement award if notification fails
+          }
         }
       }
     }

@@ -225,6 +225,41 @@ export interface Database {
           created_at?: string
         }
       }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: 'password_changed' | 'pakt_created' | 'milestone_achieved' | 'milestone_missed' | 'milestone_upcoming' | 'pakt_completed' | 'achievement' | 'reminder' | 'streak_milestone' | 'welcome'
+          title: string
+          message: string
+          read: boolean
+          metadata: Json | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: 'password_changed' | 'pakt_created' | 'milestone_achieved' | 'milestone_missed' | 'milestone_upcoming' | 'pakt_completed' | 'achievement' | 'reminder' | 'streak_milestone' | 'welcome'
+          title: string
+          message: string
+          read?: boolean
+          metadata?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: 'password_changed' | 'pakt_created' | 'milestone_achieved' | 'milestone_missed' | 'milestone_upcoming' | 'pakt_completed' | 'achievement' | 'reminder' | 'streak_milestone' | 'welcome'
+          title?: string
+          message?: string
+          read?: boolean
+          metadata?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

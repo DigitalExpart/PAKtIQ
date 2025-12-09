@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
 import { AuthService, ProfileService } from '../services';
+import { NotificationService } from '../services/notification.service';
+import { PushNotificationService } from '../services/push-notification.service';
 import type { Profile, ProfileUpdate } from '../types';
 
 interface AuthContextType {
@@ -28,7 +30,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const userProfile = await ProfileService.getProfile(userId);
       setProfile(userProfile);
-    } catch (error) {
+    } catch (error: any) {
+      // If profile doesn't exist yet (new user), that's okay - it will be created by trigger
+      if (error?.code === 'PGRST116' || error?.message?.includes('0 rows')) {
+        console.log('Profile not found yet, will be created by database trigger');
+        // Don't set error - profile will be created automatically
+        return;
+      }
       console.error('Error loading profile:', error);
     }
   };
@@ -62,6 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (newSession?.user) {
           setUser(newSession.user);
           await loadProfile(newSession.user.id);
+          // Register for push notifications
+          await PushNotificationService.registerForPushNotifications(newSession.user.id);
         } else {
           setUser(null);
           setProfile(null);
@@ -85,6 +95,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(newSession);
       if (signedInUser) {
         await loadProfile(signedInUser.id);
+        // Register for push notifications
+        await PushNotificationService.registerForPushNotifications(signedInUser.id);
       }
     } finally {
       setLoading(false);
@@ -94,9 +106,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, fullName?: string) => {
     setLoading(true);
     try {
-      await AuthService.signUp({ email, password, fullName });
-      // Note: User will need to verify email before they can sign in
-      // Or if email verification is disabled, they'll be auto-logged in
+      const signUpData = await AuthService.signUp({ email, password, fullName });
+      const newUser = signUpData?.user;
+      const newSession = signUpData?.session;
+      
+      // If user and session are returned, auto-log them in (email verification disabled)
+      if (newUser && newSession) {
+        setUser(newUser);
+        setSession(newSession);
+        // Load profile (will be created by trigger, but might need a moment)
+        await loadProfile(newUser.id);
+        // Register for push notifications
+        await PushNotificationService.registerForPushNotifications(newUser.id);
+      }
+      
+      // Create welcome notification for new user
+      if (newUser) {
+        try {
+          await NotificationService.notifyWelcome(newUser.id, fullName);
+        } catch (notifError) {
+          console.error('Error creating welcome notification:', notifError);
+          // Don't fail signup if notification fails
+        }
+      }
     } finally {
       setLoading(false);
     }

@@ -12,11 +12,35 @@ export class PaktService {
   static async getUserPakts(userId: string): Promise<Pakt[]> {
     const { data, error } = await supabase
       .from('pakts')
-      .select('*')
+      .select(`
+        *,
+        milestones (
+          id,
+          name,
+          due_date,
+          notes,
+          importance,
+          completed,
+          completed_at,
+          order_index,
+          created_at,
+          updated_at
+        )
+      `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
+    
+    // Sort milestones by order_index for each pakt
+    if (data) {
+      data.forEach((pakt: any) => {
+        if (pakt.milestones) {
+          pakt.milestones.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
+        }
+      });
+    }
+    
     return data || [];
   }
 
@@ -26,9 +50,28 @@ export class PaktService {
   static async getPakt(paktId: string): Promise<Pakt | null> {
     const { data, error } = await supabase
       .from('pakts')
-      .select('*')
+      .select(`
+        *,
+        milestones (
+          id,
+          name,
+          due_date,
+          notes,
+          importance,
+          completed,
+          completed_at,
+          order_index,
+          created_at,
+          updated_at
+        )
+      `)
       .eq('id', paktId)
       .single();
+    
+    // Sort milestones by order_index if they exist
+    if (data && (data as any).milestones) {
+      (data as any).milestones.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
+    }
 
     if (error) throw error;
     return data;
@@ -43,12 +86,36 @@ export class PaktService {
   ): Promise<Pakt[]> {
     const { data, error } = await supabase
       .from('pakts')
-      .select('*')
+      .select(`
+        *,
+        milestones (
+          id,
+          name,
+          due_date,
+          notes,
+          importance,
+          completed,
+          completed_at,
+          order_index,
+          created_at,
+          updated_at
+        )
+      `)
       .eq('user_id', userId)
       .eq('status', status)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
+    
+    // Sort milestones by order_index for each pakt
+    if (data) {
+      data.forEach((pakt: any) => {
+        if (pakt.milestones) {
+          pakt.milestones.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
+        }
+      });
+    }
+    
     return data || [];
   }
 

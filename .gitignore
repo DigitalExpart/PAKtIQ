@@ -54,3 +54,5 @@ build/
 android/app/build/
 ios/build/
 
+node_modules
+node_modules

@@ -1,111 +1,75 @@
 import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
+import { PushNotificationSenderService } from '../services/push-notification-sender.service';
 import { NotificationService } from '../services/notification.service';
-import * as Notifications from 'expo-notifications';
+import { useAuth } from '../contexts/AuthContext';
 
+/**
+ * Hook to listen for new notifications and send push notifications
+ */
 export function useNotifications() {
-  const [permissionGranted, setPermissionGranted] = useState(false);
-  const [pushToken, setPushToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    initializeNotifications();
-  }, []);
+    if (!user) return;
 
-  const initializeNotifications = async () => {
-    try {
-      setLoading(true);
-      
-      // Request permissions
-      const granted = await NotificationService.requestPermissions();
-      setPermissionGranted(granted);
-
-      if (granted) {
-        // Get push token
-        const token = await NotificationService.getPushToken();
-        setPushToken(token);
+    // Load initial unread count
+    const loadUnreadCount = async () => {
+      try {
+        const count = await NotificationService.getUnreadCount(user.id);
+        setUnreadCount(count);
+      } catch (error) {
+        console.error('Error loading unread count:', error);
       }
-    } catch (error) {
-      console.error('Error initializing notifications:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  const scheduleReminder = async (
-    paktName: string,
-    frequency: 'daily' | 'weekly' | 'custom',
-    time: string,
-    paktId: string,
-    days?: string[]
-  ): Promise<string | string[] | null> => {
-    if (!permissionGranted) {
-      const granted = await NotificationService.requestPermissions();
-      if (!granted) {
-        alert('Please enable notifications to set reminders');
-        return null;
-      }
-    }
+    loadUnreadCount();
 
-    try {
-      if (frequency === 'daily') {
-        return await NotificationService.scheduleDailyReminder(paktName, time, paktId);
-      } else if (frequency === 'weekly') {
-        // Default to Monday if no days specified
-        return await NotificationService.scheduleWeeklyReminder(paktName, time, 2, paktId);
-      } else if (frequency === 'custom' && days && days.length > 0) {
-        return await NotificationService.scheduleCustomReminders(
-          paktName,
-          time,
-          days,
-          paktId
-        );
-      }
-      return null;
-    } catch (error) {
-      console.error('Error scheduling reminder:', error);
-      throw error;
-    }
-  };
+    // Subscribe to new notifications
+    const channel = supabase
+      .channel('notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`,
+        },
+        async (payload) => {
+          console.log('New notification received:', payload.new);
+          
+          // Update unread count
+          setUnreadCount((prev) => prev + 1);
 
-  const cancelReminder = async (identifier: string | string[]) => {
-    try {
-      if (Array.isArray(identifier)) {
-        for (const id of identifier) {
-          await NotificationService.cancelNotification(id);
+          // Send push notification
+          try {
+            await PushNotificationSenderService.sendPushForDatabaseNotification(
+              payload.new
+            );
+          } catch (error) {
+            console.error('Error sending push notification:', error);
+          }
         }
-      } else {
-        await NotificationService.cancelNotification(identifier);
+      )
+      .subscribe();
+
+    // Poll for new notifications every 30 seconds as backup
+    const pollInterval = setInterval(async () => {
+      try {
+        const count = await NotificationService.getUnreadCount(user.id);
+        setUnreadCount(count);
+      } catch (error) {
+        console.error('Error polling notifications:', error);
       }
-    } catch (error) {
-      console.error('Error canceling reminder:', error);
-      throw error;
-    }
-  };
+    }, 30000);
 
-  const sendMilestoneNotification = async (milestoneName: string, paktName: string) => {
-    if (permissionGranted) {
-      await NotificationService.sendMilestoneCompletionNotification(
-        milestoneName,
-        paktName
-      );
-    }
-  };
+    return () => {
+      channel.unsubscribe();
+      clearInterval(pollInterval);
+    };
+  }, [user]);
 
-  const sendPaktCompletionNotification = async (paktName: string) => {
-    if (permissionGranted) {
-      await NotificationService.sendPaktCompletionNotification(paktName);
-    }
-  };
-
-  return {
-    permissionGranted,
-    pushToken,
-    loading,
-    scheduleReminder,
-    cancelReminder,
-    sendMilestoneNotification,
-    sendPaktCompletionNotification,
-    requestPermissions: initializeNotifications,
-  };
+  return { unreadCount };
 }
-

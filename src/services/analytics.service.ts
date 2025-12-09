@@ -42,105 +42,217 @@ export class AnalyticsService {
    * Get or create today's analytics for user
    */
   static async getTodayAnalytics(userId: string): Promise<DailyAnalytics | null> {
-    const today = new Date().toISOString().split('T')[0];
+    try {
+      const today = new Date().toISOString().split('T')[0];
 
-    // Try to get existing
-    let { data, error } = await supabase
-      .from('analytics')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('date', today)
-      .single();
-
-    // If doesn't exist, create it
-    if (error || !data) {
-      const { data: newData, error: createError } = await supabase
-        .from('analytics')
-        .insert({
-          user_id: userId,
-          date: today,
-        })
-        .select()
+      // First, verify profile exists (to avoid foreign key constraint violation)
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
         .single();
 
-      if (createError) throw createError;
-      data = newData;
-    }
+      // If profile doesn't exist yet, return null (profile might still be creating)
+      if (profileError || !profile) {
+        console.warn('Profile not found for user, analytics will be created after profile is ready');
+        return null;
+      }
 
-    return data as DailyAnalytics;
+      // Try to get existing
+      let { data, error } = await supabase
+        .from('analytics')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('date', today)
+        .single();
+
+      // If doesn't exist, create it
+      if (error || !data) {
+        const { data: newData, error: createError } = await supabase
+          .from('analytics')
+          .insert({
+            user_id: userId,
+            date: today,
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          // If foreign key error, profile might still be creating - return null gracefully
+          if (createError.code === '23503') {
+            console.warn('Profile not ready yet, analytics will be created later');
+            return null;
+          }
+          throw createError;
+        }
+        data = newData;
+      }
+
+      return data as DailyAnalytics;
+    } catch (err: any) {
+      // Catch any foreign key errors and return null gracefully
+      if (err?.code === '23503') {
+        console.warn('Foreign key violation in getTodayAnalytics, profile may not be ready');
+        return null;
+      }
+      // Re-throw other errors
+      throw err;
+    }
   }
 
   /**
    * Get weekly activity for charts
    */
   static async getWeeklyActivity(userId: string): Promise<number[]> {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    try {
+      // First verify profile exists
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
+        .single();
 
-    const { data, error } = await supabase
-      .from('analytics')
-      .select('date, milestones_completed_today')
-      .eq('user_id', userId)
-      .gte('date', sevenDaysAgo.toISOString().split('T')[0])
-      .order('date', { ascending: true });
+      if (profileError || !profile) {
+        // Profile doesn't exist yet, return empty array
+        return [0, 0, 0, 0, 0, 0, 0];
+      }
 
-    if (error) throw error;
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    // Create array of 7 days with activity counts
-    const activityMap = new Map<string, number>();
-    data?.forEach(item => {
-      activityMap.set(item.date, item.milestones_completed_today);
-    });
+      const { data, error } = await supabase
+        .from('analytics')
+        .select('date, milestones_completed_today')
+        .eq('user_id', userId)
+        .gte('date', sevenDaysAgo.toISOString().split('T')[0])
+        .order('date', { ascending: true });
 
-    // Fill in missing days with 0
-    const activity: number[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
-      activity.push(activityMap.get(dateStr) || 0);
+      if (error) {
+        // If foreign key error, profile might still be creating
+        if (error.code === '23503') {
+          return [0, 0, 0, 0, 0, 0, 0];
+        }
+        throw error;
+      }
+
+      // Create array of 7 days with activity counts
+      const activityMap = new Map<string, number>();
+      data?.forEach(item => {
+        activityMap.set(item.date, item.milestones_completed_today || 0);
+      });
+
+      // Fill in missing days with 0
+      const activity: number[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        activity.push(activityMap.get(dateStr) || 0);
+      }
+
+      return activity;
+    } catch (err: any) {
+      // If any error occurs (including foreign key), return empty array
+      if (err?.code === '23503') {
+        return [0, 0, 0, 0, 0, 0, 0];
+      }
+      // For other errors, also return empty array to prevent breaking the app
+      console.warn('Error getting weekly activity, returning defaults:', err);
+      return [0, 0, 0, 0, 0, 0, 0];
     }
-
-    return activity;
   }
 
   /**
    * Get comprehensive user insights
    */
   static async getUserInsights(userId: string): Promise<UserInsights> {
-    // Get today's analytics
-    const today = await this.getTodayAnalytics(userId);
+    try {
+      // Get today's analytics (may return null if profile not ready)
+      const today = await this.getTodayAnalytics(userId);
+      
+      // If analytics couldn't be created (profile not ready), return default values
+      if (!today) {
+        return {
+          completionRate: 0,
+          milestonesDone: 0,
+          dayStreak: 0,
+          badgesEarned: 0,
+          weeklyActivity: [0, 0, 0, 0, 0, 0, 0],
+          totalPaktsCompleted: 0,
+          longestStreak: 0,
+        };
+      }
 
-    // Get weekly activity
-    const weeklyActivity = await this.getWeeklyActivity(userId);
+      // Get weekly activity (with error handling)
+      let weeklyActivity: number[] = [0, 0, 0, 0, 0, 0, 0];
+      try {
+        weeklyActivity = await this.getWeeklyActivity(userId);
+      } catch (err: any) {
+        // If foreign key error, profile might still be creating
+        if (err?.code === '23503') {
+          console.warn('Profile not ready for weekly activity, using defaults');
+        } else {
+          console.warn('Error getting weekly activity:', err);
+        }
+      }
 
-    // Calculate completion rate from actual data
-    const { data: milestones } = await supabase
-      .from('milestones')
-      .select('id, completed')
-      .eq('user_id', userId);
+      // Calculate completion rate from actual data (with error handling)
+      let totalMilestones = 0;
+      let completedMilestones = 0;
+      try {
+        const { data: milestones } = await supabase
+          .from('milestones')
+          .select('id, completed')
+          .eq('user_id', userId);
 
-    const totalMilestones = milestones?.length || 0;
-    const completedMilestones = milestones?.filter(m => m.completed).length || 0;
-    const completionRate = totalMilestones > 0
-      ? Math.round((completedMilestones / totalMilestones) * 100)
-      : 0;
+        totalMilestones = milestones?.length || 0;
+        completedMilestones = milestones?.filter(m => m.completed).length || 0;
+      } catch (err) {
+        console.warn('Error getting milestones:', err);
+      }
 
-    // Get achievements count
-    const { count: badgesCount } = await supabase
-      .from('achievements')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId);
+      const completionRate = totalMilestones > 0
+        ? Math.round((completedMilestones / totalMilestones) * 100)
+        : 0;
 
-    return {
-      completionRate,
-      milestonesDone: today?.total_milestones_completed || completedMilestones,
-      dayStreak: today?.current_streak || 0,
-      badgesEarned: badgesCount || 0,
-      weeklyActivity,
-      totalPaktsCompleted: today?.total_pakts_completed || 0,
-      longestStreak: today?.longest_streak || 0,
-    };
+      // Get achievements count (with error handling)
+      let badgesCount = 0;
+      try {
+        const { count } = await supabase
+          .from('achievements')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId);
+        badgesCount = count || 0;
+      } catch (err) {
+        console.warn('Error getting achievements:', err);
+      }
+
+      return {
+        completionRate,
+        milestonesDone: today?.total_milestones_completed || completedMilestones,
+        dayStreak: today?.current_streak || 0,
+        badgesEarned: badgesCount,
+        weeklyActivity,
+        totalPaktsCompleted: today?.total_pakts_completed || 0,
+        longestStreak: today?.longest_streak || 0,
+      };
+    } catch (err: any) {
+      // If any foreign key error occurs, return default values
+      if (err?.code === '23503') {
+        console.warn('Profile not ready yet, returning default insights');
+        return {
+          completionRate: 0,
+          milestonesDone: 0,
+          dayStreak: 0,
+          badgesEarned: 0,
+          weeklyActivity: [0, 0, 0, 0, 0, 0, 0],
+          totalPaktsCompleted: 0,
+          longestStreak: 0,
+        };
+      }
+      // Re-throw other errors
+      throw err;
+    }
   }
 
   /**
@@ -148,7 +260,10 @@ export class AnalyticsService {
    */
   static async recordMilestoneCompletion(userId: string): Promise<void> {
     const today = await this.getTodayAnalytics(userId);
-    if (!today) return;
+    if (!today) {
+      // Profile might not be ready yet, silently skip
+      return;
+    }
 
     const { error } = await supabase
       .from('analytics')
@@ -158,7 +273,14 @@ export class AnalyticsService {
       })
       .eq('id', today.id);
 
-    if (error) throw error;
+    if (error) {
+      // Don't throw for foreign key errors - profile might still be creating
+      if (error.code === '23503') {
+        console.warn('Profile not ready yet, milestone completion will be recorded later');
+        return;
+      }
+      throw error;
+    }
 
     // Update streak
     await this.updateStreak(userId);
@@ -211,7 +333,10 @@ export class AnalyticsService {
    */
   static async recordTimeSpent(userId: string, minutes: number): Promise<void> {
     const today = await this.getTodayAnalytics(userId);
-    if (!today) return;
+    if (!today) {
+      // Profile might not be ready yet, silently skip
+      return;
+    }
 
     const { error } = await supabase
       .from('analytics')
@@ -220,7 +345,14 @@ export class AnalyticsService {
       })
       .eq('id', today.id);
 
-    if (error) throw error;
+    if (error) {
+      // Don't throw for foreign key errors - profile might still be creating
+      if (error.code === '23503') {
+        console.warn('Profile not ready yet, time spent will be recorded later');
+        return;
+      }
+      throw error;
+    }
   }
 
   /**

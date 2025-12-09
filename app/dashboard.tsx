@@ -1,139 +1,381 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Image, RefreshControl, Animated } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-
-const mockPakts = [
-  {
-    id: '1',
-    name: 'Run First 5K',
-    category: 'Health & Fitness',
-    icon: '🏃',
-    color: '#FF6B6B',
-    progress: 65,
-    milestones: 4,
-    completedMilestones: 2,
-    dueDate: '3 weeks',
-  },
-  {
-    id: '2',
-    name: 'Learn Spanish',
-    category: 'Personal Growth',
-    icon: '🗣️',
-    color: '#4ECDC4',
-    progress: 42,
-    milestones: 5,
-    completedMilestones: 2,
-    dueDate: '2 months',
-  },
-  {
-    id: '3',
-    name: 'Save $5,000',
-    category: 'Finance',
-    icon: '💰',
-    color: '#FFD93D',
-    progress: 78,
-    milestones: 4,
-    completedMilestones: 3,
-    dueDate: '1 month',
-  },
-];
+import { useAuth } from '../src/contexts/AuthContext';
+import { usePakts } from '../src/hooks/usePakts';
+import { useAnalytics } from '../src/hooks/useAnalytics';
+import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
+import { translateCategory, translatePaktName } from '../src/utils/translations';
+import { rp, wp, isSmallScreen } from '../src/utils/responsive';
 
 export default function DashboardScreen() {
   const router = useRouter();
-  const [pakts] = useState(mockPakts);
+  const { user, profile } = useAuth();
+  const { pakts, loading: paktsLoading, refetch: refetchPakts } = usePakts();
+  const { insights, loading: analyticsLoading, refresh: refreshAnalytics } = useAnalytics();
+  const { colors } = useTheme();
+  const { t } = useLanguage();
+  const [refreshing, setRefreshing] = useState(false);
+  
+  // Animated values for collapsible header
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const HEADER_MAX_HEIGHT = 120;
+  const HEADER_MIN_HEIGHT = 60;
+  const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
+  
+  // Animated header styles
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+    extrapolate: 'clamp',
+  });
+  
+  const insets = useSafeAreaInsets();
+  const minPadding = Math.max(rp(16), insets.left); // Ensure minimum padding from safe area
+  const maxPadding = Math.max(rp(24), insets.left + 8);
+  
+  const headerPadding = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [maxPadding, minPadding],
+    extrapolate: 'clamp',
+  });
+  
+  const greetingOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE / 2],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
+  
+  const greetingFontSize = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [16, 0],
+    extrapolate: 'clamp',
+  });
+  
+  const nameFontSize = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [24, 18],
+    extrapolate: 'clamp',
+  });
+  
+  const profileSize = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [40, 32],
+    extrapolate: 'clamp',
+  });
 
-  const stats = {
-    streak: 12,
-    totalPakts: pakts.length,
-    completedToday: 5,
+  const loading = paktsLoading || analyticsLoading;
+
+  // Handle pull-to-refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      // Refresh both pakts and analytics data
+      await Promise.all([
+        refetchPakts(),
+        refreshAnalytics()
+      ]);
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.content}>
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.greeting}>Welcome back! 👋</Text>
-            <Text style={styles.name}>Keep up the great work</Text>
-          </View>
-          <View style={styles.headerButtons}>
-            <TouchableOpacity 
-              style={styles.profileButton}
-              onPress={() => router.push('/profile')}
-            >
-              <Text style={styles.profileIcon}>👤</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.settingsButton}
-              onPress={() => router.push('/settings')}
-            >
-              <Text style={styles.settingsIcon}>⚙️</Text>
-            </TouchableOpacity>
-          </View>
+  // Calculate stats from real data
+  const stats = {
+    streak: insights?.dayStreak ?? 0,
+    totalPakts: pakts.filter(p => p.status === 'active').length,
+    completedToday: insights?.milestonesDone || 0, // Use milestones completed from analytics
+  };
+
+  // Helper to get category icon
+  const getCategoryIcon = (category: string): string => {
+    const icons: Record<string, string> = {
+      'Health & Fitness': '🏃',
+      'Personal Growth': '🧠',
+      'Finance': '💰',
+      'Career': '💼',
+      'Relationships': '❤️',
+      'Hobbies': '🎨',
+      'Education': '📚',
+      'Wellness': '🧘',
+    };
+    return icons[category] || '🎯';
+  };
+
+  // Helper to get category color
+  const getCategoryColor = (category: string): string => {
+    const colors: Record<string, string> = {
+      'Health & Fitness': '#FF6B6B',
+      'Personal Growth': '#4ECDC4',
+      'Finance': '#FFD93D',
+      'Career': '#9163F2',
+      'Relationships': '#FF6AC1',
+      'Hobbies': '#FFB84D',
+      'Education': '#6BCF7F',
+      'Wellness': '#A78BFA',
+    };
+    return colors[category] || '#9163F2';
+  };
+
+  // Calculate progress percentage for each pakt
+  const getPaktProgress = (pakt: any) => {
+    // Use database progress if available (updated by trigger), otherwise calculate from milestones
+    if (pakt.progress !== undefined && pakt.progress !== null) {
+      return pakt.progress;
+    }
+    if (!pakt.milestones || pakt.milestones.length === 0) return 0;
+    const completed = pakt.milestones.filter((m: any) => m.completed).length;
+    return Math.round((completed / pakt.milestones.length) * 100);
+  };
+
+  // Get due date text
+  const getDueDateText = (targetDate: string | null): string => {
+    if (!targetDate) return t('dashboard.noDeadline');
+    
+    const target = new Date(targetDate);
+    const now = new Date();
+    const diffTime = target.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return t('dashboard.overdue');
+    if (diffDays === 0) return t('dashboard.today');
+    if (diffDays === 1) return t('dashboard.tomorrow');
+    if (diffDays <= 7) return `${diffDays} ${t('dashboard.days')}`;
+    if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} ${t('dashboard.weeks')}`;
+    return `${Math.ceil(diffDays / 30)} ${t('dashboard.months')}`;
+  };
+
+  // Filter active pakts
+  const activePakts = pakts.filter(p => p.status === 'active');
+
+  // Helper to get profile image
+  const getProfileImage = () => {
+    if (profile?.avatar_url) {
+      return { uri: profile.avatar_url };
+    }
+    return null;
+  };
+
+  // Helper to get profile initials
+  const getProfileInitials = () => {
+    const name = profile?.full_name || user?.email?.split('@')[0] || 'U';
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  // Dynamic styles based on theme and responsive design
+  const dynamicStyles = {
+    container: { ...styles.container, backgroundColor: colors.background },
+    loadingText: { ...styles.loadingText, color: colors.textSecondary },
+    header: { ...styles.header, backgroundColor: colors.surface },
+    greeting: { ...styles.greeting, color: colors.textSecondary },
+    name: { ...styles.name, color: colors.text },
+    statsCard: { ...styles.statCard, backgroundColor: colors.surface },
+    statValue: { ...styles.statValue, color: colors.text },
+    statLabel: { ...styles.statLabel, color: colors.textSecondary },
+    sectionTitle: { ...styles.sectionTitle, color: colors.text },
+    seeAllText: { ...styles.seeAllText, color: colors.primary },
+    paktCard: { ...styles.paktCard, backgroundColor: colors.surface },
+    paktName: { ...styles.paktName, color: colors.text },
+    paktCategory: { ...styles.paktCategory, color: colors.textSecondary },
+    paktMilestones: { ...styles.paktMilestones, color: colors.textSecondary },
+    paktDue: { ...styles.paktDue, color: colors.primary },
+    emptyState: { ...styles.emptyState, backgroundColor: colors.surface },
+    emptyTitle: { ...styles.emptyTitle, color: colors.text },
+    emptyText: { ...styles.emptyText, color: colors.textSecondary },
+    bottomNav: { 
+      ...styles.bottomNav, 
+      backgroundColor: colors.surface, 
+      borderTopColor: colors.border,
+      paddingHorizontal: Math.max(rp(8), insets.left),
+      paddingBottom: Math.max(rp(8), insets.bottom),
+      paddingTop: rp(8),
+      minHeight: 60 + Math.max(rp(8), insets.bottom),
+    },
+    progressBar: { ...styles.progressBar, backgroundColor: colors.border },
+    progressValue: { ...styles.progressValue, color: colors.primary },
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={dynamicStyles.container}>
+        <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={dynamicStyles.loadingText}>{t('dashboard.loadingPakts')}</Text>
         </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={dynamicStyles.container} edges={['top', 'left', 'right']}>
+      {/* Animated Header */}
+      <Animated.View 
+        style={[
+          dynamicStyles.header,
+          {
+            height: headerHeight,
+            paddingHorizontal: headerPadding,
+            paddingVertical: headerPadding,
+          }
+        ]}
+      >
+        <View style={{ flex: 1, justifyContent: 'center', minWidth: 0, paddingRight: 8 }}>
+          <Animated.View
+            style={{
+              opacity: greetingOpacity,
+              height: greetingOpacity.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 20],
+              }),
+              marginBottom: greetingOpacity.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 4],
+              }),
+            }}
+          >
+            <Text 
+              style={[dynamicStyles.greeting, { fontSize: isSmallScreen ? 14 : 16 }]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.85}
+            >
+              {t('dashboard.welcomeBack')}
+            </Text>
+          </Animated.View>
+          <Animated.Text 
+            style={[
+              dynamicStyles.name,
+              { fontSize: nameFontSize }
+            ]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+            ellipsizeMode="tail"
+          >
+            {profile?.full_name || user?.email?.split('@')[0] || 'Keep up the great work'}
+          </Animated.Text>
+        </View>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity 
+            style={[styles.profileButton, { backgroundColor: colors.background }]}
+            onPress={() => router.push('/profile')}
+          >
+            {getProfileImage() ? (
+              <Animated.View
+                style={{
+                  width: profileSize,
+                  height: profileSize,
+                  borderRadius: profileSize.interpolate({
+                    inputRange: [32, 40],
+                    outputRange: [16, 20],
+                  }),
+                  overflow: 'hidden',
+                }}
+              >
+                <Image 
+                  source={getProfileImage()!} 
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                  }}
+                  resizeMode="cover"
+                />
+              </Animated.View>
+            ) : (
+              <Animated.View 
+                style={[
+                  styles.profileImagePlaceholder, 
+                  { 
+                    backgroundColor: colors.primary,
+                    width: profileSize,
+                    height: profileSize,
+                    borderRadius: profileSize.interpolate({
+                      inputRange: [32, 40],
+                      outputRange: [16, 20],
+                    }),
+                  }
+                ]}
+              >
+                <Animated.Text 
+                  style={[
+                    styles.profileInitials,
+                    {
+                      fontSize: profileSize.interpolate({
+                        inputRange: [32, 40],
+                        outputRange: [14, 16],
+                      }),
+                    }
+                  ]}
+                >
+                  {getProfileInitials()}
+                </Animated.Text>
+              </Animated.View>
+            )}
+          </TouchableOpacity>
+        </View>
+      </Animated.View>
+      
+      <Animated.ScrollView 
+        style={styles.content}
+        contentContainerStyle={{ paddingTop: 0 }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+          />
+        }
+      >
 
         <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
+          <View style={dynamicStyles.statsCard}>
             <Text style={styles.statIcon}>🔥</Text>
-            <Text style={styles.statValue}>{stats.streak}</Text>
-            <Text style={styles.statLabel}>Day Streak</Text>
+            <Text style={dynamicStyles.statValue}>{stats.streak}</Text>
+            <Text style={dynamicStyles.statLabel}>{t('dashboard.streak')}</Text>
           </View>
-          <View style={styles.statCard}>
+          <View style={dynamicStyles.statsCard}>
             <Text style={styles.statIcon}>🎯</Text>
-            <Text style={styles.statValue}>{stats.totalPakts}</Text>
-            <Text style={styles.statLabel}>Active Pakts</Text>
+            <Text style={dynamicStyles.statValue}>{stats.totalPakts}</Text>
+            <Text style={dynamicStyles.statLabel}>{t('dashboard.activePakts')}</Text>
           </View>
-          <View style={styles.statCard}>
+          <View style={dynamicStyles.statsCard}>
             <Text style={styles.statIcon}>✓</Text>
-            <Text style={styles.statValue}>{stats.completedToday}</Text>
-            <Text style={styles.statLabel}>Today</Text>
+            <Text style={dynamicStyles.statValue}>{stats.completedToday}</Text>
+            <Text style={dynamicStyles.statLabel}>{t('dashboard.today')}</Text>
           </View>
         </View>
 
-        <View style={styles.quickActions}>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => router.push('/category-selection')}
-          >
-            <Text style={styles.actionIcon}>➕</Text>
-            <Text style={styles.actionText} numberOfLines={1}>New Pakt</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => router.push('/templates')}
-          >
-            <Text style={styles.actionIcon}>📋</Text>
-            <Text style={styles.actionText} numberOfLines={1}>Templates</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => router.push('/insights')}
-          >
-            <Text style={styles.actionIcon}>📊</Text>
-            <Text style={styles.actionText} numberOfLines={1}>Insights</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => router.push('/achievements')}
-          >
-            <Text style={styles.actionIcon}>🏆</Text>
-            <Text style={styles.actionText} numberOfLines={1}>Awards</Text>
-          </TouchableOpacity>
-        </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Active Pakts</Text>
-            <TouchableOpacity>
-              <Text style={styles.seeAll}>See All</Text>
-            </TouchableOpacity>
+            <Text style={dynamicStyles.sectionTitle}>{t('dashboard.activePakts')}</Text>
+            {activePakts.length > 3 && (
+              <TouchableOpacity onPress={() => router.push('/all-pakts')}>
+                <Text style={dynamicStyles.seeAllText}>{t('dashboard.seeAll')}</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
-          {pakts.length === 0 ? (
-            <View style={styles.emptyState}>
+          {activePakts.length === 0 ? (
+            <View style={dynamicStyles.emptyState}>
               <Text style={styles.emptyIcon}>🎯</Text>
-              <Text style={styles.emptyTitle}>No Pakts Yet</Text>
-              <Text style={styles.emptyText}>
+              <Text style={dynamicStyles.emptyTitle}>No Pakts Yet</Text>
+              <Text style={dynamicStyles.emptyText}>
                 Create your first pakt to start tracking your goals
               </Text>
               <TouchableOpacity
@@ -144,43 +386,58 @@ export default function DashboardScreen() {
               </TouchableOpacity>
             </View>
           ) : (
-            pakts.map((pakt) => (
-              <TouchableOpacity key={pakt.id} style={styles.paktCard}>
-                <View style={styles.paktHeader}>
-                  <View style={[styles.paktIcon, { backgroundColor: pakt.color }]}>
-                    <Text style={styles.paktIconText}>{pakt.icon}</Text>
-                  </View>
-                  <View style={styles.paktInfo}>
-                    <Text style={styles.paktName}>{pakt.name}</Text>
-                    <Text style={styles.paktCategory}>{pakt.category}</Text>
-                  </View>
-                  <View style={styles.paktProgress}>
-                    <Text style={styles.progressValue}>{pakt.progress}%</Text>
-                  </View>
-                </View>
+            activePakts.slice(0, 3).map((pakt) => {
+              const progress = getPaktProgress(pakt);
+              const icon = getCategoryIcon(pakt.category || '');
+              const color = getCategoryColor(pakt.category || '');
+              // @ts-ignore: milestones might be injected by extended type or external source
+              const milestones = (pakt as any).milestones || [];
+              const completedMilestones = milestones.filter((m: any) => m.completed).length;
+              const totalMilestones = milestones.length;
+              const dueDate = getDueDateText(pakt.deadline);
 
-                <View style={styles.progressBar}>
-                  <View 
-                    style={[
-                      styles.progressFill, 
-                      { width: `${pakt.progress}%`, backgroundColor: pakt.color }
-                    ]} 
-                  />
-                </View>
+              return (
+                <TouchableOpacity 
+                  key={pakt.id} 
+                  style={dynamicStyles.paktCard}
+                  onPress={() => router.push(`/pakt-detail?id=${pakt.id}`)}
+                >
+                  <View style={styles.paktHeader}>
+                    <View style={[styles.paktIcon, { backgroundColor: color }]}>
+                      <Text style={styles.paktIconText}>{icon}</Text>
+                    </View>
+                    <View style={styles.paktInfo}>
+                      <Text style={dynamicStyles.paktName}>{translatePaktName(pakt.name)}</Text>
+                      <Text style={dynamicStyles.paktCategory}>{translateCategory(pakt.category)}</Text>
+                    </View>
+                    <View style={styles.paktProgress}>
+                      <Text style={dynamicStyles.progressValue}>{progress}%</Text>
+                    </View>
+                  </View>
 
-                <View style={styles.paktFooter}>
-                  <Text style={styles.paktMilestones}>
-                    {pakt.completedMilestones}/{pakt.milestones} milestones
-                  </Text>
-                  <Text style={styles.paktDue}>Due in {pakt.dueDate}</Text>
-                </View>
-              </TouchableOpacity>
-            ))
+                  <View style={dynamicStyles.progressBar}>
+                    <View 
+                      style={[
+                        styles.progressFill, 
+                        { width: `${progress}%`, backgroundColor: color }
+                      ]} 
+                    />
+                  </View>
+
+                  <View style={styles.paktFooter}>
+                    <Text style={dynamicStyles.paktMilestones}>
+                      {completedMilestones}/{totalMilestones} {t('dashboard.milestones')}
+                    </Text>
+                    <Text style={dynamicStyles.paktDue}>{t('dashboard.dueIn')} {dueDate}</Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })
           )}
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Discover More</Text>
+          <Text style={dynamicStyles.sectionTitle}>{t('dashboard.discoverMore')}</Text>
           
           <TouchableOpacity 
             style={styles.premiumBanner}
@@ -188,49 +445,84 @@ export default function DashboardScreen() {
           >
             <View>
               <Text style={styles.premiumBadge}>⭐ PREMIUM</Text>
-              <Text style={styles.premiumTitle}>Unlock Premium Features</Text>
+              <Text style={styles.premiumTitle}>{t('dashboard.unlockPremium')}</Text>
               <Text style={styles.premiumText}>
-                Get unlimited pakts, AI coaching, and more
+                {t('dashboard.unlockPremiumDesc')}
               </Text>
             </View>
             <Text style={styles.premiumArrow}>›</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
 
-      <View style={styles.bottomNav}>
+      <View style={dynamicStyles.bottomNav}>
         <TouchableOpacity style={styles.navItem}>
           <Text style={styles.navIconActive}>🏠</Text>
-          <Text style={styles.navLabelActive}>Home</Text>
+          <Text 
+            style={styles.navLabelActive}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
+            {t('navigation.home')}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.navItem}
           onPress={() => router.push('/insights')}
         >
           <Text style={styles.navIcon}>📊</Text>
-          <Text style={styles.navLabel}>Insights</Text>
+          <Text 
+            style={[styles.navLabel, { color: colors.textSecondary }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
+            {t('navigation.insights')}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.navItemCenter}
-          onPress={() => router.push('/category-selection')}
+          onPress={() => router.push('/create-choice')}
         >
-          <View style={styles.fabButton}>
-            <Text style={styles.fabIcon}>+</Text>
+          <View style={[
+            styles.fabButton,
+            {
+              width: isSmallScreen ? 48 : 56,
+              height: isSmallScreen ? 48 : 56,
+              borderRadius: isSmallScreen ? 24 : 28,
+            }
+          ]}>
+            <Text style={[styles.fabIcon, { fontSize: isSmallScreen ? 28 : 32 }]}>+</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.navItem}
-          onPress={() => router.push('/achievements')}
+          onPress={() => router.push('/daily')}
         >
-          <Text style={styles.navIcon}>🏆</Text>
-          <Text style={styles.navLabel}>Awards</Text>
+          <Text style={styles.navIcon}>📅</Text>
+          <Text 
+            style={[styles.navLabel, { color: colors.textSecondary }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
+            {t('navigation.daily')}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.navItem}
           onPress={() => router.push('/profile')}
         >
           <Text style={styles.navIcon}>👤</Text>
-          <Text style={styles.navLabel}>Profile</Text>
+          <Text 
+            style={[styles.navLabel, { color: colors.textSecondary }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
+            {t('navigation.profile')}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -242,6 +534,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F4F4F6',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
+  },
   content: {
     flex: 1,
   },
@@ -250,7 +552,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 24,
-    backgroundColor: '#FFFFFF',
   },
   greeting: {
     fontSize: 16,
@@ -270,12 +571,26 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F4F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  profileImagePlaceholder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  profileIcon: {
-    fontSize: 20,
+  profileInitials: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
   settingsButton: {
     width: 40,
@@ -296,7 +611,6 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -308,12 +622,10 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#3C2B63',
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#666',
   },
   quickActions: {
     flexDirection: 'row',
@@ -351,15 +663,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#3C2B63',
   },
-  seeAll: {
+  seeAllText: {
     fontSize: 14,
-    color: '#9163F2',
     fontWeight: '500',
   },
   emptyState: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 40,
     alignItems: 'center',
@@ -371,12 +680,10 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#3C2B63',
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 14,
-    color: '#666',
     textAlign: 'center',
     marginBottom: 24,
     lineHeight: 20,
@@ -420,12 +727,10 @@ const styles = StyleSheet.create({
   paktName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#3C2B63',
     marginBottom: 4,
   },
   paktCategory: {
     fontSize: 14,
-    color: '#666',
   },
   paktProgress: {
     alignItems: 'flex-end',
@@ -433,11 +738,9 @@ const styles = StyleSheet.create({
   progressValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#9163F2',
   },
   progressBar: {
     height: 8,
-    backgroundColor: '#E0E0E0',
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 12,
@@ -452,11 +755,9 @@ const styles = StyleSheet.create({
   },
   paktMilestones: {
     fontSize: 14,
-    color: '#666',
   },
   paktDue: {
     fontSize: 14,
-    color: '#9163F2',
     fontWeight: '500',
   },
   premiumBanner: {
@@ -490,39 +791,44 @@ const styles = StyleSheet.create({
   },
   bottomNav: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 8,
-    paddingHorizontal: 8,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
   },
   navItem: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 8,
+    justifyContent: 'center',
+    paddingVertical: 4,
+    maxWidth: '20%',
+    minWidth: wp(15),
   },
   navItemCenter: {
     flex: 1,
     alignItems: 'center',
-    marginTop: -20,
+    justifyContent: 'center',
+    marginTop: -24,
+    maxWidth: '20%',
   },
   navIcon: {
-    fontSize: 24,
-    marginBottom: 4,
+    fontSize: isSmallScreen ? 20 : 24,
+    marginBottom: 2,
     opacity: 0.5,
   },
   navIconActive: {
-    fontSize: 24,
-    marginBottom: 4,
+    fontSize: isSmallScreen ? 20 : 24,
+    marginBottom: 2,
   },
   navLabel: {
-    fontSize: 12,
-    color: '#999',
+    fontSize: isSmallScreen ? 10 : 11,
+    fontWeight: '500',
+    textAlign: 'center',
   },
   navLabelActive: {
-    fontSize: 12,
+    fontSize: isSmallScreen ? 10 : 11,
     color: '#9163F2',
     fontWeight: '600',
+    textAlign: 'center',
   },
   fabButton: {
     width: 56,

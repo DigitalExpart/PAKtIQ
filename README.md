@@ -1,4 +1,4 @@
-# PaktIQ - Smart Commitment Tracking
+# Resolute Plan - Smart Commitment Tracking
 
 <div align="center">
   <h3>🎯 Make commitments. Track progress. Achieve your goals with intelligence.</h3>
@@ -8,9 +8,9 @@
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 </div>
 
-## 📱 About PaktIQ
+## 📱 About Resolute Plan
 
-PaktIQ is a beautiful, feature-rich mobile application for setting goals, tracking progress, and achieving your commitments. Built with React Native and Expo, it offers an intuitive interface and comprehensive features to help users stay motivated and on track.
+Resolute Plan is a beautiful, feature-rich mobile application for setting goals, tracking progress, and achieving your commitments. Built with React Native and Expo, it offers an intuitive interface and comprehensive features to help users stay motivated and on track.
 
 ## ✨ Features
 
@@ -166,5 +166,5 @@ For questions or support, please open an issue on GitHub.
 <div align="center">
   Made with ❤️ for achievers
   
-  **PaktIQ** - Smart Commitment Tracking
+  **Resolute Plan** - Smart Commitment Tracking
 </div>

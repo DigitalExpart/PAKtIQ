@@ -7,9 +7,12 @@ export { ReminderService } from './reminder.service';
 export { AchievementService } from './achievement.service';
 export { ActivityService } from './activity.service';
 export { NotificationService } from './notification.service';
+export { PushNotificationService } from './push-notification.service';
+export { PushNotificationSenderService } from './push-notification-sender.service';
 export { SettingsService } from './settings.service';
 export { AnalyticsService } from './analytics.service';
 export { TemplateService } from './template.service';
+export { StorageService } from './storage.service';
 
 // Re-export types
 export type { SignUpData, SignInData } from './auth.service';

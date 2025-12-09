@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Bell, BellOff, Clock, Target, Trophy, TrendingUp } from 'lucide-react-native';
+import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
+import { useAuth } from '../src/contexts/AuthContext';
+import { SettingsService, type NotificationPreferences } from '../src/services/settings.service';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 export default function NotificationsScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
+  const { t } = useLanguage();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState({
     pushEnabled: true,
     emailEnabled: true,
@@ -14,88 +25,174 @@ export default function NotificationsScreen() {
     weeklyReports: true,
     achievements: true,
     streakReminders: true,
+    dailyHabitReminders: true,
+    quietHoursStart: '22:00',
+    quietHoursEnd: '08:00',
   });
 
-  const toggleSetting = (key: string) => {
-    setSettings({ ...settings, [key]: !settings[key] });
+  // Load notification preferences from backend
+  useEffect(() => {
+    const loadPreferences = async () => {
+      if (!user) return;
+      
+      try {
+        setLoading(true);
+        const prefs = await SettingsService.getNotificationPreferences(user.id);
+        setSettings({
+          pushEnabled: prefs.push_enabled,
+          emailEnabled: prefs.email_enabled,
+          paktReminders: prefs.pakt_reminders,
+          milestoneReminders: prefs.milestone_deadlines,
+          dailyMotivation: prefs.daily_motivation,
+          weeklyReports: prefs.weekly_progress,
+          achievements: prefs.achievement_alerts,
+          streakReminders: prefs.streak_protection,
+          dailyHabitReminders: prefs.daily_habit_reminders,
+          quietHoursStart: prefs.quiet_hours_start,
+          quietHoursEnd: prefs.quiet_hours_end,
+        });
+      } catch (error) {
+        console.error('Error loading notification preferences:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPreferences();
+  }, [user]);
+
+  const toggleSetting = async (key: keyof typeof settings) => {
+    if (!user) return;
+
+    const newValue = !(settings[key] as boolean);
+    const updatedSettings = { ...settings, [key]: newValue };
+    setSettings(updatedSettings);
+
+    // Map frontend keys to backend keys
+    const keyMapping: Record<string, keyof NotificationPreferences> = {
+      pushEnabled: 'push_enabled',
+      emailEnabled: 'email_enabled',
+      paktReminders: 'pakt_reminders',
+      milestoneReminders: 'milestone_deadlines',
+      dailyMotivation: 'daily_motivation',
+      weeklyReports: 'weekly_progress',
+      achievements: 'achievement_alerts',
+      streakReminders: 'streak_protection',
+      dailyHabitReminders: 'daily_habit_reminders',
+    };
+
+    const backendKey = keyMapping[key];
+    if (backendKey) {
+      try {
+        setSaving(true);
+        await SettingsService.updateNotificationPreferences(user.id, {
+          [backendKey]: newValue,
+          enabled: updatedSettings.pushEnabled, // Master toggle
+        });
+      } catch (error) {
+        console.error('Error saving notification preferences:', error);
+        // Revert on error
+        setSettings(settings);
+      } finally {
+        setSaving(false);
+      }
+    }
   };
 
-  const notificationGroups = [
+  type NotificationItem = {
+    key: keyof typeof settings;
+    icon: typeof Bell;
+    color: string;
+    title: string;
+    description: string;
+  };
+
+  const notificationGroups: Array<{
+    title: string;
+    items: NotificationItem[];
+  }> = [
     {
-      title: 'General',
+      title: t('notifications.general'),
       items: [
         {
           key: 'pushEnabled',
           icon: Bell,
           color: '#9163F2',
-          title: 'Push Notifications',
-          description: 'Receive push notifications on your device',
+          title: t('notifications.pushNotifications'),
+          description: t('notifications.pushNotificationsDesc'),
         },
         {
           key: 'emailEnabled',
           icon: Bell,
           color: '#FFD88A',
-          title: 'Email Notifications',
-          description: 'Receive notifications via email',
+          title: t('notifications.emailNotifications'),
+          description: t('notifications.emailNotificationsDesc'),
         },
       ],
     },
     {
-      title: 'Pakt Reminders',
+      title: t('notifications.paktReminders'),
       items: [
         {
           key: 'paktReminders',
           icon: Target,
           color: '#9163F2',
-          title: 'Pakt Reminders',
-          description: 'Get reminded about your active Pakts',
+          title: t('notifications.paktReminders'),
+          description: t('notifications.paktRemindersDesc'),
         },
         {
           key: 'milestoneReminders',
           icon: Clock,
           color: '#96E6B3',
-          title: 'Milestone Deadlines',
-          description: 'Reminders for upcoming milestone deadlines',
+          title: t('notifications.milestoneDeadlines'),
+          description: t('notifications.milestoneDeadlinesDesc'),
         },
         {
           key: 'streakReminders',
           icon: TrendingUp,
           color: '#FF6B6B',
-          title: 'Streak Protection',
-          description: 'Alerts when your streak is at risk',
+          title: t('notifications.streakProtection'),
+          description: t('notifications.streakProtectionDesc'),
+        },
+        {
+          key: 'dailyHabitReminders',
+          icon: Clock,
+          color: '#9163F2',
+          title: t('notifications.dailyHabitReminders'),
+          description: t('notifications.dailyHabitRemindersDesc'),
         },
       ],
     },
     {
-      title: 'Progress & Motivation',
+      title: t('notifications.progressMotivation'),
       items: [
         {
           key: 'dailyMotivation',
           icon: TrendingUp,
           color: '#FFD88A',
-          title: 'Daily Motivation',
-          description: 'Receive daily motivational messages',
+          title: t('notifications.dailyMotivation'),
+          description: t('notifications.dailyMotivationDesc'),
         },
         {
           key: 'weeklyReports',
           icon: Trophy,
           color: '#96E6B3',
-          title: 'Weekly Progress Reports',
-          description: 'Summary of your weekly progress',
+          title: t('notifications.weeklyProgressReports'),
+          description: t('notifications.weeklyProgressReportsDesc'),
         },
         {
           key: 'achievements',
           icon: Trophy,
           color: '#FFD88A',
-          title: 'Achievement Alerts',
-          description: 'Celebrate when you unlock achievements',
+          title: t('notifications.achievementAlerts'),
+          description: t('notifications.achievementAlertsDesc'),
         },
       ],
     },
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity 
@@ -105,35 +202,35 @@ export default function NotificationsScreen() {
           <ArrowLeft size={24} color="#FFFFFF" />
         </TouchableOpacity>
         
-        <Text style={styles.headerTitle}>Notifications</Text>
+        <Text style={styles.headerTitle}>{t('notifications.title')}</Text>
         
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* All Notifications Toggle */}
-        <View style={styles.masterToggle}>
+        <View style={[styles.masterToggle, { backgroundColor: colors.surface }]}>
           <View style={styles.masterToggleContent}>
             {settings.pushEnabled ? (
-              <Bell size={24} color="#9163F2" />
+              <Bell size={24} color={colors.primary} />
             ) : (
-              <BellOff size={24} color="#999" />
+              <BellOff size={24} color={colors.textSecondary} />
             )}
             <View style={styles.masterToggleText}>
-              <Text style={styles.masterToggleTitle}>
-                {settings.pushEnabled ? 'Notifications Enabled' : 'Notifications Disabled'}
+              <Text style={[styles.masterToggleTitle, { color: colors.text }]}>
+                {settings.pushEnabled ? t('notifications.notificationsEnabled') : t('notifications.notificationsDisabled')}
               </Text>
-              <Text style={styles.masterToggleDescription}>
+              <Text style={[styles.masterToggleDescription, { color: colors.textSecondary }]}>
                 {settings.pushEnabled 
-                  ? 'You will receive notifications based on your preferences below' 
-                  : 'Enable to start receiving notifications'}
+                  ? t('notifications.notificationsEnabledDesc')
+                  : t('notifications.enableToStartReceiving')}
               </Text>
             </View>
           </View>
           <Switch
             value={settings.pushEnabled}
             onValueChange={() => toggleSetting('pushEnabled')}
-            trackColor={{ false: '#E0E0E0', true: '#9163F2' }}
+            trackColor={{ false: colors.border, true: colors.primary }}
             thumbColor="#FFFFFF"
           />
         </View>
@@ -141,7 +238,7 @@ export default function NotificationsScreen() {
         {/* Notification Groups */}
         {notificationGroups.map((group, groupIndex) => (
           <View key={groupIndex} style={styles.section}>
-            <Text style={styles.sectionTitle}>{group.title}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>{group.title}</Text>
             {group.items.map((item, itemIndex) => {
               const IconComponent = item.icon;
               return (
@@ -149,6 +246,7 @@ export default function NotificationsScreen() {
                   key={item.key} 
                   style={[
                     styles.notificationItem,
+                    { backgroundColor: colors.surface },
                     !settings.pushEnabled && styles.notificationItemDisabled
                   ]}
                 >
@@ -158,22 +256,24 @@ export default function NotificationsScreen() {
                   <View style={styles.notificationContent}>
                     <Text style={[
                       styles.notificationTitle,
-                      !settings.pushEnabled && styles.textDisabled
+                      { color: colors.text },
+                      !settings.pushEnabled && { color: colors.textSecondary }
                     ]}>
                       {item.title}
                     </Text>
                     <Text style={[
                       styles.notificationDescription,
-                      !settings.pushEnabled && styles.textDisabled
+                      { color: colors.textSecondary },
+                      !settings.pushEnabled && { color: colors.textSecondary }
                     ]}>
                       {item.description}
                     </Text>
                   </View>
                   <Switch
-                    value={settings[item.key]}
+                    value={settings[item.key] as boolean}
                     onValueChange={() => toggleSetting(item.key)}
                     disabled={!settings.pushEnabled}
-                    trackColor={{ false: '#E0E0E0', true: item.color }}
+                    trackColor={{ false: colors.border, true: item.color }}
                     thumbColor="#FFFFFF"
                   />
                 </View>
@@ -184,29 +284,32 @@ export default function NotificationsScreen() {
 
         {/* Quiet Hours */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quiet Hours</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('notifications.quietHours')}</Text>
           <TouchableOpacity 
-            style={styles.quietHoursCard}
+            style={[styles.quietHoursCard, { backgroundColor: colors.surface }]}
             disabled={!settings.pushEnabled}
           >
-            <Clock size={20} color={settings.pushEnabled ? "#9163F2" : "#999"} />
+            <Clock size={20} color={settings.pushEnabled ? colors.primary : colors.textSecondary} />
             <View style={styles.quietHoursContent}>
               <Text style={[
                 styles.quietHoursTitle,
-                !settings.pushEnabled && styles.textDisabled
+                { color: colors.text },
+                !settings.pushEnabled && { color: colors.textSecondary }
               ]}>
-                Set Quiet Hours
+                {t('notifications.setQuietHours')}
               </Text>
               <Text style={[
                 styles.quietHoursDescription,
-                !settings.pushEnabled && styles.textDisabled
+                { color: colors.textSecondary },
+                !settings.pushEnabled && { color: colors.textSecondary }
               ]}>
-                Pause notifications during specific times
+                {t('notifications.pauseNotificationsDuringTimes')}
               </Text>
             </View>
             <Text style={[
               styles.quietHoursTime,
-              !settings.pushEnabled && styles.textDisabled
+              { color: colors.primary },
+              !settings.pushEnabled && { color: colors.textSecondary }
             ]}>
               10 PM - 8 AM
             </Text>
@@ -218,22 +321,26 @@ export default function NotificationsScreen() {
           <TouchableOpacity 
             style={[
               styles.testButton,
+              { backgroundColor: colors.surface, borderColor: settings.pushEnabled ? colors.primary : colors.border },
               !settings.pushEnabled && styles.testButtonDisabled
             ]}
             disabled={!settings.pushEnabled}
           >
-            <Bell size={20} color={settings.pushEnabled ? "#9163F2" : "#999"} />
+            <Bell size={20} color={settings.pushEnabled ? colors.primary : colors.textSecondary} />
             <Text style={[
               styles.testButtonText,
-              !settings.pushEnabled && styles.textDisabled
+              { color: settings.pushEnabled ? colors.primary : colors.textSecondary },
+              !settings.pushEnabled && { color: colors.textSecondary }
             ]}>
-              Send Test Notification
+              {t('notifications.sendTestNotification')}
             </Text>
           </TouchableOpacity>
         </View>
 
         <View style={{ height: 40 }} />
       </ScrollView>
+      
+      <BottomTabBar />
     </SafeAreaView>
   );
 }
@@ -241,7 +348,6 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F6',
   },
   header: {
     flexDirection: 'row',
@@ -265,7 +371,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   masterToggle: {
-    backgroundColor: '#FFFFFF',
     margin: 16,
     padding: 20,
     borderRadius: 16,
@@ -291,12 +396,10 @@ const styles = StyleSheet.create({
   masterToggleTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1a1625',
     marginBottom: 4,
   },
   masterToggleDescription: {
     fontSize: 13,
-    color: '#666',
     lineHeight: 18,
   },
   section: {
@@ -306,11 +409,9 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1a1625',
     marginBottom: 12,
   },
   notificationItem: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     marginBottom: 8,
@@ -335,19 +436,16 @@ const styles = StyleSheet.create({
   notificationTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1a1625',
     marginBottom: 2,
   },
   notificationDescription: {
     fontSize: 13,
-    color: '#666',
     lineHeight: 18,
   },
   textDisabled: {
     color: '#999',
   },
   quietHoursCard: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
@@ -360,12 +458,10 @@ const styles = StyleSheet.create({
   quietHoursTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1a1625',
     marginBottom: 2,
   },
   quietHoursDescription: {
     fontSize: 13,
-    color: '#666',
   },
   quietHoursTime: {
     fontSize: 14,
@@ -377,7 +473,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   testButton: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
@@ -385,7 +480,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 12,
     borderWidth: 2,
-    borderColor: '#9163F2',
   },
   testButtonDisabled: {
     borderColor: '#E0E0E0',
@@ -393,7 +487,6 @@ const styles = StyleSheet.create({
   testButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#9163F2',
   },
 });
 

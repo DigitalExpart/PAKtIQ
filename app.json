@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "New Year Resolutions Tracker",
-    "slug": "new-year-resolutions-tracker",
-    "version": "1.0.0",
+    "name": "Resolute Plan",
+    "slug": "resolute-plan",
+    "version": "1.0.1",
+    "owner": "resolute-plan",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -16,25 +17,61 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.resolutionstracker.app"
+      "bundleIdentifier": "com.resolutionstracker.app",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F4F4F6"
       },
-      "package": "com.resolutionstracker.app"
+      "package": "com.resolutionstracker.app",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "scheme": "resolutionstracker",
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "imageWidth": 512,
+          "resizeMode": "contain",
+          "backgroundColor": "#F4F4F6"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#9163F2",
+          "mode": "production"
+        }
+      ]
     ],
+    "notification": {
+      "icon": "./assets/icon.png",
+      "color": "#9163F2",
+      "iosDisplayInForeground": true,
+      "androidMode": "default",
+      "androidCollapsedTitle": "#{unread_notifications} new notifications"
+    },
+    "updates": {
+      "enabled": false,
+      "checkAutomatically": "NEVER",
+      "fallbackToCacheTimeout": 0
+    },
     "extra": {
       "supabaseUrl": "https://mirpnmrsjjmmiqbbawab.supabase.co",
-      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pcnBubXJzamptbWlxYmJhd2FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MjQ5NDcsImV4cCI6MjA4MDMwMDk0N30.0INXVgxZsdjsD0DL8Ot_Q3RfYPqwBwz5O1_E6Lu4q9g"
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pcnBubXJzamptbWlxYmJhd2FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MjQ5NDcsImV4cCI6MjA4MDMwMDk0N30.0INXVgxZsdjsD0DL8Ot_Q3RfYPqwBwz5O1_E6Lu4q9g",
+      "expoProjectId": "3fd4af30-6d0e-4455-8a28-07f929aa6d24",
+      "router": {},
+      "eas": {
+        "projectId": "3fd4af30-6d0e-4455-8a28-07f929aa6d24"
+      }
     }
   }
 }

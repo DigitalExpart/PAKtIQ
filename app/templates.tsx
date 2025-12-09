@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTheme } from '../src/contexts/ThemeContext';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 const templates = [
   {
@@ -169,6 +172,8 @@ export default function TemplateLibrary() {
           </View>
         ))}
       </ScrollView>
+      
+      <BottomTabBar />
     </SafeAreaView>
   );
 }

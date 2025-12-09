@@ -15,12 +15,14 @@ export interface SignInData {
 export class AuthService {
   /**
    * Sign up a new user
+   * Email verification is disabled - users can use the platform immediately
    */
   static async signUp({ email, password, fullName }: SignUpData) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo: undefined, // No email verification redirect
         data: {
           full_name: fullName,
         },
@@ -28,6 +30,9 @@ export class AuthService {
     });
 
     if (error) throw error;
+    
+    // If user is returned, they're automatically confirmed (email verification disabled)
+    // The session should be available immediately
     return data;
   }
 

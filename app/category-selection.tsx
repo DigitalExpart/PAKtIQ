@@ -1,20 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { usePaktCreation } from '../src/contexts/PaktCreationContext';
+import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
 
+// Categories will be translated in the component
 const categories = [
-  { id: '1', name: 'Health & Fitness', icon: '💪', color: '#FF6B6B' },
-  { id: '2', name: 'Career & Education', icon: '📚', color: '#4ECDC4' },
-  { id: '3', name: 'Finance', icon: '💰', color: '#FFD93D' },
-  { id: '4', name: 'Relationships', icon: '❤️', color: '#FF6B9D' },
-  { id: '5', name: 'Personal Growth', icon: '🌱', color: '#95E1D3' },
-  { id: '6', name: 'Creativity', icon: '🎨', color: '#F38181' },
-  { id: '7', name: 'Productivity', icon: '⚡', color: '#AA96DA' },
-  { id: '8', name: 'Wellness', icon: '🧘', color: '#FCBAD3' },
+  { id: '1', key: 'healthFitness', icon: '💪', color: '#FF6B6B' },
+  { id: '2', key: 'careerEducation', icon: '📚', color: '#4ECDC4' },
+  { id: '3', key: 'finance', icon: '💰', color: '#FFD93D' },
+  { id: '4', key: 'relationships', icon: '❤️', color: '#FF6B9D' },
+  { id: '5', key: 'personalGrowth', icon: '🌱', color: '#95E1D3' },
+  { id: '6', key: 'creativity', icon: '🎨', color: '#F38181' },
+  { id: '7', key: 'productivity', icon: '⚡', color: '#AA96DA' },
+  { id: '8', key: 'wellness', icon: '🧘', color: '#FCBAD3' },
 ];
 
 export default function CategorySelection() {
   const router = useRouter();
+  const { updatePaktData } = usePaktCreation();
+  const { colors } = useTheme();
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const handleSelect = (categoryId: string) => {
@@ -23,18 +31,33 @@ export default function CategorySelection() {
 
   const handleContinue = () => {
     if (selectedCategory) {
+      const category = categories.find(c => c.id === selectedCategory);
+      if (category) {
+        // Map translation key back to English name for database
+        const categoryNameMap: Record<string, string> = {
+          healthFitness: 'Health & Fitness',
+          careerEducation: 'Career & Education',
+          finance: 'Finance',
+          relationships: 'Relationships',
+          personalGrowth: 'Personal Growth',
+          creativity: 'Creativity',
+          productivity: 'Productivity',
+          wellness: 'Wellness',
+        };
+        updatePaktData({ category: categoryNameMap[category.key] || category.key });
+      }
       router.push('/pakt-naming');
     }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backButton}>← Back</Text>
+          <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Choose a Category</Text>
-        <Text style={styles.subtitle}>What area of life do you want to improve?</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{t('categories.title')}</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{t('categories.subtitle')}</Text>
       </View>
 
       <ScrollView style={styles.content}>
@@ -50,7 +73,7 @@ export default function CategorySelection() {
               onPress={() => handleSelect(category.id)}
             >
               <Text style={styles.categoryIcon}>{category.icon}</Text>
-              <Text style={styles.categoryName}>{category.name}</Text>
+              <Text style={styles.categoryName}>{t(`categories.${category.key}`)}</Text>
               {selectedCategory === category.id && (
                 <View style={styles.checkmark}>
                   <Text style={styles.checkmarkText}>✓</Text>
@@ -61,13 +84,13 @@ export default function CategorySelection() {
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: colors.surface }]}>
         <TouchableOpacity
           style={[styles.continueButton, !selectedCategory && styles.disabledButton]}
           onPress={handleContinue}
           disabled={!selectedCategory}
         >
-          <Text style={styles.continueButtonText}>Continue</Text>
+          <Text style={styles.continueButtonText}>{t('common.continue')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { AuthService } from '../src/services/auth.service';
+import { useAuth } from '../src/contexts/AuthContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
 
 export default function AuthScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
+  const { signIn, signUp: signUpUser } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false); // Default to Sign In
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleAuth = async () => {
     if (!email || !password) {
@@ -22,30 +29,45 @@ export default function AuthScreen() {
       return;
     }
 
+    if (isSignUp && password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (isSignUp) {
-        await AuthService.signUp(email, password, fullName || undefined);
-        Alert.alert(
-          'Success!',
-          'Account created successfully!',
-          [
-            {
-              text: 'OK',
-              onPress: () => router.replace('/dashboard'),
-            },
-          ]
-        );
+        // Sign up - will auto-login if email verification is disabled
+        await signUpUser(email, password, fullName || undefined);
+        // If signup succeeds and user is auto-logged in, navigate to dashboard
+        // The AuthContext will handle setting the user and session
+        router.replace('/dashboard');
       } else {
-        await AuthService.signIn(email, password);
+        // Sign in
+        await signIn(email, password);
         router.replace('/dashboard');
       }
     } catch (error: any) {
       console.error('Auth error:', error);
+      
+      // Provide more helpful error messages
+      let errorMessage = error.message || t('auth.failedToAuthenticate');
+      
+      // Handle specific Supabase errors
+      if (error.message?.includes('User already registered')) {
+        errorMessage = t('auth.emailAlreadyExists') || 'This email is already registered. Please sign in instead.';
+      } else if (error.message?.includes('Invalid email')) {
+        errorMessage = t('auth.invalidEmail') || 'Please enter a valid email address.';
+      } else if (error.message?.includes('Password')) {
+        errorMessage = t('auth.passwordError') || 'Password must be at least 8 characters long.';
+      } else if (error.message?.includes('Database error') || error.message?.includes('saving new user')) {
+        errorMessage = t('auth.databaseError') || 'There was an issue creating your account. Please try again or contact support if the problem persists.';
+      }
+      
       Alert.alert(
-        'Authentication Error',
-        error.message || 'Failed to authenticate. Please try again.'
+        t('auth.authenticationError'),
+        errorMessage
       );
     } finally {
       setLoading(false);
@@ -62,9 +84,9 @@ export default function AuthScreen() {
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.logo}>🎯</Text>
-            <Text style={styles.title}>PaktIQ</Text>
+            <Text style={styles.title}>{t('auth.title')}</Text>
             <Text style={styles.subtitle}>
-              {isSignUp ? 'Create Your Account' : 'Welcome Back'}
+              {isSignUp ? t('auth.createAccount') : t('auth.welcomeBack')}
             </Text>
           </View>
 
@@ -72,7 +94,7 @@ export default function AuthScreen() {
           <View style={styles.form}>
             {isSignUp && (
               <View style={styles.inputContainer}>
-                <Text style={styles.label}>Full Name (Optional)</Text>
+                <Text style={styles.label}>{t('auth.fullName')}</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="John Doe"
@@ -86,10 +108,10 @@ export default function AuthScreen() {
             )}
 
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>Email</Text>
+              <Text style={styles.label}>{t('auth.email')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="you@example.com"
+                placeholder={t('auth.enterEmail')}
                 placeholderTextColor="#9CA3AF"
                 value={email}
                 onChangeText={setEmail}
@@ -101,19 +123,54 @@ export default function AuthScreen() {
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>Password</Text>
-              <TextInput
-                style={styles.input}
-                placeholder={isSignUp ? 'At least 8 characters' : 'Enter your password'}
-                placeholderTextColor="#9CA3AF"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
-                editable={!loading}
-              />
+              <Text style={styles.label}>{t('auth.password')}</Text>
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.passwordInput}
+                  placeholder={isSignUp ? t('auth.atLeast8Chars') : t('auth.enterPassword')}
+                  placeholderTextColor="#9CA3AF"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  editable={!loading}
+                />
+                <TouchableOpacity
+                  style={styles.eyeButton}
+                  onPress={() => setShowPassword(!showPassword)}
+                  disabled={loading}
+                >
+                  <Text style={styles.eyeIcon}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
+
+            {isSignUp && (
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>{t('auth.confirmPassword')}</Text>
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder={t('auth.reEnterPassword')}
+                    placeholderTextColor="#9CA3AF"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    secureTextEntry={!showConfirmPassword}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    editable={!loading}
+                  />
+                  <TouchableOpacity
+                    style={styles.eyeButton}
+                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                    disabled={loading}
+                  >
+                    <Text style={styles.eyeIcon}>{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
 
             {/* Submit Button */}
             <TouchableOpacity
@@ -126,7 +183,7 @@ export default function AuthScreen() {
                 <ActivityIndicator color="#3C2B63" />
               ) : (
                 <Text style={styles.submitButtonText}>
-                  {isSignUp ? 'Create Account' : 'Sign In'}
+                  {isSignUp ? t('auth.signUp') : t('auth.signIn')}
                 </Text>
               )}
             </TouchableOpacity>
@@ -134,18 +191,21 @@ export default function AuthScreen() {
             {/* Toggle Sign In/Sign Up */}
             <View style={styles.toggleContainer}>
               <Text style={styles.toggleText}>
-                {isSignUp ? 'Already have an account?' : "Don't have an account?"}
+                {isSignUp ? t('auth.alreadyHaveAccount') : t('auth.dontHaveAccount')}
               </Text>
               <TouchableOpacity
                 onPress={() => {
                   setIsSignUp(!isSignUp);
                   setFullName('');
                   setPassword('');
+                  setConfirmPassword('');
+                  setShowPassword(false);
+                  setShowConfirmPassword(false);
                 }}
                 disabled={loading}
               >
                 <Text style={styles.toggleLink}>
-                  {isSignUp ? 'Sign In' : 'Sign Up'}
+                  {isSignUp ? t('auth.signIn') : t('auth.signUp')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -154,9 +214,7 @@ export default function AuthScreen() {
           {/* Info */}
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>
-              {isSignUp
-                ? 'By creating an account, you can save your pakts and track progress across devices.'
-                : 'Sign in to access your pakts and continue your journey.'}
+              {isSignUp ? t('auth.createAccountInfo') : t('auth.signInInfo')}
             </Text>
           </View>
         </ScrollView>
@@ -219,6 +277,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
     color: '#FFFFFF',
+  },
+  passwordContainer: {
+    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  passwordInput: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    paddingRight: 50,
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 12,
+    padding: 8,
+  },
+  eyeIcon: {
+    fontSize: 22,
   },
   submitButton: {
     backgroundColor: '#FFD88A',

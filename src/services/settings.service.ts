@@ -11,6 +11,7 @@ export interface NotificationPreferences {
   daily_motivation: boolean;
   weekly_progress: boolean;
   achievement_alerts: boolean;
+  daily_habit_reminders: boolean;
   quiet_hours_start: string;
   quiet_hours_end: string;
 }
@@ -89,6 +90,7 @@ export class SettingsService {
       daily_motivation: false,
       weekly_progress: true,
       achievement_alerts: true,
+      daily_habit_reminders: true,
       quiet_hours_start: '22:00',
       quiet_hours_end: '08:00',
     };

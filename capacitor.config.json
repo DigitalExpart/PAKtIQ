@@ -1,6 +1,6 @@
 {
   "appId": "com.resolutionstracker.app",
-  "appName": "New Year Resolutions Tracker",
+  "appName": "Resolute Plan",
   "webDir": "build",
   "server": {
     "androidScheme": "https"
@@ -8,7 +8,10 @@
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 2000,
-      "backgroundColor": "#F4F4F6"
+      "backgroundColor": "#F4F4F6",
+      "androidSplashResourceName": "splashscreen_logo",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false
     }
   }
 }

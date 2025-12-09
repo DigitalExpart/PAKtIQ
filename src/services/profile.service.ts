@@ -21,8 +21,37 @@ export class ProfileService {
 
   /**
    * Update user profile
+   * Creates profile if it doesn't exist
    */
   static async updateProfile(userId: string, updates: ProfileUpdate): Promise<Profile> {
+    // First check if profile exists
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
+      .single();
+
+    if (!existingProfile) {
+      // Profile doesn't exist, create it first
+      // Get user email from auth.users
+      const { data: authUser } = await supabase.auth.getUser();
+      const email = authUser?.user?.email || '';
+      
+      const { data: newProfile, error: createError } = await supabase
+        .from('profiles')
+        .insert({
+          id: userId,
+          email: email,
+          ...updates,
+        })
+        .select()
+        .single();
+
+      if (createError) throw createError;
+      return newProfile;
+    }
+
+    // Profile exists, update it
     const { data, error } = await supabase
       .from('profiles')
       .update(updates)
@@ -30,7 +59,28 @@ export class ProfileService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      // If update fails because profile was deleted, try to create it
+      if (error.code === 'PGRST116') {
+        const { data: authUser } = await supabase.auth.getUser();
+        const email = authUser?.user?.email || '';
+        
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert({
+            id: userId,
+            email: email,
+            ...updates,
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        return newProfile;
+      }
+      throw error;
+    }
+    
     return data;
   }
 
