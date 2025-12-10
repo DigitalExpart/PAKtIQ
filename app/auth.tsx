@@ -4,10 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/contexts/AuthContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
+import { ErrorModal } from '../src/components/ErrorModal';
+import { useTheme } from '../src/contexts/ThemeContext';
 
 export default function AuthScreen() {
   const router = useRouter();
   const { t } = useLanguage();
+  const { colors } = useTheme();
   const { signIn, signUp: signUpUser } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false); // Default to Sign In
   const [email, setEmail] = useState('');
@@ -17,6 +20,8 @@ export default function AuthScreen() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleAuth = async () => {
     if (!email || !password) {
@@ -65,10 +70,8 @@ export default function AuthScreen() {
         errorMessage = t('auth.databaseError') || 'There was an issue creating your account. Please try again or contact support if the problem persists.';
       }
       
-      Alert.alert(
-        t('auth.authenticationError'),
-        errorMessage
-      );
+      setErrorMessage(errorMessage);
+      setShowErrorModal(true);
     } finally {
       setLoading(false);
     }
@@ -219,6 +222,14 @@ export default function AuthScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <ErrorModal
+        visible={showErrorModal}
+        title={t('auth.authenticationError')}
+        message={errorMessage}
+        buttonText={t('common.done')}
+        onButtonPress={() => setShowErrorModal(false)}
+      />
     </SafeAreaView>
   );
 }

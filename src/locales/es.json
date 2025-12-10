@@ -368,7 +368,9 @@
     "successRate": "Tasa de Éxito",
     "noPaktsInCategory": "No hay Pakts en esta categoría",
     "total": "total",
-    "done": "Hecho"
+    "done": "Hecho",
+    "imageUpdateTitle": "Éxito",
+    "imageUpdateMessage": "¡Imagen de perfil actualizada exitosamente!"
   },
   "dashboard": {
     "title": "Panel",

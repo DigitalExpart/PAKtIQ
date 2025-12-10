@@ -159,7 +159,9 @@
     "successRate": "Taux de Réussite",
     "noPaktsInCategory": "Aucun Pakt dans cette catégorie",
     "total": "total",
-    "done": "Terminé"
+    "done": "Terminé",
+    "imageUpdateTitle": "Succès",
+    "imageUpdateMessage": "Image de profil mise à jour avec succès !"
   },
   "insights": {
     "title": "Statistiques",

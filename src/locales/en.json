@@ -389,7 +389,9 @@
     "successRate": "Success Rate",
     "noPaktsInCategory": "No Pakts in this category",
     "total": "total",
-    "done": "Done"
+    "done": "Done",
+    "imageUpdateTitle": "Success",
+    "imageUpdateMessage": "Profile image updated successfully!"
   },
   "dashboard": {
     "title": "Dashboard",

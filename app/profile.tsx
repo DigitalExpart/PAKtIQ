@@ -11,6 +11,7 @@ import { StorageService } from '../src/services/storage.service';
 import { useAnalytics } from '../src/hooks/useAnalytics';
 import { usePaktStats } from '../src/hooks/usePakts';
 import BottomTabBar from '../src/components/BottomTabBar';
+import { SuccessModal } from '../src/components/SuccessModal';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function ProfileScreen() {
   const { t } = useLanguage();
   const { user, profile: userProfile, updateProfile, refreshProfile, signOut } = useAuth();
   const [uploading, setUploading] = useState(false);
+  const [showImageSuccessModal, setShowImageSuccessModal] = useState(false);
   const { insights, loading: analyticsLoading } = useAnalytics();
   const { stats: paktStats, loading: paktStatsLoading } = usePaktStats();
 
@@ -91,7 +93,7 @@ export default function ProfileScreen() {
           await refreshProfile();
           
           setUploading(false);
-          Alert.alert('Success', 'Profile image updated successfully!');
+          setShowImageSuccessModal(true);
         } catch (profileError: any) {
           // If profile update fails, the image was still uploaded
           // Try to refresh profile - it might have been created by trigger
@@ -432,6 +434,14 @@ export default function ProfileScreen() {
       </TouchableOpacity>
       
       <BottomTabBar />
+
+      <SuccessModal
+        visible={showImageSuccessModal}
+        title={t('profile.imageUpdateTitle')}
+        message={t('profile.imageUpdateMessage')}
+        buttonText={t('common.done')}
+        onButtonPress={() => setShowImageSuccessModal(false)}
+      />
     </SafeAreaView>
   );
 }

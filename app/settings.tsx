@@ -177,6 +177,21 @@ export default function SettingsScreen() {
               <ChevronRight size={20} color="#CCC" />
             </TouchableOpacity>
 
+            <TouchableOpacity 
+              style={styles.menuRow}
+              onPress={() => router.push('/language')}
+            >
+              <View style={styles.menuLeft}>
+                <Globe size={20} color={colors.textSecondary} />
+                <Text style={dynamicStyles.menuText}>{t('settings.language')}</Text>
+              </View>
+              <View style={styles.menuRight}>
+                <Text style={[dynamicStyles.languageText, { color: colors.textSecondary }]}>
+                  {currentLanguage === 'en' ? 'English' : currentLanguage === 'fr' ? 'Français' : 'Español'}
+                </Text>
+                <ChevronRight size={20} color="#CCC" />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -478,6 +493,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
     flex: 1,
+  },
+  languageRow: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginLeft: 16,
   },
   menuText: {
     fontSize: 16,
