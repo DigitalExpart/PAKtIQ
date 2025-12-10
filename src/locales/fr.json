@@ -376,6 +376,11 @@
     "createDailyHabit": "Créer une Habitude Quotidienne",
     "createDailyHabitDesc": "Créez une routine quotidienne avec des horaires programmés"
   },
+  "paktCreation": {
+    "successTitle": "Succès !",
+    "successMessage": "Votre pakt \"{{paktName}}\" a été créé !",
+    "viewDashboard": "Voir le Tableau de bord"
+  },
   "habit": {
     "habitName": "Nom de l'Habitude",
     "habitNamePlaceholder": "ex., Exercice, Méditation, Lecture",

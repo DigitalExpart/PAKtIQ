@@ -415,6 +415,11 @@
     "createDailyHabit": "Create Daily Habit",
     "createDailyHabitDesc": "Build a daily routine with scheduled times"
   },
+  "paktCreation": {
+    "successTitle": "Success!",
+    "successMessage": "Your pakt \"{{paktName}}\" has been created!",
+    "viewDashboard": "View Dashboard"
+  },
   "habit": {
     "habitName": "Habit Name",
     "habitNamePlaceholder": "e.g., Exercise, Meditation, Reading",

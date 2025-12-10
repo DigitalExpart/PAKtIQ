@@ -9,17 +9,21 @@ import { MilestoneService } from '../src/services/milestone.service';
 import { ReminderService } from '../src/services/reminder.service';
 import { NotificationService } from '../src/services/notification.service';
 import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
+import { SuccessModal } from '../src/components/SuccessModal';
 
 export default function ReminderSetup() {
   const router = useRouter();
   const { user } = useAuth();
   const { paktData, resetPaktData } = usePaktCreation();
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const [remindersEnabled, setRemindersEnabled] = useState(true);
   const [selectedFrequency, setSelectedFrequency] = useState<'daily' | 'weekly' | 'custom'>('daily');
   const [selectedTime, setSelectedTime] = useState('morning');
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const frequencies = [
     { id: 'daily' as const, label: 'Daily', icon: '📅' },
@@ -128,19 +132,9 @@ export default function ReminderSetup() {
         console.log('✅ Reminder created');
       }
 
-      // Reset context and navigate to dashboard
+      // Reset context and show success modal
       resetPaktData();
-      
-      Alert.alert(
-        'Success! 🎉',
-        `Your pakt "${paktData.name}" has been created!`,
-        [
-          {
-            text: 'View Dashboard',
-            onPress: () => router.push('/dashboard'),
-          },
-        ]
-      );
+      setShowSuccessModal(true);
     } catch (error: any) {
       console.error('Error creating pakt:', error);
       Alert.alert('Error', error.message || 'Failed to create pakt. Please try again.');
@@ -301,6 +295,17 @@ export default function ReminderSetup() {
           )}
         </TouchableOpacity>
       </View>
+
+      <SuccessModal
+        visible={showSuccessModal}
+        title={t('paktCreation.successTitle')}
+        message={t('paktCreation.successMessage', { paktName: paktData.name })}
+        buttonText={t('paktCreation.viewDashboard')}
+        onButtonPress={() => {
+          setShowSuccessModal(false);
+          router.push('/dashboard');
+        }}
+      />
     </SafeAreaView>
   );
 }
