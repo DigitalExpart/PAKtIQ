@@ -11,6 +11,7 @@
     "continue": "Continuer",
     "done": "Terminé",
     "close": "Fermer",
+    "ok": "OK",
     "loading": "Chargement...",
     "error": "Erreur",
     "success": "Succès",
@@ -513,7 +514,15 @@
     "emailPlaceholder": "Entrez votre e-mail",
     "bioPlaceholder": "Parlez-nous de vous",
     "emailCannotChange": "L'e-mail ne peut pas être modifié",
-    "saveChanges": "Enregistrer les Modifications"
+    "saveChanges": "Enregistrer les Modifications",
+    "successTitle": "Profil Mis à Jour !",
+    "successMessage": "Votre profil a été mis à jour avec succès.",
+    "errorTitle": "Échec de la Mise à Jour",
+    "updateError": "Échec de la mise à jour de votre profil. Veuillez réessayer.",
+    "noUserError": "Vous devez être connecté pour mettre à jour votre profil.",
+    "nameRequired": "Le nom est requis. Veuillez entrer votre nom.",
+    "nameTooLong": "Le nom doit contenir 100 caractères ou moins.",
+    "bioTooLong": "La biographie doit contenir 500 caractères ou moins."
   },
   "notificationsFeed": {
     "milestoneDueTomorrow": "Jalon Dû Demain",

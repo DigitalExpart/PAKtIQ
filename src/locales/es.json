@@ -11,6 +11,7 @@
     "continue": "Continuar",
     "done": "Hecho",
     "close": "Cerrar",
+    "ok": "OK",
     "loading": "Cargando...",
     "error": "Error",
     "success": "Éxito",
@@ -662,7 +663,15 @@
     "emailPlaceholder": "Ingresa tu correo electrónico",
     "bioPlaceholder": "Cuéntanos sobre ti",
     "emailCannotChange": "El correo electrónico no se puede cambiar",
-    "saveChanges": "Guardar Cambios"
+    "saveChanges": "Guardar Cambios",
+    "successTitle": "¡Perfil Actualizado!",
+    "successMessage": "Tu perfil se ha actualizado correctamente.",
+    "errorTitle": "Error al Actualizar",
+    "updateError": "No se pudo actualizar tu perfil. Por favor, inténtalo de nuevo.",
+    "noUserError": "Debes iniciar sesión para actualizar tu perfil.",
+    "nameRequired": "El nombre es obligatorio. Por favor, ingresa tu nombre.",
+    "nameTooLong": "El nombre debe tener 100 caracteres o menos.",
+    "bioTooLong": "La biografía debe tener 500 caracteres o menos."
   },
   "notificationsFeed": {
     "milestoneDueTomorrow": "Hito Vence Mañana",

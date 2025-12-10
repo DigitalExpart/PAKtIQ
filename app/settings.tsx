@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, Modal, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Sun, Moon, Bell, Globe, CreditCard, Shield, FileText, LogOut, ChevronRight, Lock, Eye, EyeOff } from 'lucide-react-native';
+import { ArrowLeft, Sun, Moon, Bell, Globe, CreditCard, Shield, FileText, ChevronRight, Lock, Eye, EyeOff } from 'lucide-react-native';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useAuth } from '../src/contexts/AuthContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
@@ -13,7 +13,7 @@ import BottomTabBar from '../src/components/BottomTabBar';
 export default function SettingsScreen() {
   const router = useRouter();
   const { isDarkMode, themeMode, setThemeMode, colors } = useTheme();
-  const { signOut, user } = useAuth();
+  const { user } = useAuth();
   const { currentLanguage, t } = useLanguage();
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -24,14 +24,6 @@ export default function SettingsScreen() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
 
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      router.replace('/');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
 
   const handleChangePassword = async () => {
     // Validation
@@ -109,7 +101,6 @@ export default function SettingsScreen() {
     settingText: { ...styles.settingText, color: colors.text },
     menuText: { ...styles.menuText, color: colors.text },
     languageText: { ...styles.languageText, color: colors.textSecondary },
-    logoutCard: { ...styles.logoutCard, backgroundColor: colors.surface },
     footerTitle: { ...styles.footerTitle, color: colors.textSecondary },
     footerVersion: { ...styles.footerVersion, color: colors.textSecondary },
   };
@@ -244,19 +235,6 @@ export default function SettingsScreen() {
               <ChevronRight size={20} color="#CCC" />
             </TouchableOpacity>
           </View>
-        </View>
-
-        {/* Actions Section */}
-        <View style={styles.section}>
-          <Text style={dynamicStyles.sectionTitle}>{t('settings.actions')}</Text>
-          
-          <TouchableOpacity 
-            style={dynamicStyles.logoutCard}
-            onPress={handleLogout}
-          >
-            <LogOut size={20} color="#FF6B6B" />
-            <Text style={styles.logoutText}>{t('settings.logOut')}</Text>
-          </TouchableOpacity>
         </View>
 
         {/* Version Footer */}
@@ -514,25 +492,6 @@ const styles = StyleSheet.create({
   languageText: {
     fontSize: 15,
     color: '#666',
-  },
-  logoutCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-    gap: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  logoutText: {
-    fontSize: 16,
-    color: '#FF6B6B',
-    fontWeight: '500',
   },
   footer: {
     alignItems: 'center',

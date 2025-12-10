@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Image, RefreshControl, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Image, RefreshControl, Animated, Dimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/contexts/AuthContext';
@@ -85,10 +85,12 @@ export default function DashboardScreen() {
   };
 
   // Calculate stats from real data
+  const activePaktsList = pakts.filter(p => p.status === 'active');
   const stats = {
     streak: insights?.dayStreak ?? 0,
-    totalPakts: pakts.filter(p => p.status === 'active').length,
+    totalPakts: activePaktsList.length,
     completedToday: insights?.milestonesDone || 0, // Use milestones completed from analytics
+    activeHabits: activePaktsList.length, // Active habits (using active pakts as habits)
   };
 
   // Helper to get category icon
@@ -342,23 +344,38 @@ export default function DashboardScreen() {
         }
       >
 
-        <View style={styles.statsContainer}>
-          <View style={dynamicStyles.statsCard}>
+        {/* Stats Cards Carousel */}
+        <ScrollView 
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.statsCarouselContainer}
+          style={styles.statsCarousel}
+          snapToInterval={122}
+          decelerationRate="fast"
+          snapToAlignment="start"
+          pagingEnabled={false}
+        >
+          <View style={[dynamicStyles.statsCard, styles.statCardWithMargin]}>
             <Text style={styles.statIcon}>🔥</Text>
             <Text style={dynamicStyles.statValue}>{stats.streak}</Text>
             <Text style={dynamicStyles.statLabel}>{t('dashboard.streak')}</Text>
           </View>
-          <View style={dynamicStyles.statsCard}>
+          <View style={[dynamicStyles.statsCard, styles.statCardWithMargin]}>
             <Text style={styles.statIcon}>🎯</Text>
             <Text style={dynamicStyles.statValue}>{stats.totalPakts}</Text>
             <Text style={dynamicStyles.statLabel}>{t('dashboard.activePakts')}</Text>
           </View>
-          <View style={dynamicStyles.statsCard}>
+          <View style={[dynamicStyles.statsCard, styles.statCardWithMargin]}>
             <Text style={styles.statIcon}>✓</Text>
             <Text style={dynamicStyles.statValue}>{stats.completedToday}</Text>
             <Text style={dynamicStyles.statLabel}>{t('dashboard.today')}</Text>
           </View>
-        </View>
+          <View style={[dynamicStyles.statsCard, styles.statCardWithMargin]}>
+            <Text style={styles.statIcon}>📅</Text>
+            <Text style={dynamicStyles.statValue}>{stats.activeHabits}</Text>
+            <Text style={dynamicStyles.statLabel}>{t('dashboard.activeHabits')}</Text>
+          </View>
+        </ScrollView>
 
 
         <View style={styles.section}>
@@ -609,11 +626,22 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     gap: 12,
   },
+  statsCarousel: {
+    marginTop: 24,
+  },
+  statsCarouselContainer: {
+    paddingHorizontal: 16,
+    gap: 12,
+  },
   statCard: {
-    flex: 1,
+    width: 110,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
+    minWidth: 100,
+  },
+  statCardWithMargin: {
+    marginRight: 12,
   },
   statIcon: {
     fontSize: 24,

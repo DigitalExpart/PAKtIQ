@@ -6,6 +6,8 @@ import { ArrowLeft } from 'lucide-react-native';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
 import { useAuth } from '../src/contexts/AuthContext';
+import { SuccessModal } from '../src/components/SuccessModal';
+import { ErrorModal } from '../src/components/ErrorModal';
 
 export default function EditProfileScreen() {
   const router = useRouter();
@@ -13,6 +15,9 @@ export default function EditProfileScreen() {
   const { t } = useLanguage();
   const { user, profile: userProfile, updateProfile, refreshProfile } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [profile, setProfile] = useState({
     name: userProfile?.full_name || user?.email?.split('@')[0] || '',
     email: user?.email || '',
@@ -35,20 +40,48 @@ export default function EditProfileScreen() {
   };
 
   const handleSave = async () => {
-    if (!user) return;
+    if (!user) {
+      setErrorMessage(t('editProfile.noUserError'));
+      setShowErrorModal(true);
+      return;
+    }
+
+    // Validate name field
+    if (!profile.name || profile.name.trim().length === 0) {
+      setErrorMessage(t('editProfile.nameRequired'));
+      setShowErrorModal(true);
+      return;
+    }
+
+    // Validate name length
+    if (profile.name.trim().length > 100) {
+      setErrorMessage(t('editProfile.nameTooLong'));
+      setShowErrorModal(true);
+      return;
+    }
+
+    // Validate bio length if provided
+    if (profile.bio && profile.bio.length > 500) {
+      setErrorMessage(t('editProfile.bioTooLong'));
+      setShowErrorModal(true);
+      return;
+    }
     
     setLoading(true);
     try {
       await updateProfile({
-        full_name: profile.name,
-        bio: profile.bio,
+        full_name: profile.name.trim(),
+        bio: profile.bio.trim() || null,
       });
       // Refresh profile to get updated data
       await refreshProfile();
-      router.back();
-    } catch (error) {
+      setShowSuccessModal(true);
+    } catch (error: any) {
       console.error('Error saving profile:', error);
-      // You could show an error message here
+      // Show user-friendly error message
+      const errorMsg = error?.message || t('editProfile.updateError');
+      setErrorMessage(errorMsg);
+      setShowErrorModal(true);
     } finally {
       setLoading(false);
     }
@@ -154,6 +187,27 @@ export default function EditProfileScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Success Modal */}
+      <SuccessModal
+        visible={showSuccessModal}
+        title={t('editProfile.successTitle')}
+        message={t('editProfile.successMessage')}
+        buttonText={t('common.ok')}
+        onButtonPress={() => {
+          setShowSuccessModal(false);
+          router.back();
+        }}
+      />
+
+      {/* Error Modal */}
+      <ErrorModal
+        visible={showErrorModal}
+        title={t('editProfile.errorTitle')}
+        message={errorMessage}
+        buttonText={t('common.ok')}
+        onButtonPress={() => setShowErrorModal(false)}
+      />
     </SafeAreaView>
   );
 }
