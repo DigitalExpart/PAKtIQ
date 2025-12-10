@@ -45,13 +45,20 @@
     "share": "Partager",
     "edit": "Modifier le Pakt",
     "delete": "Supprimer le Pakt",
+    "deletePakt": "Supprimer le Pakt",
+    "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer \"{{paktName}}\" ? Cette action ne peut pas être annulée.",
+    "deleteError": "Échec de la suppression du pakt. Veuillez réessayer.",
     "sharePakt": "Partager le Pakt",
     "exportPdf": "Exporter en PDF",
     "milestones": "Jalons",
     "progress": "Progrès",
     "deadline": "Date limite",
     "status": "Statut",
-    "loadingDetails": "Chargement des détails du pakt..."
+    "loadingDetails": "Chargement des détails du pakt...",
+    "completionTitle": "🎉 Félicitations !",
+    "completionMessage": "Vous avez complété ce pakt !",
+    "notFoundTitle": "Pakt Introuvable",
+    "notFoundMessage": "Ce pakt a peut-être été supprimé."
   },
   "journal": {
     "title": "Journal de réflexion",

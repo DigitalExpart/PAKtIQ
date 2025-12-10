@@ -41,13 +41,20 @@
     "share": "Share",
     "edit": "Edit Pakt",
     "delete": "Delete Pakt",
+    "deletePakt": "Delete Pakt",
+    "deleteConfirmMessage": "Are you sure you want to delete \"{{paktName}}\"? This action cannot be undone.",
+    "deleteError": "Failed to delete pakt. Please try again.",
     "sharePakt": "Share Pakt",
     "exportPdf": "Export to PDF",
     "milestones": "Milestones",
     "progress": "Progress",
     "deadline": "Deadline",
     "status": "Status",
-    "loadingDetails": "Loading pakt details..."
+    "loadingDetails": "Loading pakt details...",
+    "completionTitle": "🎉 Congratulations!",
+    "completionMessage": "You've completed this pakt!",
+    "notFoundTitle": "Pakt Not Found",
+    "notFoundMessage": "This pakt may have been deleted."
   },
   "journal": {
     "title": "Reflection Journal",

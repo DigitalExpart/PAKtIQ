@@ -13,6 +13,9 @@ import { usePakts } from '../src/hooks/usePakts';
 import { ShareService } from '../src/services/share.service';
 import { useLanguage } from '../src/contexts/LanguageContext';
 import { translateCategory, translatePaktName } from '../src/utils/translations';
+import { DeleteConfirmationModal } from '../src/components/DeleteConfirmationModal';
+import { SuccessModal } from '../src/components/SuccessModal';
+import { ErrorModal } from '../src/components/ErrorModal';
 
 // Conditional import for DateTimePicker
 let DateTimePicker: any = null;
@@ -39,6 +42,9 @@ export default function PaktDetailScreen() {
   const [togglingMilestone, setTogglingMilestone] = useState<string | null>(null);
   const [editingMilestoneDeadline, setEditingMilestoneDeadline] = useState<string | null>(null);
   const [milestoneDeadlineDate, setMilestoneDeadlineDate] = useState(new Date());
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [showNotFoundModal, setShowNotFoundModal] = useState(false);
   
   // Find pakt from params or use first pakt as fallback
   useEffect(() => {
@@ -58,16 +64,12 @@ export default function PaktDetailScreen() {
               setMilestones(paktMilestones.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0)));
             } else {
               // Pakt not found, try to navigate back or show error
-              Alert.alert('Pakt Not Found', 'This pakt may have been deleted.', [
-                { text: 'OK', onPress: () => router.back() }
-              ]);
+              setShowNotFoundModal(true);
             }
           } catch (paktError: any) {
             // Handle specific "not found" error
             if (paktError?.code === 'PGRST116' || paktError?.message?.includes('0 rows')) {
-              Alert.alert('Pakt Not Found', 'This pakt may have been deleted.', [
-                { text: 'OK', onPress: () => router.back() }
-              ]);
+              setShowNotFoundModal(true);
             } else {
               throw paktError; // Re-throw other errors
             }
@@ -229,7 +231,7 @@ export default function PaktDetailScreen() {
       }
       
       if (newStatus && updatedPakt?.progress === 100) {
-        Alert.alert('🎉 Congratulations!', 'You\'ve completed this pakt!');
+        setShowCompletionModal(true);
         
         // Create notification for pakt completion
         try {
@@ -313,37 +315,26 @@ export default function PaktDetailScreen() {
   // Handle delete pakt
   const handleDeletePakt = () => {
     if (!user || !pakt) return;
+    setShowMenu(false);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeletePakt = async () => {
+    if (!user || !pakt) return;
     
-    Alert.alert(
-      'Delete Pakt',
-      `Are you sure you want to delete "${pakt.name}"? This action cannot be undone.`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-          onPress: () => setShowMenu(false),
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setShowMenu(false);
-              await PaktService.deletePakt(pakt.id);
-              
-              // Refresh pakts list
-              await refetch();
-              
-              // Navigate back
-              router.back();
-            } catch (error) {
-              console.error('Error deleting pakt:', error);
-              Alert.alert('Error', 'Failed to delete pakt. Please try again.');
-            }
-          },
-        },
-      ]
-    );
+    try {
+      setShowDeleteConfirm(false);
+      await PaktService.deletePakt(pakt.id);
+      
+      // Refresh pakts list
+      await refetch();
+      
+      // Navigate back
+      router.back();
+    } catch (error) {
+      console.error('Error deleting pakt:', error);
+      Alert.alert(t('common.error'), t('pakt.deleteError'));
+    }
   };
 
   return (
@@ -538,42 +529,42 @@ export default function PaktDetailScreen() {
           activeOpacity={1}
           onPress={() => setShowMenu(false)}
         >
-          <View style={styles.menuModal}>
+          <View style={[styles.menuModal, { backgroundColor: colors.surface }]}>
             <TouchableOpacity 
-              style={styles.menuItem}
+              style={[styles.menuItem, { borderBottomColor: colors.border }]}
               onPress={() => {
                 setShowMenu(false);
                 router.push(`/edit-pakt?paktId=${pakt.id}`);
               }}
             >
-              <Edit size={20} color="#333" />
-              <Text style={styles.menuItemText}>Edit Pakt</Text>
+              <Edit size={20} color={colors.text} />
+              <Text style={[styles.menuItemText, { color: colors.text }]}>{t('pakt.edit')}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={styles.menuItem}
+              style={[styles.menuItem, { borderBottomColor: colors.border }]}
               onPress={() => {
                 setShowMenu(false);
                 handleSharePakt();
               }}
             >
-              <Share2 size={20} color="#333" />
-              <Text style={styles.menuItemText}>{t('pakt.sharePakt')}</Text>
+              <Share2 size={20} color={colors.text} />
+              <Text style={[styles.menuItemText, { color: colors.text }]}>{t('pakt.sharePakt')}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
               style={[styles.menuItem, styles.menuItemDanger]}
               onPress={handleDeletePakt}
             >
-              <Trash2 size={20} color="#FF6B6B" />
-              <Text style={[styles.menuItemText, styles.menuItemTextDanger]}>Delete Pakt</Text>
+              <Trash2 size={20} color={colors.error} />
+              <Text style={[styles.menuItemText, { color: colors.error }]}>{t('pakt.delete')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
               style={styles.cancelButton}
               onPress={() => setShowMenu(false)}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>{t('common.cancel')}</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
@@ -767,6 +758,35 @@ export default function PaktDetailScreen() {
           </Modal>
         )
       )}
+
+      <DeleteConfirmationModal
+        visible={showDeleteConfirm}
+        title={t('pakt.deletePakt')}
+        message={t('pakt.deleteConfirmMessage', { paktName: pakt?.name || '' })}
+        cancelText={t('common.cancel')}
+        deleteText={t('pakt.delete')}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onDelete={confirmDeletePakt}
+      />
+
+      <SuccessModal
+        visible={showCompletionModal}
+        title={t('pakt.completionTitle')}
+        message={t('pakt.completionMessage')}
+        buttonText={t('common.done')}
+        onButtonPress={() => setShowCompletionModal(false)}
+      />
+
+      <ErrorModal
+        visible={showNotFoundModal}
+        title={t('pakt.notFoundTitle')}
+        message={t('pakt.notFoundMessage')}
+        buttonText={t('common.done')}
+        onButtonPress={() => {
+          setShowNotFoundModal(false);
+          router.back();
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -954,7 +974,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   menuModal: {
-    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingTop: 8,
@@ -966,18 +985,16 @@ const styles = StyleSheet.create({
     padding: 18,
     gap: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
   },
   menuItemText: {
     fontSize: 16,
-    color: '#333',
     fontWeight: '500',
   },
   menuItemDanger: {
     borderBottomWidth: 0,
   },
   menuItemTextDanger: {
-    color: '#FF6B6B',
+    // Color is now set dynamically in component
   },
   cancelButton: {
     marginTop: 8,
@@ -986,7 +1003,6 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize: 16,
-    color: '#666',
     fontWeight: '600',
   },
   loadingContainer: {

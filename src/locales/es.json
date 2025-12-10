@@ -41,13 +41,20 @@
     "share": "Compartir",
     "edit": "Editar Pakt",
     "delete": "Eliminar Pakt",
+    "deletePakt": "Eliminar Pakt",
+    "deleteConfirmMessage": "¿Estás seguro de que quieres eliminar \"{{paktName}}\"? Esta acción no se puede deshacer.",
+    "deleteError": "Error al eliminar el pakt. Por favor intenta de nuevo.",
     "sharePakt": "Compartir Pakt",
     "exportPdf": "Exportar a PDF",
     "milestones": "Hitos",
     "progress": "Progreso",
     "deadline": "Fecha Límite",
     "status": "Estado",
-    "loadingDetails": "Cargando detalles del pakt..."
+    "loadingDetails": "Cargando detalles del pakt...",
+    "completionTitle": "🎉 ¡Felicidades!",
+    "completionMessage": "¡Has completado este pakt!",
+    "notFoundTitle": "Pakt No Encontrado",
+    "notFoundMessage": "Este pakt puede haber sido eliminado."
   },
   "journal": {
     "title": "Diario de Reflexión",
