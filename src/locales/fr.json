@@ -130,7 +130,8 @@
     "enterCurrentPassword": "Entrez votre mot de passe actuel",
     "enterNewPassword": "Entrez un nouveau mot de passe (min. 6 caractères)",
     "confirmNewPassword": "Confirmez le nouveau mot de passe",
-    "passwordHint": "Le mot de passe doit contenir au moins 6 caractères\nUtilisez un mot de passe fort et unique"
+    "passwordHint": "Le mot de passe doit contenir au moins 6 caractères\nUtilisez un mot de passe fort et unique",
+    "signOutConfirmMessage": "Êtes-vous sûr de vouloir vous déconnecter ?"
   },
   "profile": {
     "title": "Profil",

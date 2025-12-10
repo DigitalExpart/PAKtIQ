@@ -12,6 +12,7 @@ import { useAnalytics } from '../src/hooks/useAnalytics';
 import { usePaktStats } from '../src/hooks/usePakts';
 import BottomTabBar from '../src/components/BottomTabBar';
 import { SuccessModal } from '../src/components/SuccessModal';
+import { DeleteConfirmationModal } from '../src/components/DeleteConfirmationModal';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -20,25 +21,17 @@ export default function ProfileScreen() {
   const { user, profile: userProfile, updateProfile, refreshProfile, signOut } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [showImageSuccessModal, setShowImageSuccessModal] = useState(false);
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const { insights, loading: analyticsLoading } = useAnalytics();
   const { stats: paktStats, loading: paktStatsLoading } = usePaktStats();
 
   const handleLogout = () => {
-    Alert.alert(
-      t('settings.logOut'),
-      'Are you sure you want to sign out?',
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('settings.logOut'),
-          style: 'destructive',
-          onPress: async () => {
-            await signOut();
-            router.replace('/auth');
-          },
-        },
-      ]
-    );
+    setShowSignOutConfirm(true);
+  };
+
+  const confirmSignOut = async () => {
+    await signOut();
+    router.replace('/auth');
   };
   
   // Use profile from context or fallback to defaults
@@ -441,6 +434,16 @@ export default function ProfileScreen() {
         message={t('profile.imageUpdateMessage')}
         buttonText={t('common.done')}
         onButtonPress={() => setShowImageSuccessModal(false)}
+      />
+
+      <DeleteConfirmationModal
+        visible={showSignOutConfirm}
+        title={t('settings.logOut')}
+        message={t('settings.signOutConfirmMessage')}
+        cancelText={t('common.cancel')}
+        deleteText={t('settings.logOut')}
+        onCancel={() => setShowSignOutConfirm(false)}
+        onDelete={confirmSignOut}
       />
     </SafeAreaView>
   );

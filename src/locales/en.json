@@ -126,7 +126,8 @@
     "enterCurrentPassword": "Enter current password",
     "enterNewPassword": "Enter new password (min 6 characters)",
     "confirmNewPassword": "Confirm new password",
-    "passwordHint": "Password must be at least 6 characters long\nUse a strong, unique password"
+    "passwordHint": "Password must be at least 6 characters long\nUse a strong, unique password",
+    "signOutConfirmMessage": "Are you sure you want to sign out?"
   },
   "profile": {
     "title": "Profile",

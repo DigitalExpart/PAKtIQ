@@ -126,7 +126,8 @@
     "enterCurrentPassword": "Ingresa tu contraseña actual",
     "enterNewPassword": "Ingresa nueva contraseña (mín. 6 caracteres)",
     "confirmNewPassword": "Confirma la nueva contraseña",
-    "passwordHint": "La contraseña debe tener al menos 6 caracteres\nUsa una contraseña fuerte y única"
+    "passwordHint": "La contraseña debe tener al menos 6 caracteres\nUsa una contraseña fuerte y única",
+    "signOutConfirmMessage": "¿Estás seguro de que quieres cerrar sesión?"
   },
   "profile": {
     "title": "Perfil",
