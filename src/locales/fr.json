@@ -595,5 +595,26 @@
     "section10Title": "10. Nous Contacter",
     "section10Content": "Si vous avez des questions concernant cette Politique de Confidentialité ou nos pratiques en matière de données, veuillez nous contacter à :\n\nE-mail : privacy@paktiq.com\nSupport : support@paktiq.com\n\nNous répondrons à votre demande dans les 30 jours.",
     "footerNote": "En utilisant PaktIQ, vous reconnaissez avoir lu et compris cette Politique de Confidentialité et acceptez la collecte et l'utilisation de vos informations telles que décrites ici."
+  },
+  "terms": {
+    "title": "Conditions d'Utilisation",
+    "lastUpdated": "Dernière mise à jour : Décembre 2025",
+    "section1Title": "1. Acceptation des Conditions",
+    "section1Content": "En accédant et en utilisant PaktIQ (\"le Service\"), vous acceptez d'être lié par ces Conditions d'Utilisation et toutes les lois et réglementations applicables. Si vous n'acceptez pas l'une de ces conditions, vous êtes interdit d'utiliser ou d'accéder à ce service.",
+    "section2Title": "2. Licence d'Utilisation",
+    "section2Content": "PaktIQ vous accorde une licence personnelle, non transférable et non exclusive d'utiliser l'application à des fins de suivi d'objectifs personnels et de réalisations. Cette licence n'inclut pas :\n\n• Le droit de revendre ou de redistribuer le service\n• Le droit de rétro-ingénierie ou de tenter d'extraire le code source\n• Le droit d'utiliser le service à des fins commerciales sans autorisation\n• Le droit de créer des œuvres dérivées basées sur le service",
+    "section3Title": "3. Responsabilités de l'Utilisateur",
+    "section3Content": "En tant qu'utilisateur de PaktIQ, vous acceptez de :\n\n• Maintenir la confidentialité de vos identifiants de compte\n• Utiliser le service en conformité avec toutes les lois locales, étatiques, nationales et internationales applicables\n• Ne pas tenter d'accéder de manière non autorisée au service ou aux comptes d'autres utilisateurs\n• Ne pas utiliser le service pour stocker ou transmettre tout contenu illégal, nuisible ou offensant\n• Ne pas interférer avec ou perturber le service ou les serveurs connectés au service\n• Fournir des informations précises et véridiques lors de la création de votre compte",
+    "section4Title": "4. Compte et Données",
+    "section4Content": "Vous êtes responsable du maintien de la sécurité de votre compte et de votre mot de passe. PaktIQ ne peut pas et ne sera pas responsable de toute perte ou dommage résultant de votre incapacité à respecter cette obligation de sécurité. Vous êtes responsable de tout le contenu publié et de toute activité qui se produit sous votre compte. Vous pouvez supprimer votre compte à tout moment, et lors de la suppression, vos données seront supprimées conformément à notre Politique de Confidentialité.",
+    "section5Title": "5. Propriété Intellectuelle",
+    "section5Content": "Le Service et son contenu original, ses fonctionnalités et sa fonctionnalité sont la propriété de PaktIQ et sont protégés par les lois internationales sur le droit d'auteur, les marques de commerce, les brevets, les secrets commerciaux et autres droits de propriété intellectuelle. Votre utilisation du Service ne vous accorde pas la propriété de droits de propriété intellectuelle dans le Service ou le contenu auquel vous accédez.",
+    "section6Title": "6. Avertissement",
+    "section6Content": "PaktIQ est fourni \"tel quel\" et \"tel que disponible\" sans garanties d'aucune sorte, expresse ou implicite. Nous nous efforçons d'assurer l'exactitude et la fiabilité mais ne pouvons garantir un service ininterrompu ou sans erreur. Nous ne garantissons pas que le Service répondra à vos exigences ou que le fonctionnement du Service sera ininterrompu ou sans erreur.",
+    "section7Title": "7. Limitation de Responsabilité",
+    "section7Content": "En aucun cas PaktIQ, ses directeurs, employés, partenaires, agents, fournisseurs ou affiliés ne seront responsables de tout dommage indirect, accessoire, spécial, consécutif ou punitif, y compris sans limitation, la perte de profits, de données, d'utilisation, de goodwill ou d'autres pertes intangibles, résultant de votre utilisation du Service.",
+    "section8Title": "8. Modifications des Conditions",
+    "section8Content": "Nous nous réservons le droit de modifier ou de remplacer ces Conditions d'Utilisation à tout moment. Si une révision est importante, nous fournirons un préavis d'au moins 30 jours avant que les nouvelles conditions ne prennent effet. Ce qui constitue un changement important sera déterminé à notre seule discrétion. Votre utilisation continue du Service après de tels changements constitue votre acceptation des nouvelles Conditions d'Utilisation.",
+    "footerNote": "En utilisant PaktIQ, vous reconnaissez avoir lu, compris et accepté d'être lié par ces Conditions d'Utilisation. Si vous avez des questions sur ces conditions, veuillez nous contacter à legal@paktiq.com."
   }
 }

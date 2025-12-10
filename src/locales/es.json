@@ -780,5 +780,26 @@
     "section10Title": "10. Contáctenos",
     "section10Content": "Si tiene alguna pregunta sobre esta Política de Privacidad o nuestras prácticas de datos, contáctenos en:\n\nCorreo electrónico: privacy@paktiq.com\nSoporte: support@paktiq.com\n\nResponderemos a su consulta dentro de 30 días.",
     "footerNote": "Al usar PaktIQ, usted reconoce que ha leído y entendido esta Política de Privacidad y acepta la recopilación y uso de su información según se describe aquí."
+  },
+  "terms": {
+    "title": "Términos de Servicio",
+    "lastUpdated": "Última actualización: Diciembre 2025",
+    "section1Title": "1. Aceptación de los Términos",
+    "section1Content": "Al acceder y usar PaktIQ (\"el Servicio\"), usted acepta estar sujeto a estos Términos de Servicio y todas las leyes y regulaciones aplicables. Si no está de acuerdo con alguno de estos términos, tiene prohibido usar o acceder a este servicio.",
+    "section2Title": "2. Licencia de Uso",
+    "section2Content": "PaktIQ le otorga una licencia personal, no transferible y no exclusiva para usar la aplicación con fines de seguimiento de objetivos personales y logros. Esta licencia no incluye:\n\n• El derecho de revender o redistribuir el servicio\n• El derecho de ingeniería inversa o intentar extraer el código fuente\n• El derecho de usar el servicio para cualquier propósito comercial sin autorización\n• El derecho de crear obras derivadas basadas en el servicio",
+    "section3Title": "3. Responsabilidades del Usuario",
+    "section3Content": "Como usuario de PaktIQ, usted acepta:\n\n• Mantener la confidencialidad de las credenciales de su cuenta\n• Usar el servicio en cumplimiento de todas las leyes locales, estatales, nacionales e internacionales aplicables\n• No intentar obtener acceso no autorizado al servicio o a las cuentas de otros usuarios\n• No usar el servicio para almacenar o transmitir cualquier contenido ilegal, dañino u ofensivo\n• No interferir o interrumpir el servicio o los servidores conectados al servicio\n• Proporcionar información precisa y veraz al crear su cuenta",
+    "section4Title": "4. Cuenta y Datos",
+    "section4Content": "Usted es responsable de mantener la seguridad de su cuenta y contraseña. PaktIQ no puede y no será responsable de ninguna pérdida o daño por su incumplimiento de esta obligación de seguridad. Usted es responsable de todo el contenido publicado y la actividad que ocurre bajo su cuenta. Puede eliminar su cuenta en cualquier momento, y al eliminar, sus datos serán removidos de acuerdo con nuestra Política de Privacidad.",
+    "section5Title": "5. Propiedad Intelectual",
+    "section5Content": "El Servicio y su contenido original, características y funcionalidad son propiedad de PaktIQ y están protegidos por las leyes internacionales de derechos de autor, marcas registradas, patentes, secretos comerciales y otras leyes de propiedad intelectual. Su uso del Servicio no le otorga la propiedad de ningún derecho de propiedad intelectual en el Servicio o el contenido al que accede.",
+    "section6Title": "6. Descargo de Responsabilidad",
+    "section6Content": "PaktIQ se proporciona \"tal cual\" y \"según disponibilidad\" sin garantías de ningún tipo, ya sean expresas o implícitas. Nos esforzamos por la precisión y confiabilidad pero no podemos garantizar un servicio ininterrumpido o libre de errores. No garantizamos que el Servicio cumplirá con sus requisitos o que el funcionamiento del Servicio será ininterrumpido o libre de errores.",
+    "section7Title": "7. Limitación de Responsabilidad",
+    "section7Content": "En ningún caso PaktIQ, sus directores, empleados, socios, agentes, proveedores o afiliados serán responsables de ningún daño indirecto, incidental, especial, consecuente o punitivo, incluidos sin limitación, pérdida de ganancias, datos, uso, buena voluntad u otras pérdidas intangibles, resultantes de su uso del Servicio.",
+    "section8Title": "8. Cambios a los Términos",
+    "section8Content": "Nos reservamos el derecho de modificar o reemplazar estos Términos de Servicio en cualquier momento. Si una revisión es material, proporcionaremos al menos 30 días de aviso antes de que cualquier nuevo término entre en vigor. Lo que constituye un cambio material será determinado a nuestra sola discreción. Su uso continuo del Servicio después de tales cambios constituye su aceptación de los nuevos Términos de Servicio.",
+    "footerNote": "Al usar PaktIQ, usted reconoce que ha leído, entendido y acepta estar sujeto a estos Términos de Servicio. Si tiene alguna pregunta sobre estos términos, contáctenos en legal@paktiq.com."
   }
 }

@@ -670,5 +670,26 @@
     "section10Title": "10. Contact Us",
     "section10Content": "If you have any questions about this Privacy Policy or our data practices, please contact us at:\n\nEmail: privacy@paktiq.com\nSupport: support@paktiq.com\n\nWe will respond to your inquiry within 30 days.",
     "footerNote": "By using PaktIQ, you acknowledge that you have read and understood this Privacy Policy and agree to the collection and use of your information as described herein."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last Updated: December 2025",
+    "section1Title": "1. Acceptance of Terms",
+    "section1Content": "By accessing and using PaktIQ (\"the Service\"), you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this service.",
+    "section2Title": "2. Use License",
+    "section2Content": "PaktIQ grants you a personal, non-transferable, non-exclusive license to use the application for personal goal tracking and achievement purposes. This license does not include:\n\n• The right to resell or redistribute the service\n• The right to reverse engineer or attempt to extract source code\n• The right to use the service for any commercial purposes without authorization\n• The right to create derivative works based on the service",
+    "section3Title": "3. User Responsibilities",
+    "section3Content": "As a user of PaktIQ, you agree to:\n\n• Maintain the confidentiality of your account credentials\n• Use the service in compliance with all applicable local, state, national, and international laws\n• Not attempt to gain unauthorized access to the service or other users' accounts\n• Not use the service to store or transmit any illegal, harmful, or offensive content\n• Not interfere with or disrupt the service or servers connected to the service\n• Provide accurate and truthful information when creating your account",
+    "section4Title": "4. Account and Data",
+    "section4Content": "You are responsible for maintaining the security of your account and password. PaktIQ cannot and will not be liable for any loss or damage from your failure to comply with this security obligation. You are responsible for all content posted and activity that occurs under your account. You may delete your account at any time, and upon deletion, your data will be removed in accordance with our Privacy Policy.",
+    "section5Title": "5. Intellectual Property",
+    "section5Content": "The Service and its original content, features, and functionality are owned by PaktIQ and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws. Your use of the Service does not grant you ownership of any intellectual property rights in the Service or the content you access.",
+    "section6Title": "6. Disclaimer",
+    "section6Content": "PaktIQ is provided \"as is\" and \"as available\" without warranties of any kind, either express or implied. We strive for accuracy and reliability but cannot guarantee uninterrupted or error-free service. We do not warrant that the Service will meet your requirements or that the operation of the Service will be uninterrupted or error-free.",
+    "section7Title": "7. Limitation of Liability",
+    "section7Content": "In no event shall PaktIQ, its directors, employees, partners, agents, suppliers, or affiliates be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your use of the Service.",
+    "section8Title": "8. Changes to Terms",
+    "section8Content": "We reserve the right to modify or replace these Terms of Service at any time. If a revision is material, we will provide at least 30 days notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion. Your continued use of the Service after any such changes constitutes your acceptance of the new Terms of Service.",
+    "footerNote": "By using PaktIQ, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service. If you have any questions about these terms, please contact us at legal@paktiq.com."
   }
 }

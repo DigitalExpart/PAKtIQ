@@ -235,7 +235,7 @@ export default function SettingsScreen() {
 
             <TouchableOpacity 
               style={styles.menuRow}
-              onPress={() => {/* Navigate to terms */}}
+              onPress={() => router.push('/terms')}
             >
               <View style={styles.menuLeft}>
                 <FileText size={20} color={colors.textSecondary} />
