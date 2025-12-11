@@ -27,7 +27,7 @@ You should see: **"Success. No rows returned"**
 - Click **"Table Editor"** in left sidebar
 - You should see these 6 tables:
   - ✅ profiles
-  - ✅ pakts
+  - ✅ Resolves
   - ✅ milestones
   - ✅ reminders
   - ✅ achievements
@@ -50,15 +50,15 @@ You should see: **"Success. No rows returned"**
 - Go to **Table Editor** → **profiles** table
 - Profile was auto-created!
 
-### Create a Pakt:
+### Create a Resolve:
 1. Select a category (like "Health & Fitness")
-2. Fill in pakt details
+2. Fill in Resolve details
 3. Add milestones
 4. Complete the flow
 
 ### Check Database:
-- Go to **Table Editor** → **pakts** table
-- Your pakt is saved!
+- Go to **Table Editor** → **Resolves** table
+- Your Resolve is saved!
 - Check **milestones** table too
 
 ---

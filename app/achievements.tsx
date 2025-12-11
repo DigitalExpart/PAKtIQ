@@ -85,11 +85,11 @@ export default function AchievementScreen() {
     { type: 'milestone_25', title: 'On a Roll', description: 'Complete 25 milestones', icon: '🔥' },
     { type: 'milestone_50', title: 'Half Century', description: 'Complete 50 milestones', icon: '💯' },
     { type: 'milestone_100', title: 'Century Club', description: 'Complete 100 milestones', icon: '🏆' },
-    // Pakt achievements
-    { type: 'first_pakt', title: 'Committed', description: 'Complete your first Pakt', icon: '🎉' },
-    { type: 'pakt_5', title: 'Dedicated', description: 'Complete 5 Pakts', icon: '💪' },
-    { type: 'pakt_10', title: 'Achiever', description: 'Complete 10 Pakts', icon: '🌟' },
-    { type: 'pakt_25', title: 'Champion', description: 'Complete 25 Pakts', icon: '👑' },
+    // Resolve achievements
+    { type: 'first_pakt', title: 'Committed', description: 'Complete your first Resolve', icon: '🎉' },
+    { type: 'pakt_5', title: 'Dedicated', description: 'Complete 5 Resolves', icon: '💪' },
+    { type: 'pakt_10', title: 'Achiever', description: 'Complete 10 Resolves', icon: '🌟' },
+    { type: 'pakt_25', title: 'Champion', description: 'Complete 25 Resolves', icon: '👑' },
   ];
 
   // Icon mapping for achievements
@@ -376,7 +376,7 @@ export default function AchievementScreen() {
         <View style={[styles.motivationCard, { backgroundColor: colors.surface }]}>
           <Text style={styles.motivationEmoji}>🌟</Text>
           <Text style={[styles.motivationText, { color: colors.textSecondary }]}>
-            Keep going! Complete more Pakts to unlock new badges
+            Keep going! Complete more Resolves to unlock new badges
           </Text>
         </View>
 

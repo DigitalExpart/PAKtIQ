@@ -21,14 +21,14 @@ export interface PaktExportData {
 
 export class ExportService {
   /**
-   * Generate PDF HTML for a pakt
+   * Generate PDF HTML for a Resolve
    */
-  private static generatePaktPDFHTML(pakt: PaktExportData): string {
-    const completedMilestones = pakt.milestones?.filter(m => m.completed).length || 0;
-    const totalMilestones = pakt.milestones?.length || 0;
-    const deadlineDate = new Date(pakt.deadline).toLocaleDateString();
+  private static generatePaktPDFHTML(Resolve: PaktExportData): string {
+    const completedMilestones = Resolve.milestones?.filter(m => m.completed).length || 0;
+    const totalMilestones = Resolve.milestones?.length || 0;
+    const deadlineDate = new Date(Resolve.deadline).toLocaleDateString();
 
-    const milestonesHTML = pakt.milestones
+    const milestonesHTML = Resolve.milestones
       ?.map(
         (m, index) => `
         <div style="margin-bottom: 12px; padding: 12px; background: #f5f5f5; border-radius: 8px;">
@@ -70,7 +70,7 @@ export class ExportService {
               color: #9163F2;
               margin-bottom: 8px;
             }
-            .pakt-name {
+            .Resolve-name {
               font-size: 28px;
               font-weight: bold;
               color: #1a1625;
@@ -147,17 +147,17 @@ export class ExportService {
         <body>
           <div class="header">
             <div class="logo">Resolute Plan</div>
-            <div class="pakt-name">${pakt.name}</div>
+            <div class="Resolve-name">${Resolve.name}</div>
           </div>
 
           <div class="info-grid">
             <div class="info-item">
               <div class="info-label">Category</div>
-              <div class="info-value">${pakt.category}</div>
+              <div class="info-value">${Resolve.category}</div>
             </div>
             <div class="info-item">
               <div class="info-label">Status</div>
-              <div class="info-value">${pakt.status.charAt(0).toUpperCase() + pakt.status.slice(1)}</div>
+              <div class="info-value">${Resolve.status.charAt(0).toUpperCase() + Resolve.status.slice(1)}</div>
             </div>
             <div class="info-item">
               <div class="info-label">Deadline</div>
@@ -165,10 +165,10 @@ export class ExportService {
             </div>
             <div class="info-item">
               <div class="info-label">Progress</div>
-              <div class="info-value">${pakt.progress}%</div>
+              <div class="info-value">${Resolve.progress}%</div>
               <div class="progress-bar">
-                <div class="progress-fill" style="width: ${pakt.progress}%;">
-                  ${pakt.progress}%
+                <div class="progress-fill" style="width: ${Resolve.progress}%;">
+                  ${Resolve.progress}%
                 </div>
               </div>
             </div>
@@ -176,7 +176,7 @@ export class ExportService {
 
           <div class="description">
             <strong>Description:</strong><br/>
-            ${pakt.description || 'No description provided'}
+            ${Resolve.description || 'No description provided'}
           </div>
 
           <div class="milestones-section">
@@ -195,11 +195,11 @@ export class ExportService {
   }
 
   /**
-   * Export a single pakt to PDF
+   * Export a single Resolve to PDF
    */
-  static async exportPaktToPDF(pakt: PaktExportData): Promise<void> {
+  static async exportPaktToPDF(Resolve: PaktExportData): Promise<void> {
     try {
-      const html = this.generatePaktPDFHTML(pakt);
+      const html = this.generatePaktPDFHTML(Resolve);
       
       const { uri } = await Print.printToFileAsync({
         html,
@@ -209,7 +209,7 @@ export class ExportService {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri, {
           mimeType: 'application/pdf',
-          dialogTitle: `Export ${pakt.name}`,
+          dialogTitle: `Export ${Resolve.name}`,
         });
       } else {
         throw new Error('Sharing is not available on this device');
@@ -221,13 +221,13 @@ export class ExportService {
   }
 
   /**
-   * Export multiple pakts to PDF
+   * Export multiple Resolves to PDF
    */
-  static async exportPaktsToPDF(pakts: PaktExportData[]): Promise<void> {
+  static async exportPaktsToPDF(Resolves: PaktExportData[]): Promise<void> {
     try {
-      const html = pakts
-        .map((pakt, index) => {
-          const paktHTML = this.generatePaktPDFHTML(pakt);
+      const html = Resolves
+        .map((Resolve, index) => {
+          const paktHTML = this.generatePaktPDFHTML(Resolve);
           if (index > 0) {
             return `<div style="page-break-before: always;">${paktHTML}</div>`;
           }
@@ -243,7 +243,7 @@ export class ExportService {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri, {
           mimeType: 'application/pdf',
-          dialogTitle: `Export ${pakts.length} Pakts`,
+          dialogTitle: `Export ${Resolves.length} Resolves`,
         });
       } else {
         throw new Error('Sharing is not available on this device');

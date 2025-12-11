@@ -3,7 +3,7 @@
 ## Problem
 The app was crashing with error:
 ```
-Unable to resolve "@react-native-community/datetimepicker" from "app\pakt-naming.tsx"
+Unable to resolve "@react-native-community/datetimepicker" from "app\Resolve-naming.tsx"
 ```
 
 ## Root Cause
@@ -33,7 +33,7 @@ The `--clear` flag clears the Metro bundler cache, ensuring the new package is p
    - Or reload manually by pressing `R` in the Expo terminal
 
 3. **Test the deadline picker**
-   - Go to New Pakt → Category → Pakt Name screen
+   - Go to New Resolve → Category → Resolve Name screen
    - You should now see the deadline picker working!
 
 ## Why This Fix Works

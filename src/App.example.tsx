@@ -9,8 +9,8 @@
 
 import React from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import WelcomeScreen from './components/paktiq/WelcomeScreen';
-import PaktDashboard from './components/paktiq/PaktDashboard';
+import WelcomeScreen from './components/resolviq/WelcomeScreen';
+import PaktDashboard from './components/resolviq/PaktDashboard';
 
 function AppContent() {
   const { user, loading } = useAuth();

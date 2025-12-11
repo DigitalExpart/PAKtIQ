@@ -11,9 +11,9 @@ A comprehensive user profile screen featuring:
 - Name, email, and bio display
 - PaktIQ Pro badge indicator
 - Member since date
-- **Stats Cards**: Day Streak, Active Pakts, Success Rate
+- **Stats Cards**: Day Streak, Active Resolves, Success Rate
 - **Quick Actions**: 
-  - Create New Pakt
+  - Create New Resolve
   - View Achievements
 - **Account Settings**:
   - App Settings
@@ -52,10 +52,10 @@ Allows users to edit their personal information:
 
 ---
 
-### 3. **Pakt Detail Screen** (`app/pakt-detail.tsx`)
-Detailed view of individual Pakts:
+### 3. **Resolve Detail Screen** (`app/Resolve-detail.tsx`)
+Detailed view of individual Resolves:
 - **Progress Overview**:
-  - Pakt name and category
+  - Resolve name and category
   - Progress percentage with colored circle
   - Progress bar with milestone completion
 - **Information Sections**:
@@ -69,11 +69,11 @@ Detailed view of individual Pakts:
   - Completion status with strikethrough
 - **Action Buttons**:
   - Add Milestone
-  - Share Pakt
+  - Share Resolve
 - **Menu Options** (⋮):
-  - Edit Pakt
-  - Share Pakt
-  - Delete Pakt (danger action)
+  - Edit Resolve
+  - Share Resolve
+  - Delete Resolve (danger action)
 
 **Features**:
 - Dynamic progress colors based on percentage
@@ -81,7 +81,7 @@ Detailed view of individual Pakts:
 - Modal menu for additional actions
 - Back navigation
 
-**Navigation**: From Dashboard (tap on Pakt cards)
+**Navigation**: From Dashboard (tap on Resolve cards)
 
 ---
 
@@ -91,8 +91,8 @@ Comprehensive notification management:
 - **General Settings**:
   - Push Notifications
   - Email Notifications
-- **Pakt Reminders**:
-  - Pakt Reminders
+- **Resolve Reminders**:
+  - Resolve Reminders
   - Milestone Deadlines
   - Streak Protection
 - **Progress & Motivation**:
@@ -133,15 +133,15 @@ Dashboard
     │     ├─→ Edit Profile
     │     ├─→ Settings
     │     ├─→ Notifications
-    │     └─→ Quick Actions (Create Pakt, Achievements)
-    ├─→ Pakt Card → Pakt Detail
+    │     └─→ Quick Actions (Create Resolve, Achievements)
+    ├─→ Resolve Card → Resolve Detail
     │                  ├─→ Add Milestone
     │                  ├─→ Share
     │                  └─→ Edit/Delete (via menu)
     └─→ Bottom Nav
           ├─→ Home (Dashboard)
           ├─→ Insights
-          ├─→ + (Create New Pakt)
+          ├─→ + (Create New Resolve)
           ├─→ Awards (Achievements)
           └─→ Profile
 ```
@@ -186,9 +186,9 @@ Dashboard
 3. **Social Features Screen** - Share with friends, leaderboards
 4. **Custom Themes Screen** - Dark mode, color schemes
 5. **Backup & Sync Screen** - Cloud backup, data export
-6. **Pakt Templates Detail** - View and customize template details
+6. **Resolve Templates Detail** - View and customize template details
 7. **Achievement Detail** - Expanded view of specific achievements
-8. **Calendar View** - Visual timeline of all Pakts and milestones
+8. **Calendar View** - Visual timeline of all Resolves and milestones
 
 ---
 
@@ -205,7 +205,7 @@ Dashboard
 app/
 ├── profile.tsx           # Main profile screen
 ├── edit-profile.tsx      # Edit profile form
-├── pakt-detail.tsx       # Individual Pakt details
+├── Resolve-detail.tsx       # Individual Resolve details
 ├── notifications.tsx     # Notification settings
 └── dashboard.tsx         # Updated with profile navigation
 ```
@@ -221,7 +221,7 @@ app/
 
 - [x] Profile screen renders correctly
 - [x] Edit profile form works
-- [x] Pakt detail shows proper information
+- [x] Resolve detail shows proper information
 - [x] Notifications toggles work
 - [x] Dashboard navigation to profile works
 - [x] Back navigation works from all new screens

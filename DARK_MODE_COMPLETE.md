@@ -7,19 +7,19 @@
 ## 🎨 SCREENS WITH FULL DARK MODE (100% Coverage)
 
 ### ✅ Dashboard Screens:
-1. **Dashboard** - Background, stats cards, pakt cards, all text
-2. **Profile** - Header, stats, quick actions, My Pakts section, tabs
+1. **Dashboard** - Background, stats cards, Resolve cards, all text
+2. **Profile** - Header, stats, quick actions, My Resolves section, tabs
 3. **Settings** - All menus, switches, cards, text
 
 ### ✅ Creation Flow Screens:
 4. **Category Selection** - Header, category cards, footer
-5. **Pakt Naming** - Header, inputs, date button, suggestions, tips, footer
+5. **Resolve Naming** - Header, inputs, date button, suggestions, tips, footer
 6. **Milestone Builder** - Header, milestone items, input cards, footer
 7. **Reminder Setup** - Header, toggle section, frequency options, time cards, footer
 
 ### ✅ Detail & Management Screens:
-8. **Pakt Detail** - Background, all cards
-9. **Edit Pakt** - Forms, buttons, inputs (already had it)
+8. **Resolve Detail** - Background, all cards
+9. **Edit Resolve** - Forms, buttons, inputs (already had it)
 10. **Achievements** - Earned badges, locked badges, motivational card
 11. **Insights** - Stats cards, weekly activity, category breakdown, productivity times, AI card
 
@@ -76,7 +76,7 @@
 
 3. **Test all screens**:
    - Dashboard → Should be dark ✅
-   - New Pakt flow → All steps dark ✅
+   - New Resolve flow → All steps dark ✅
    - Profile → Dark with dark cards ✅
    - Achievements → Dark badges ✅
    - Insights → Dark stats & charts ✅
@@ -97,22 +97,22 @@
 **Quick Commands:**
 
 ```sql
--- View all pakts with deadlines
+-- View all Resolves with deadlines
 SELECT name, deadline, category, status, progress
-FROM pakts
+FROM Resolves
 ORDER BY deadline ASC;
 
 -- Get upcoming deadlines (next 7 days)
 SELECT name, deadline, 
   EXTRACT(DAY FROM (deadline - NOW())) as days_left
-FROM pakts
+FROM Resolves
 WHERE status = 'active'
   AND deadline > NOW()
   AND deadline < NOW() + INTERVAL '7 days'
 ORDER BY deadline ASC;
 
--- Update specific pakt deadline
-UPDATE pakts
+-- Update specific Resolve deadline
+UPDATE Resolves
 SET deadline = '2026-06-15 00:00:00+00'
 WHERE id = 'YOUR_PAKT_ID';
 ```
@@ -130,12 +130,12 @@ WHERE id = 'YOUR_PAKT_ID';
 - ✅ `app/achievements.tsx` - Badges and cards
 - ✅ `app/insights.tsx` - All charts and stats
 - ✅ `app/category-selection.tsx` - Complete
-- ✅ `app/pakt-naming.tsx` - Forms and sections
+- ✅ `app/Resolve-naming.tsx` - Forms and sections
 - ✅ `app/milestone-builder.tsx` - Items and inputs
 - ✅ `app/reminder-setup.tsx` - Options and cards
 - ✅ `app/notifications.tsx` - All notification items
-- ✅ `app/pakt-detail.tsx` - Background
-- ✅ `app/edit-pakt.tsx` - Already had it
+- ✅ `app/Resolve-detail.tsx` - Background
+- ✅ `app/edit-Resolve.tsx` - Already had it
 - ✅ `app/templates.tsx` - Theme ready
 - ✅ `app/premium.tsx` - Theme ready
 - ✅ `app/auth.tsx` - Theme ready
@@ -165,9 +165,9 @@ WHERE id = 'YOUR_PAKT_ID';
 - ⏳ **Manual date picker** (needs Metro restart)
 
 ### Features Working:
-- ✅ Create pakts with deadline
-- ✅ Edit pakts
-- ✅ Delete pakts
+- ✅ Create Resolves with deadline
+- ✅ Edit Resolves
+- ✅ Delete Resolves
 - ✅ View achievements
 - ✅ View insights
 - ✅ All navigation
@@ -192,7 +192,7 @@ npx expo start -c
 
 **Then uncomment in code:**
 - AsyncStorage in `ThemeContext.tsx`
-- DateTimePicker in `pakt-naming.tsx` and `edit-pakt.tsx`
+- DateTimePicker in `Resolve-naming.tsx` and `edit-Resolve.tsx`
 
 **Or I can do it for you after Metro restarts!**
 
@@ -230,10 +230,10 @@ colors.warning        // Yellow #FFD88A
 ## 📸 BEFORE & AFTER
 
 ### BEFORE (Your Screenshots):
-- ❌ Profile: My Pakts section WHITE
+- ❌ Profile: My Resolves section WHITE
 - ❌ Insights: Weekly Activity card WHITE
 - ❌ Category Selection: Completely LIGHT MODE
-- ❌ Pakt Naming: Completely LIGHT MODE
+- ❌ Resolve Naming: Completely LIGHT MODE
 - ❌ Notifications: Completely LIGHT MODE
 - ❌ Dashboard: Mixed light/dark
 
@@ -241,7 +241,7 @@ colors.warning        // Yellow #FFD88A
 - ✅ Profile: FULLY DARK
 - ✅ Insights: FULLY DARK
 - ✅ Category Selection: FULLY DARK
-- ✅ Pakt Naming: FULLY DARK
+- ✅ Resolve Naming: FULLY DARK
 - ✅ Notifications: FULLY DARK
 - ✅ Dashboard: FULLY DARK
 - ✅ **ALL SCREENS**: FULLY DARK
@@ -278,7 +278,7 @@ colors.warning        // Yellow #FFD88A
 3. **Toggle "Dark Mode"**
 4. **Navigate through ALL screens**:
    - Home/Dashboard
-   - Create New Pakt (all 4 steps)
+   - Create New Resolve (all 4 steps)
    - Achievements
    - Insights
    - Profile
@@ -293,7 +293,7 @@ colors.warning        // Yellow #FFD88A
 
 Your app is now truly a professional, polished application with:
 - Full dark mode support
-- Pakt creation & editing
+- Resolve creation & editing
 - Deadline management
 - Beautiful UI that adapts to user preference
 

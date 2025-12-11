@@ -6,7 +6,7 @@ import { usePaktCreation } from '../src/contexts/PaktCreationContext';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
 import { Calendar } from 'lucide-react-native';
-import { PaktService } from '../src/services/pakt.service';
+import { ResolveService } from '../src/services/resolve.service';
 
 // Conditional import for DateTimePicker
 let DateTimePicker: any = null;
@@ -37,18 +37,18 @@ export default function MilestoneBuilder() {
   const [showDatePicker, setShowDatePicker] = useState<string | null>(null);
   const [tempDate, setTempDate] = useState<Date>(new Date());
   
-  // Load pakt deadline for validation
+  // Load Resolve deadline for validation
   useEffect(() => {
     const loadPaktDeadline = async () => {
       const paktId = params.paktId as string;
       if (paktId) {
         try {
-          const pakt = await PaktService.getPakt(paktId);
-          if (pakt?.deadline) {
-            setPaktDeadline(new Date(pakt.deadline));
+          const Resolve = await ResolveService.getResolve(paktId);
+          if (Resolve?.deadline) {
+            setPaktDeadline(new Date(Resolve.deadline));
           }
         } catch (error) {
-          console.error('Error loading pakt deadline:', error);
+          console.error('Error loading Resolve deadline:', error);
         }
       } else if (paktData.targetDate) {
         setPaktDeadline(new Date(paktData.targetDate));
@@ -68,7 +68,7 @@ export default function MilestoneBuilder() {
   };
 
   const updateMilestoneDueDate = (milestoneId: string, date: Date) => {
-    // Validate that milestone deadline doesn't exceed pakt deadline
+    // Validate that milestone deadline doesn't exceed Resolve deadline
     if (paktDeadline && date > paktDeadline) {
       Alert.alert(
         t('milestoneBuilder.invalidDate'),
@@ -111,7 +111,7 @@ export default function MilestoneBuilder() {
       return;
     }
     
-    // Validate milestone deadlines don't exceed pakt deadline
+    // Validate milestone deadlines don't exceed Resolve deadline
     if (paktDeadline) {
       const invalidMilestones = validMilestones.filter(m => {
         if (!m.dueDate) return false;
@@ -146,7 +146,7 @@ export default function MilestoneBuilder() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
+          <Text style={[styles.backButton, { color: colors.primary }]}>← {t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.text }]}>{t('milestoneBuilder.title')}</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{t('milestoneBuilder.subtitle')}</Text>
@@ -198,7 +198,7 @@ export default function MilestoneBuilder() {
               
               {milestone.dueDate && paktDeadline && new Date(milestone.dueDate) > paktDeadline && (
                 <Text style={[styles.errorText, { color: colors.error }]}>
-                  ⚠️ Deadline exceeds Pakt deadline
+                  ⚠️ Deadline exceeds Resolve deadline
                 </Text>
               )}
             </View>

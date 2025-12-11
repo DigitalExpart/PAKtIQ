@@ -1,7 +1,11 @@
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import { supabase } from '../lib/supabase';
+
+// Check if running in Expo Go (push notifications don't work in Expo Go)
+const isExpoGo = Constants.executionEnvironment === 'storeClient';
 
 // Configure how notifications are handled when app is in foreground
 Notifications.setNotificationHandler({
@@ -42,6 +46,12 @@ export class PushNotificationService {
    * Register device for push notifications
    */
   static async registerForPushNotifications(userId: string): Promise<string | null> {
+    // Push notifications don't work in Expo Go
+    if (isExpoGo) {
+      console.log('Push notifications are not available in Expo Go. Use a development build for full notification support.');
+      return null;
+    }
+
     try {
       const hasPermission = await this.requestPermissions();
       if (!hasPermission) {

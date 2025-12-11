@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, TrendingUp, Target, Calendar, Award, BarChart3, Clock } from 'lucide-react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { useAnalytics } from '../src/hooks/useAnalytics';
-import { usePakts } from '../src/hooks/usePakts';
+import { useResolves } from '../src/hooks/useResolves';
 import { useAchievements } from '../src/hooks/useAchievements';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
@@ -14,7 +14,7 @@ import BottomTabBar from '../src/components/BottomTabBar';
 export default function InsightsScreen() {
   const router = useRouter();
   const { insights, loading: analyticsLoading } = useAnalytics();
-  const { pakts, loading: paktsLoading } = usePakts();
+  const { resolves, loading: paktsLoading } = useResolves();
   const { achievements, loading: achievementsLoading } = useAchievements();
   const { colors } = useTheme();
   const { t } = useLanguage();
@@ -64,24 +64,26 @@ export default function InsightsScreen() {
     extrapolate: 'clamp',
   });
 
-  // Calculate completion rate from pakts
+  // Calculate completion rate from resolves
   const completionRate = () => {
-    const activePakts = pakts.filter(p => p.status === 'active');
-    if (activePakts.length === 0) return 0;
+    if (!resolves || !Array.isArray(resolves)) return 0;
+    
+    const activeResolves = resolves.filter(p => p.status === 'active');
+    if (activeResolves.length === 0) return 0;
     
     let totalMilestones = 0;
     let completedMilestones = 0;
 
     // Calculate from actual milestones if available
-    activePakts.forEach(pakt => {
-      const paktWithMilestones = pakt as any;
-      if (paktWithMilestones.milestones && Array.isArray(paktWithMilestones.milestones)) {
-        totalMilestones += paktWithMilestones.milestones.length;
-        completedMilestones += paktWithMilestones.milestones.filter((m: any) => m.completed).length;
+    activeResolves.forEach(resolve => {
+      const resolveWithMilestones = resolve as any;
+      if (resolveWithMilestones.milestones && Array.isArray(resolveWithMilestones.milestones)) {
+        totalMilestones += resolveWithMilestones.milestones.length;
+        completedMilestones += resolveWithMilestones.milestones.filter((m: any) => m.completed).length;
       } else {
-        // Fallback: treat each active pakt as a single "milestone"
+        // Fallback: treat each active resolve as a single "milestone"
         totalMilestones += 1;
-        if (pakt.progress >= 100) {
+        if (resolve.progress >= 100) {
           completedMilestones += 1;
         }
       }
@@ -111,7 +113,7 @@ export default function InsightsScreen() {
     },
     { 
       icon: Award, 
-      value: String(achievements.filter(a => a.earned_at !== null).length), 
+      value: String((achievements && Array.isArray(achievements) ? achievements.filter(a => a.earned_at !== null).length : 0)), 
       label: t('insights.badgesEarned'),
       colors: ['#FFB84D', '#FFA533'],
     },
@@ -147,16 +149,18 @@ export default function InsightsScreen() {
 
   // Calculate category breakdown
   const categoryMap = new Map<string, number>();
-  pakts.filter(p => p.status === 'active').forEach(pakt => {
-    const category = pakt.category || 'Other';
-    categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
-  });
+  if (resolves && Array.isArray(resolves)) {
+    resolves.filter(p => p.status === 'active').forEach(resolve => {
+      const category = resolve.category || 'Other';
+      categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
+    });
+  }
 
-  const totalPakts = pakts.filter(p => p.status === 'active').length;
+  const totalResolves = resolves && Array.isArray(resolves) ? resolves.filter(p => p.status === 'active').length : 0;
   const categories = Array.from(categoryMap.entries()).map(([name, count]) => ({
     name,
     count,
-    percentage: totalPakts > 0 ? Math.round((count / totalPakts) * 100) : 0,
+    percentage: totalResolves > 0 ? Math.round((count / totalResolves) * 100) : 0,
     color: getCategoryColor(name),
   }));
 
@@ -330,7 +334,7 @@ export default function InsightsScreen() {
               <View key={index} style={styles.categoryRow}>
                 <View style={styles.categoryLeft}>
                   <Text style={[styles.categoryName, { color: colors.text }]}>{category.name}</Text>
-                  <Text style={[styles.categoryCount, { color: colors.textSecondary }]}>{category.count} Pakts</Text>
+                  <Text style={[styles.categoryCount, { color: colors.textSecondary }]}>{category.count} Resolves</Text>
                 </View>
                 <View style={[styles.categoryBarContainer, { backgroundColor: colors.border }]}>
                   <View 
@@ -422,7 +426,7 @@ export default function InsightsScreen() {
             <Text style={styles.aiEmoji}>🤖</Text>
             <Text style={[styles.aiTitle, { color: colors.text }]}>{t('insights.aiInsightsComingSoon')}</Text>
             <Text style={[styles.aiText, { color: colors.textSecondary }]}>
-              Get personalized suggestions and optimize your Pakt strategy with AI
+              Get personalized suggestions and optimize your Resolve strategy with AI
             </Text>
             <TouchableOpacity style={styles.aiButton}>
               <Text style={styles.aiButtonText}>Join Waitlist</Text>

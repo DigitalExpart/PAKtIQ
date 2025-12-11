@@ -11,10 +11,10 @@
 ### ✅ Dashboard Overview
 - [ ] Total users count
 - [ ] Active users (last 30 days)
-- [ ] Total pakts count
+- [ ] Total Resolves count
 - [ ] Completion rate
 - [ ] User growth chart (30/90/365 days)
-- [ ] Pakt creation trend chart
+- [ ] Resolve creation trend chart
 - [ ] Recent activity feed
 
 ### ✅ User Management
@@ -23,7 +23,7 @@
 - [ ] Filter by date, status, premium
 - [ ] User detail view
   - Profile information
-  - User's pakts list
+  - User's Resolves list
   - Activity history
   - Achievements
 - [ ] Suspend/activate user
@@ -31,15 +31,15 @@
 - [ ] Export user list (CSV)
 
 ### ✅ Content Management
-- [ ] Pakt list (paginated)
-- [ ] Search pakts
+- [ ] Resolve list (paginated)
+- [ ] Search Resolves
 - [ ] Filter by category, status, date
-- [ ] Pakt detail view
-  - Full pakt information
+- [ ] Resolve detail view
+  - Full Resolve information
   - Milestones list
   - Progress history
-- [ ] Edit pakt (if needed)
-- [ ] Delete pakt
+- [ ] Edit Resolve (if needed)
+- [ ] Delete Resolve
 - [ ] Flag inappropriate content
 - [ ] Content moderation queue
 
@@ -53,7 +53,7 @@
   - Monthly active users (MAU)
   - Retention rate
   - Churn rate
-- [ ] Pakt analytics
+- [ ] Resolve analytics
   - Creation rate
   - Completion rate by category
   - Average completion time
@@ -100,14 +100,14 @@
 - Full Name
 - Signup Date
 - Last Active
-- Total Pakts
-- Completed Pakts
+- Total Resolves
+- Completed Resolves
 - Current Streak
 - Premium Status
 - Status (Active/Suspended)
 - Actions (View, Suspend, Delete)
 
-### Pakts Table Columns:
+### Resolves Table Columns:
 - ID
 - Name
 - User Email
@@ -123,9 +123,9 @@
 - Total Users
 - New Users (today/week/month)
 - Active Users (DAU/WAU/MAU)
-- Total Pakts
-- Active Pakts
-- Completed Pakts
+- Total Resolves
+- Active Resolves
+- Completed Resolves
 - Average Completion Rate
 - Total Milestones
 - Completed Milestones
@@ -161,10 +161,10 @@
 1. **AdminSidebar** - Navigation sidebar
 2. **StatsCard** - Display statistics
 3. **UserTable** - User list with filters
-4. **PaktTable** - Pakt list with filters
+4. **PaktTable** - Resolve list with filters
 5. **AnalyticsChart** - Various chart types
 6. **UserDetailModal** - User details view
-7. **PaktDetailModal** - Pakt details view
+7. **PaktDetailModal** - Resolve details view
 8. **ContentModerationQueue** - Flagged content review
 9. **ExportButton** - Export functionality
 10. **FilterPanel** - Advanced filters
@@ -189,18 +189,18 @@
 - `GET /admin/users/:id/activity`
 - `GET /admin/users/export`
 
-### Pakts:
-- `GET /admin/pakts` (list with filters)
-- `GET /admin/pakts/:id` (details)
-- `PUT /admin/pakts/:id`
-- `DELETE /admin/pakts/:id`
-- `POST /admin/pakts/:id/flag`
-- `GET /admin/pakts/flags` (moderation queue)
+### Resolves:
+- `GET /admin/Resolves` (list with filters)
+- `GET /admin/Resolves/:id` (details)
+- `PUT /admin/Resolves/:id`
+- `DELETE /admin/Resolves/:id`
+- `POST /admin/Resolves/:id/flag`
+- `GET /admin/Resolves/flags` (moderation queue)
 
 ### Analytics:
 - `GET /admin/analytics/overview`
 - `GET /admin/analytics/users`
-- `GET /admin/analytics/pakts`
+- `GET /admin/analytics/Resolves`
 - `GET /admin/analytics/reports`
 
 ### Settings:

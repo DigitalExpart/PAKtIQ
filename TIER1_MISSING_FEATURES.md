@@ -9,12 +9,12 @@
 - **Files needed:**
   - `src/services/export.service.ts` (new)
   - `src/utils/pdf-generator.ts` (new)
-  - Export button in `app/pakt-detail.tsx` or `app/dashboard.tsx`
+  - Export button in `app/Resolve-detail.tsx` or `app/dashboard.tsx`
 
 ### 2. **Share Resolution Plans** ❌
 - **Status:** UI buttons exist but no functionality
 - **Priority:** HIGH
-- **Location:** `app/pakt-detail.tsx` (line 481, 522 - Share buttons)
+- **Location:** `app/Resolve-detail.tsx` (line 481, 522 - Share buttons)
 - **Needs:** Implementation of share functionality
 - **Options:** 
   - Share as link (deep linking)
@@ -39,7 +39,7 @@
   - AI integration (OpenAI API or similar)
   - `src/services/ai-suggestions.service.ts` (new)
   - Dynamic suggestions based on user goals
-  - Integration in `app/pakt-naming.tsx` or new AI suggestions screen
+  - Integration in `app/Resolve-naming.tsx` or new AI suggestions screen
 
 ### 5. **Multi-language Support (i18n)** ❌
 - **Status:** UI exists but no translations

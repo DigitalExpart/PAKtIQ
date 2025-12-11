@@ -32,16 +32,16 @@ Your app will open automatically (usually http://localhost:5173)
 ### Test 1: See Real Data (2 minutes)
 1. **Open app** → Should show Welcome or Dashboard
 2. **Sign in** with your test account (test@test.com)
-3. **Dashboard loads** → You'll see pakts from database!
-4. **Click on a pakt** → See real milestones
+3. **Dashboard loads** → You'll see Resolves from database!
+4. **Click on a Resolve** → See real milestones
 5. **Check progress bars** → Shows actual backend data
 
-✅ **Success:** Dashboard shows your real pakts from Supabase
+✅ **Success:** Dashboard shows your real Resolves from Supabase
 
 ---
 
 ### Test 2: Complete Milestone (2 minutes)
-1. **Open any pakt** on dashboard
+1. **Open any Resolve** on dashboard
 2. **Click checkbox** on a milestone
 3. **Watch for:**
    - 🎊 Confetti animation
@@ -50,16 +50,16 @@ Your app will open automatically (usually http://localhost:5173)
 4. **Check Supabase:**
    - Go to Table Editor → milestones
    - Find the milestone → `completed` = true
-   - Go to pakts table → `progress` increased!
+   - Go to Resolves table → `progress` increased!
 
 ✅ **Success:** Milestone saved, progress auto-updated, notification sent
 
 ---
 
-### Test 3: Create Pakt with Reminder (5 minutes)
-1. **Click "+ New Pakt"**
+### Test 3: Create Resolve with Reminder (5 minutes)
+1. **Click "+ New Resolve"**
 2. **Select category** (e.g., Health & Fitness)
-3. **Name it:** "Test Backend Pakt"
+3. **Name it:** "Test Backend Resolve"
 4. **Add 2-3 milestones**
 5. **Reminder screen:**
    - Toggle "Enable Reminders" **ON**
@@ -78,8 +78,8 @@ Go to https://mirpnmrsjjmmiqbbawab.supabase.co
 
 **Check these tables:**
 
-1. **pakts** table:
-   - Find your "Test Backend Pakt"
+1. **Resolves** table:
+   - Find your "Test Backend Resolve"
    - Note the `progress` = 0
    - Note the `user_id` matches yours
 
@@ -96,7 +96,7 @@ Go to https://mirpnmrsjjmmiqbbawab.supabase.co
 
 4. **activity_log** table:
    - See logged activities
-   - Pakt created, milestones completed, etc.
+   - Resolve created, milestones completed, etc.
 
 ✅ **Success:** All data in database!
 
@@ -105,7 +105,7 @@ Go to https://mirpnmrsjjmmiqbbawab.supabase.co
 ## 🎯 **What's Different Now**
 
 ### Old Dashboard (Mock Data):
-- Showed hardcoded pakts
+- Showed hardcoded Resolves
 - Data disappeared on refresh
 - No notifications
 - Progress manual
@@ -122,19 +122,19 @@ Go to https://mirpnmrsjjmmiqbbawab.supabase.co
 
 You'll now receive:
 
-1. **🎯 Daily Reminders** - "Time to work on: [Pakt Name]"
+1. **🎯 Daily Reminders** - "Time to work on: [Resolve Name]"
 2. **📅 Weekly Reminders** - On selected days
 3. **🗓️ Custom Reminders** - Your chosen days
 4. **🎉 Milestone Completion** - "Great job completing [Milestone]!"
-5. **🏆 Pakt Completion** - "Congratulations! You completed [Pakt]!"
+5. **🏆 Resolve Completion** - "Congratulations! You completed [Resolve]!"
 
 ---
 
 ## 🔍 **Troubleshooting**
 
-### Dashboard shows no pakts?
+### Dashboard shows no Resolves?
 - Check you're signed in
-- Look in Supabase → pakts table → verify pakts exist for your user_id
+- Look in Supabase → Resolves table → verify Resolves exist for your user_id
 
 ### Milestone won't complete?
 - Check browser console for errors
@@ -157,7 +157,7 @@ You'll now receive:
 
 After testing, you should have:
 
-- [ ] Dashboard showing real pakts from database
+- [ ] Dashboard showing real Resolves from database
 - [ ] Milestones loading from backend
 - [ ] Progress updating automatically
 - [ ] Milestone completion notifications working
@@ -185,11 +185,11 @@ After testing, you should have:
 1. ✅ Restart dev server
 2. ✅ Test dashboard with real data
 3. ✅ Complete a milestone
-4. ✅ Create pakt with reminder
+4. ✅ Create Resolve with reminder
 5. ✅ Verify in Supabase
 
 ### Later:
-- Add more pakts
+- Add more Resolves
 - Test on different categories
 - Try weekly/custom reminders
 - Build to physical device for full notification testing

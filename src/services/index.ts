@@ -1,7 +1,7 @@
 // Export all services for easy importing
 export { AuthService } from './auth.service';
 export { ProfileService } from './profile.service';
-export { PaktService } from './pakt.service';
+export { ResolveService } from './resolve.service';
 export { MilestoneService } from './milestone.service';
 export { ReminderService } from './reminder.service';
 export { AchievementService } from './achievement.service';

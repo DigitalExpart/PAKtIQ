@@ -9,7 +9,7 @@ import { useAuth } from '../src/contexts/AuthContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
 import { StorageService } from '../src/services/storage.service';
 import { useAnalytics } from '../src/hooks/useAnalytics';
-import { usePaktStats } from '../src/hooks/usePakts';
+import { useResolveStats } from '../src/hooks/useResolves';
 import BottomTabBar from '../src/components/BottomTabBar';
 import { SuccessModal } from '../src/components/SuccessModal';
 import { DeleteConfirmationModal } from '../src/components/DeleteConfirmationModal';
@@ -23,7 +23,7 @@ export default function ProfileScreen() {
   const [showImageSuccessModal, setShowImageSuccessModal] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const { insights, loading: analyticsLoading } = useAnalytics();
-  const { stats: paktStats, loading: paktStatsLoading } = usePaktStats();
+  const { stats: resolveStats, loading: resolveStatsLoading } = useResolveStats();
 
   const handleLogout = () => {
     setShowSignOutConfirm(true);
@@ -131,12 +131,12 @@ export default function ProfileScreen() {
 
   // Calculate stats from live data
   const dayStreak = insights?.dayStreak || 0;
-  const activePakts = paktStats?.active || 0;
+  const activeResolves = resolveStats?.active || 0;
   const successRate = insights?.completionRate || 0;
 
   const stats = [
     { icon: '🔥', value: dayStreak.toString(), label: t('dashboard.streak'), color: '#FF6B6B' },
-    { icon: '🎯', value: activePakts.toString(), label: t('dashboard.activePakts'), color: '#9163F2' },
+    { icon: '🎯', value: activeResolves.toString(), label: t('dashboard.activeResolves'), color: '#9163F2' },
     { icon: '📈', value: `${Math.round(successRate)}%`, label: t('profile.successRate'), color: '#96E6B3' },
   ];
 
@@ -181,7 +181,7 @@ export default function ProfileScreen() {
       subtitle: t('profile.shareYourResolutions'),
       route: '/share',
       color: '#96E6B3',
-      available: true, // ✅ Implemented (available in pakt detail)
+      available: true, // ✅ Implemented (available in Resolve detail)
     },
   ];
 
@@ -238,7 +238,7 @@ export default function ProfileScreen() {
           {profile.isPro && (
             <View style={styles.proBadge}>
               <Crown size={16} color="#FFD88A" />
-              <Text style={styles.proText}>PaktIQ Pro</Text>
+              <Text style={styles.proText}>resolviq Pro</Text>
             </View>
           )}
 
@@ -382,15 +382,6 @@ export default function ProfileScreen() {
         activeOpacity={0.8}
       >
         <Text style={styles.backButtonText}>←</Text>
-      </TouchableOpacity>
-
-      {/* Floating Add Button */}
-      <TouchableOpacity 
-        style={styles.fabButton}
-        onPress={() => router.push('/category-selection')}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.fabIcon}>+</Text>
       </TouchableOpacity>
       
       <BottomTabBar />
@@ -694,27 +685,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     backgroundColor: '#F4F4F6',
     borderRadius: 8,
-  },
-  fabButton: {
-    position: 'absolute',
-    bottom: 32,
-    right: 32,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#9163F2',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#9163F2',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  fabIcon: {
-    color: '#FFFFFF',
-    fontSize: 32,
-    fontWeight: '300',
   },
   logoutButton: {
     flexDirection: 'row',

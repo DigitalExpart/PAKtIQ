@@ -7,8 +7,8 @@ import { useTheme } from '../src/contexts/ThemeContext';
 import { useAuth } from '../src/contexts/AuthContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
 import { JournalService, type JournalEntry } from '../src/services/journal.service';
-import { usePakts } from '../src/hooks/usePakts';
-import { translatePaktName } from '../src/utils/translations';
+import { useResolves } from '../src/hooks/useResolves';
+import { translateResolveName } from '../src/utils/translations';
 import BottomTabBar from '../src/components/BottomTabBar';
 
 export default function JournalScreen() {
@@ -16,7 +16,7 @@ export default function JournalScreen() {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { pakts } = usePakts();
+  const { Resolves } = useResolves();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [showEntryModal, setShowEntryModal] = useState(false);
@@ -133,8 +133,8 @@ export default function JournalScreen() {
 
   const getPaktName = (paktId?: string) => {
     if (!paktId) return null;
-    const pakt = pakts.find(p => p.id === paktId);
-    return pakt?.name;
+    const Resolve = Resolves.find(p => p.id === paktId);
+    return Resolve?.name;
   };
 
   const moods = ['😊', '😌', '😐', '😟', '😢', '🎉', '💪', '🙏'];
@@ -253,7 +253,7 @@ export default function JournalScreen() {
                 />
               </View>
 
-              {/* Linked Pakt */}
+              {/* Linked Resolve */}
               <View style={styles.formGroup}>
                 <Text style={[styles.label, { color: colors.text }]}>{t('journal.linkedToPakt')} (Optional)</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.paktSelector}>
@@ -273,24 +273,24 @@ export default function JournalScreen() {
                       None
                     </Text>
                   </TouchableOpacity>
-                  {pakts.map((pakt) => (
+                  {Resolves.map((Resolve) => (
                     <TouchableOpacity
-                      key={pakt.id}
+                      key={resolve.id}
                       style={[
                         styles.paktChip,
                         {
-                          backgroundColor: selectedPaktId === pakt.id ? colors.primary : colors.background,
+                          backgroundColor: selectedPaktId === resolve.id ? colors.primary : colors.background,
                         },
                       ]}
-                      onPress={() => setSelectedPaktId(pakt.id)}
+                      onPress={() => setSelectedPaktId(resolve.id)}
                     >
                       <Text
                         style={[
                           styles.paktChipText,
-                          { color: selectedPaktId === pakt.id ? '#FFFFFF' : colors.text },
+                          { color: selectedPaktId === resolve.id ? '#FFFFFF' : colors.text },
                         ]}
                       >
-                        {translatePaktName(pakt.name)}
+                        {translateResolveName(resolve.name)}
                       </Text>
                     </TouchableOpacity>
                   ))}

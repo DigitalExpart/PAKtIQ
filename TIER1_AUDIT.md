@@ -3,7 +3,7 @@
 ## ✅ Already Implemented
 
 ### Core Features
-- ✅ **Unlimited resolution plans** - No limits found in code (pakts table)
+- ✅ **Unlimited resolution plans** - No limits found in code (Resolves table)
 - ✅ **Push notifications** - Implemented via `expo-notifications` and `notification.service.ts`
 - ✅ **Streak tracking** - Implemented in dashboard and stats components
 - ✅ **Accountability reminders** - Reminder system exists (`reminder.service.ts`, `app/reminder-setup.tsx`)
@@ -29,7 +29,7 @@
 
 ### Backend Support
 - ✅ Database schema supports all core features
-- ✅ Services layer exists for pakts, milestones, reminders
+- ✅ Services layer exists for Resolves, milestones, reminders
 - ✅ Authentication system in place
 
 ### Frontend Support

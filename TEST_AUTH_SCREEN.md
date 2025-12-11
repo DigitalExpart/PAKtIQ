@@ -126,7 +126,7 @@ Check:
 
 Once sign-up works, test the full app:
 
-1. **Create a Pakt** → Onboarding flow
+1. **Create a Resolve** → Onboarding flow
 2. **Add Milestones** → Milestone builder
 3. **Set Reminders** → Reminder setup
 4. **Complete a Milestone** → Check analytics updates

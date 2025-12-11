@@ -20,10 +20,10 @@
 - **Status:** ✅ Implemented
 - **Files:**
   - `src/services/share.service.ts` - Share service
-  - `app/pakt-detail.tsx` - Share buttons functional
+  - `app/Resolve-detail.tsx` - Share buttons functional
   - `app/share.tsx` - Share screen
 - **How to Test:**
-  - Open any pakt detail page
+  - Open any Resolve detail page
   - Click "Share" button
   - Should open native share dialog
 
@@ -34,7 +34,7 @@
   - `app/export.tsx` - Export screen
 - **How to Test:**
   - Go to Profile → Export Plans
-  - Select pakts to export
+  - Select Resolves to export
   - Click Export button
   - PDF should generate and open share dialog
 
@@ -47,7 +47,7 @@
 - **How to Test:**
   - Go to Profile → Reflection Journal
   - Create new journal entry
-  - Link to a pakt (optional)
+  - Link to a Resolve (optional)
   - View/edit/delete entries
 
 ### 5. ✅ **Admin Dashboard (Admin Only Access)**
@@ -86,7 +86,7 @@ npm start
 
 ### 4. Test Each Feature
 - ✅ **Language:** Profile → Language Settings → Change language
-- ✅ **Share:** Open pakt → Click Share button
+- ✅ **Share:** Open Resolve → Click Share button
 - ✅ **Export:** Profile → Export Plans → Select & Export
 - ✅ **Journal:** Profile → Reflection Journal → Create entry
 - ✅ **Admin:** Navigate to `/admin` (admin users only)

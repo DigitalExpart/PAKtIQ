@@ -14,25 +14,25 @@ type PaktDashboardLiveProps = {
 
 export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashboardLiveProps) {
   const { user } = useAuth();
-  const { pakts, loading: paktsLoading, refetch: refetchPakts } = usePakts();
+  const { Resolves, loading: paktsLoading, refetch: refetchPakts } = usePakts();
   const { achievements } = useAchievements();
   const { analytics, loading: analyticsLoading } = useAnalytics();
   const [selectedPaktId, setSelectedPaktId] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const { sendMilestoneNotification, sendPaktCompletionNotification } = useNotifications();
 
-  // Get milestones for selected pakt
+  // Get milestones for selected Resolve
   const { milestones, toggleMilestone, loading: milestonesLoading } = useMilestones(
     selectedPaktId || ''
   );
 
-  const selectedPakt = pakts.find(p => p.id === selectedPaktId);
+  const selectedPakt = Resolves.find(p => p.id === selectedPaktId);
 
   useEffect(() => {
-    if (pakts.length > 0 && !selectedPaktId) {
-      setSelectedPaktId(pakts[0].id);
+    if (Resolves.length > 0 && !selectedPaktId) {
+      setSelectedPaktId(Resolves[0].id);
     }
-  }, [pakts, selectedPaktId]);
+  }, [Resolves, selectedPaktId]);
 
   const handleCompleteMilestone = async (milestoneId: string, completed: boolean) => {
     if (!user || !selectedPakt) return;
@@ -66,10 +66,10 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
         }
       }
 
-      // Refresh pakts to get updated progress
+      // Refresh Resolves to get updated progress
       await refetchPakts();
 
-      // Check if pakt is now complete
+      // Check if Resolve is now complete
       if (selectedPakt && selectedPakt.progress === 100) {
         await sendPaktCompletionNotification(selectedPakt.name);
       }
@@ -80,7 +80,7 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
   };
 
   // Calculate stats from real data
-  const activePakts = pakts.filter(p => p.status === 'active');
+  const activePakts = Resolves.filter(p => p.status === 'active');
   
   // Get real analytics data
   const completedToday = analytics?.milestones_completed_today || 0;
@@ -103,7 +103,7 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
     );
   }
 
-  if (pakts.length === 0) {
+  if (Resolves.length === 0) {
     return (
       <div className={`min-h-screen ${bgColor} flex items-center justify-center px-6`}>
         <div className="text-center max-w-md">
@@ -114,15 +114,15 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
           >
             <Target className="w-24 h-24 mx-auto text-[#9163F2]" />
           </motion.div>
-          <h2 className={`text-3xl ${textPrimary} mb-4`}>No Pakts Yet</h2>
+          <h2 className={`text-3xl ${textPrimary} mb-4`}>No Resolves Yet</h2>
           <p className={`text-lg ${textSecondary} mb-8`}>
-            Create your first pakt to start your journey!
+            Create your first Resolve to start your journey!
           </p>
           <button
             onClick={() => onNavigate('categorySelection')}
             className="bg-gradient-to-r from-[#9163F2] to-[#3C2B63] text-white px-8 py-4 rounded-2xl text-lg hover:scale-105 transition-transform"
           >
-            Create First Pakt
+            Create First Resolve
           </button>
         </div>
       </div>
@@ -161,7 +161,7 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
       <div className="px-6 pt-12 pb-6">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className={`text-4xl ${textPrimary} mb-2`}>My Pakts</h1>
+            <h1 className={`text-4xl ${textPrimary} mb-2`}>My Resolves</h1>
             <p className={`text-lg ${textSecondary}`}>
               {activePakts.length} active • {achievements.length} achievements
             </p>
@@ -194,7 +194,7 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
           >
             <Target className="w-8 h-8 text-[#9163F2] mx-auto mb-2" />
             <div className={`text-2xl ${textPrimary} mb-1`}>{activePakts.length}</div>
-            <div className={`text-xs ${textSecondary}`}>Active Pakts</div>
+            <div className={`text-xs ${textSecondary}`}>Active Resolves</div>
           </motion.div>
 
           <motion.div
@@ -216,7 +216,7 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
             className={`${cardBg} rounded-2xl p-4 flex flex-col items-center gap-2 hover:scale-105 transition-transform`}
           >
             <Plus className={`w-6 h-6 ${textPrimary}`} />
-            <span className={`text-xs ${textSecondary}`}>New Pakt</span>
+            <span className={`text-xs ${textSecondary}`}>New Resolve</span>
           </button>
           <button
             onClick={() => onNavigate('templates')}
@@ -242,20 +242,20 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
         </div>
       </div>
 
-      {/* Active Pakts List */}
+      {/* Active Resolves List */}
       <div className="px-6">
-        <h2 className={`text-xl ${textPrimary} mb-4`}>Your Active Pakts</h2>
+        <h2 className={`text-xl ${textPrimary} mb-4`}>Your Active Resolves</h2>
         <div className="space-y-4">
-          {pakts.map((pakt, index) => (
+          {Resolves.map((Resolve, index) => (
             <motion.div
-              key={pakt.id}
+              key={Resolve.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               className={`${cardBg} rounded-3xl p-6 shadow-lg cursor-pointer`}
-              onClick={() => setSelectedPaktId(pakt.id)}
+              onClick={() => setSelectedPaktId(Resolve.id)}
             >
-              {/* Pakt Header */}
+              {/* Resolve Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div
@@ -265,10 +265,10 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
                       color: ['#FF6A6A', '#96E6B3', '#9163F2', '#FFD88A'][index % 4],
                     }}
                   >
-                    {pakt.category}
+                    {Resolve.category}
                   </div>
-                  <h3 className={`text-xl ${textPrimary} mb-2`}>{pakt.name}</h3>
-                  <p className={`text-sm ${textSecondary}`}>{pakt.target_outcome}</p>
+                  <h3 className={`text-xl ${textPrimary} mb-2`}>{Resolve.name}</h3>
+                  <p className={`text-sm ${textSecondary}`}>{Resolve.target_outcome}</p>
                 </div>
               </div>
 
@@ -277,22 +277,22 @@ export default function PaktDashboardLive({ onNavigate, isDarkMode }: PaktDashbo
                 <div className="flex-1">
                   <div className="flex justify-between text-sm mb-2">
                     <span className={textSecondary}>Progress</span>
-                    <span className={textPrimary}>{pakt.progress}%</span>
+                    <span className={textPrimary}>{Resolve.progress}%</span>
                   </div>
                   <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                     <motion.div
                       className="h-full bg-gradient-to-r from-[#9163F2] to-[#3C2B63]"
                       initial={{ width: 0 }}
-                      animate={{ width: `${pakt.progress}%` }}
+                      animate={{ width: `${Resolve.progress}%` }}
                       transition={{ duration: 0.5 }}
                     />
                   </div>
                 </div>
-                <div className={`text-2xl ${textPrimary}`}>{pakt.progress}%</div>
+                <div className={`text-2xl ${textPrimary}`}>{Resolve.progress}%</div>
               </div>
 
-              {/* Milestones Preview - Only show for selected pakt */}
-              {selectedPaktId === pakt.id && (
+              {/* Milestones Preview - Only show for selected Resolve */}
+              {selectedPaktId === Resolve.id && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}

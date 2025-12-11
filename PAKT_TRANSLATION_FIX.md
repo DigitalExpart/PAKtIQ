@@ -1,8 +1,8 @@
-# 🌍 Pakt Translation Fix
+# 🌍 Resolve Translation Fix
 
 ## Problem
 
-Active pakts on the home screen (like "Book Reading", "Healthy") were not being translated to French or Spanish. The interface was in the selected language, but pakt names and categories remained in English.
+Active Resolves on the home screen (like "Book Reading", "Healthy") were not being translated to French or Spanish. The interface was in the selected language, but Resolve names and categories remained in English.
 
 ## Solution
 
@@ -10,11 +10,11 @@ Active pakts on the home screen (like "Book Reading", "Healthy") were not being 
 
 **Functions:**
 - `translateCategory(category)` - Translates category names
-- `translatePaktName(name)` - Translates common pakt names
+- `translatePaktName(name)` - Translates common Resolve names
 
 **Features:**
 - Maps database category values to translation keys
-- Handles common pakt names like "Book Reading", "Healthy", "Exercise", etc.
+- Handles common Resolve names like "Book Reading", "Healthy", "Exercise", etc.
 - Falls back to original text if translation not found
 - Case-insensitive matching for flexibility
 
@@ -26,18 +26,18 @@ Active pakts on the home screen (like "Book Reading", "Healthy") were not being 
 - `categories.wellness` → "Bien-être" (FR) / "Bienestar" (ES)
 - etc.
 
-**Pakt Names** (new):
+**Resolve Names** (new):
 - `paktNames.bookReading` → "Lecture de Livres" (FR) / "Lectura de Libros" (ES)
 - `paktNames.healthy` → "Santé" (FR) / "Saludable" (ES)
 - `paktNames.exercise` → "Exercice" (FR) / "Ejercicio" (ES)
-- And 20+ more common pakt names
+- And 20+ more common Resolve names
 
 ### 3. Updated All Screens
 
 **Screens Updated:**
-- ✅ `app/dashboard.tsx` - Home screen active pakts
-- ✅ `app/all-pakts.tsx` - All pakts list
-- ✅ `app/pakt-detail.tsx` - Pakt detail screen
+- ✅ `app/dashboard.tsx` - Home screen active Resolves
+- ✅ `app/all-Resolves.tsx` - All Resolves list
+- ✅ `app/Resolve-detail.tsx` - Resolve detail screen
 - ✅ `app/export.tsx` - Export screen
 - ✅ `app/share.tsx` - Share screen
 - ✅ `app/journal.tsx` - Journal screen
@@ -54,7 +54,7 @@ Active pakts on the home screen (like "Book Reading", "Healthy") were not being 
 - Creativity → Créativité / Creatividad
 - Productivity → Productivité / Productividad
 
-### Common Pakt Names Translated:
+### Common Resolve Names Translated:
 - Book Reading → Lecture de Livres / Lectura de Libros
 - Healthy → Santé / Saludable
 - Exercise → Exercice / Ejercicio
@@ -72,7 +72,7 @@ Active pakts on the home screen (like "Book Reading", "Healthy") were not being 
    // Returns: "Croissance Personnelle" (FR) or "Crecimiento Personal" (ES)
    ```
 
-2. **Pakt Name Translation:**
+2. **Resolve Name Translation:**
    ```typescript
    translatePaktName("Book Reading")
    // Returns: "Lecture de Livres" (FR) or "Lectura de Libros" (ES)
@@ -89,15 +89,15 @@ Active pakts on the home screen (like "Book Reading", "Healthy") were not being 
 3. `src/locales/fr.json` - Added paktNames translations (French)
 4. `src/locales/es.json` - Added paktNames translations (Spanish)
 5. `app/dashboard.tsx` - Uses translation functions
-6. `app/all-pakts.tsx` - Uses translation functions
-7. `app/pakt-detail.tsx` - Uses translation functions
+6. `app/all-Resolves.tsx` - Uses translation functions
+7. `app/Resolve-detail.tsx` - Uses translation functions
 8. `app/export.tsx` - Uses translation functions
 9. `app/share.tsx` - Uses translation functions
 10. `app/journal.tsx` - Uses translation functions
 
 ## Adding More Translations
 
-To add more pakt name translations:
+To add more Resolve name translations:
 
 1. **Add to locale files:**
    ```json
@@ -111,7 +111,7 @@ To add more pakt name translations:
    ```typescript
    // src/utils/translations.ts
    const commonPaktNames: Record<string, string> = {
-     'New Pakt Name': 'paktNames.newPaktName',
+     'New Resolve Name': 'paktNames.newPaktName',
      // ...
    };
    ```
@@ -119,18 +119,18 @@ To add more pakt name translations:
 ## Testing
 
 After the fix:
-- [ ] Dashboard shows translated pakt names in French
-- [ ] Dashboard shows translated pakt names in Spanish
+- [ ] Dashboard shows translated Resolve names in French
+- [ ] Dashboard shows translated Resolve names in Spanish
 - [ ] Categories are translated correctly
-- [ ] All pakts screen shows translations
-- [ ] Pakt detail screen shows translations
+- [ ] All Resolves screen shows translations
+- [ ] Resolve detail screen shows translations
 - [ ] Export/share screens show translations
-- [ ] Journal screen shows translated pakt names
-- [ ] Unknown pakt names fall back to original (no errors)
+- [ ] Journal screen shows translated Resolve names
+- [ ] Unknown Resolve names fall back to original (no errors)
 
 ## Notes
 
-- User-entered pakt names that aren't in the common list will show in original language
+- User-entered Resolve names that aren't in the common list will show in original language
 - This is expected behavior - we can't translate arbitrary user input
-- Common pakt names like "Book Reading", "Healthy", "Exercise" are now translated
+- Common Resolve names like "Book Reading", "Healthy", "Exercise" are now translated
 - Categories are always translated since they come from a fixed list

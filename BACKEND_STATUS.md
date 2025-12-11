@@ -12,8 +12,8 @@
 
 ---
 
-### 2. **Pakts (Resolutions) Backend**
-- ✅ Create, Read, Update, Delete Pakts
+### 2. **Resolves (Resolutions) Backend**
+- ✅ Create, Read, Update, Delete Resolves
 - ✅ Auto-calculate progress based on milestones
 - ✅ Status management (active, completed, archived)
 - ✅ Category filtering
@@ -25,12 +25,12 @@
 
 ### 3. **Milestones Backend**
 - ✅ Create, Read, Update, Delete Milestones
-- ✅ Link to Pakts
+- ✅ Link to Resolves
 - ✅ Completion tracking with timestamps
 - ✅ Importance levels (1-5)
 - ✅ Due date tracking
 - ✅ Overdue milestone detection
-- ✅ Auto-update Pakt progress on completion
+- ✅ Auto-update Resolve progress on completion
 - ✅ Row Level Security (RLS)
 - **Status:** ✅ COMPLETE & LIVE
 
@@ -39,7 +39,7 @@
 ### 4. **Reminders Backend**
 - ✅ Save reminder settings (daily, weekly, custom)
 - ✅ Store time and selected days
-- ✅ Link to specific Pakts
+- ✅ Link to specific Resolves
 - ✅ Enable/disable toggles
 - ✅ Push notification scheduling
 - ✅ Row Level Security (RLS)
@@ -52,7 +52,7 @@
 - ✅ Schedule daily reminders
 - ✅ Schedule weekly reminders
 - ✅ Schedule custom reminders
-- ✅ Celebration notifications (milestone/pakt complete)
+- ✅ Celebration notifications (milestone/Resolve complete)
 - ✅ Integration with NotificationService
 - **Status:** ✅ COMPLETE & LIVE
 
@@ -74,7 +74,7 @@
 - ✅ Streak calculation (current & longest)
 - ✅ Completion rate tracking
 - ✅ Milestones completed today
-- ✅ Total pakts completed
+- ✅ Total Resolves completed
 - ✅ Weekly activity view
 - ✅ Auto-update on milestone completion (triggers)
 - ✅ InsightsOverviewLive with real-time data
@@ -88,7 +88,7 @@
 - ✅ Comprehensive notification preferences (JSONB)
   - Push notifications
   - Email notifications
-  - Pakt reminders
+  - Resolve reminders
   - Milestone deadlines
   - Streak protection
   - Daily motivation
@@ -103,7 +103,7 @@
 
 ### 9. **Activity Log**
 - ✅ Track all user actions
-- ✅ Link to Pakts and Milestones
+- ✅ Link to Resolves and Milestones
 - ✅ Action type categorization
 - ✅ Description and metadata storage
 - ✅ Timestamp tracking
@@ -158,14 +158,14 @@
 
 ### 13. **Social/Sharing Features**
 - ❌ No friend system
-- ❌ No pakt sharing
+- ❌ No Resolve sharing
 - ❌ No achievement sharing
 - ❌ No leaderboards
 
 ---
 
 ### 14. **Search & Filtering**
-- ❌ No full-text search for Pakts
+- ❌ No full-text search for Resolves
 - ❌ No advanced filtering (by date, category, status)
 - ❌ No search history
 
@@ -208,7 +208,7 @@
 | Feature | Status | Backend | Frontend | Database | Notes |
 |---------|--------|---------|----------|----------|-------|
 | Authentication | ✅ | ✅ | ✅ | ✅ | Complete |
-| Pakts | ✅ | ✅ | ✅ | ✅ | Complete |
+| Resolves | ✅ | ✅ | ✅ | ✅ | Complete |
 | Milestones | ✅ | ✅ | ✅ | ✅ | Complete |
 | Reminders | ✅ | ✅ | ✅ | ✅ | Complete |
 | Push Notifications | ✅ | ✅ | ✅ | N/A | Complete |
@@ -230,7 +230,7 @@
 
 Your app is **90% functional** with:
 - ✅ Full authentication system
-- ✅ Complete Pakt creation & management
+- ✅ Complete Resolve creation & management
 - ✅ Milestone tracking with auto-progress
 - ✅ Reminder system with push notifications
 - ✅ Real-time analytics & insights
@@ -250,7 +250,7 @@ If you want to add more features, here's the priority order:
 3. **Better Activity Feed** - Show activity log in UI
 
 ### **MEDIUM PRIORITY** (Nice to have)
-4. **Search & Filters** - Find pakts faster
+4. **Search & Filters** - Find Resolves faster
 5. **Data Export** - Let users export their data
 6. **Email Notifications** - Weekly summary emails
 

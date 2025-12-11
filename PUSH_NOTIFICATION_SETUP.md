@@ -99,20 +99,20 @@ EXPO_PUBLIC_PROJECT_ID=your-project-id-here
 
 ### 4. User Interaction
 - **Tap notification**: Navigates to relevant screen
-  - Pakt notifications → Pakt detail screen
-  - Pakt created → Dashboard
+  - Resolve notifications → Resolve detail screen
+  - Resolve created → Dashboard
   - Others → Notifications feed
 - **Foreground**: Shows in-app notification banner
 - **Background**: Shows in notification tray
 
 ## Notification Types That Send Push
 
-✅ Pakt created (with congratulations message)  
+✅ Resolve created (with congratulations message)  
 ✅ Password changed  
 ✅ Milestone achieved  
 ✅ Milestone missed  
 ✅ Milestone upcoming  
-✅ Pakt completed  
+✅ Resolve completed  
 ✅ Daily motivation  
 ✅ Reminder notifications  
 

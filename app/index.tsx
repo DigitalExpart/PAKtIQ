@@ -341,7 +341,7 @@ export default function WelcomeScreen() {
               onPress={() => router.push('/auth')}
               activeOpacity={0.8}
             >
-              <Text style={styles.primaryButtonText}>{t('welcome.startFirstPakt')}</Text>
+              <Text style={styles.primaryButtonText}>{t('welcome.startFirstResolve')}</Text>
               <Text style={styles.arrow}>→</Text>
             </TouchableOpacity>
             

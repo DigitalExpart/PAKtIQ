@@ -46,7 +46,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           <div>
             <h4 className="text-xl text-[#3E2C20] mb-3 flex items-center gap-2">
               <Target className="w-5 h-5 text-[#FF8A3D]" />
-              Smart Pakt Creation
+              Smart Resolve Creation
             </h4>
             <p className="text-[#3E2C20]/70">Create detailed commitments with customizable categories, deadlines, and milestone tracking.</p>
           </div>
@@ -94,7 +94,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-[#3E2C20]">
                 <CheckCircle className="w-5 h-5 text-[#FF8A3D]" />
-                2 Pakts per year (12 months)
+                2 Resolves per year (12 months)
               </li>
               <li className="flex items-center gap-2 text-[#3E2C20]">
                 <CheckCircle className="w-5 h-5 text-[#FF8A3D]" />
@@ -113,7 +113,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           <div className="bg-gradient-to-br from-[#FF8A3D] to-[#FF5E6C] rounded-2xl p-6 text-white border-2 border-[#FF8A3D]">
             <div className="text-center mb-4">
               <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm mb-2">Coming Soon</div>
-              <h4 className="text-3xl mb-2">PaktIQ Pro</h4>
+              <h4 className="text-3xl mb-2">resolviq Pro</h4>
               <p className="text-5xl mb-2">$4.99<span className="text-xl">/mo</span></p>
               <p className="opacity-90">For serious achievers</p>
             </div>
@@ -124,7 +124,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
-                Unlimited Pakts
+                Unlimited Resolves
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
@@ -181,11 +181,11 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
       )
     },
     'about': {
-      title: 'About PaktIQ',
+      title: 'About resolviq',
       content: (
         <div className="space-y-4">
           <p className="text-[#3E2C20]/80">
-            PaktIQ was born from a simple observation: people don't fail at achieving goals because they lack motivation—they fail because they lack the right tools to track progress and stay accountable.
+            resolviq was born from a simple observation: people don't fail at achieving goals because they lack motivation—they fail because they lack the right tools to track progress and stay accountable.
           </p>
           <p className="text-[#3E2C20]/80">
             Founded in 2025, we set out to create more than just another goal-tracking app. We built an intelligent commitment system that combines psychology-backed milestone strategies with beautiful, intuitive design.
@@ -241,7 +241,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           </div>
           <div className="bg-gradient-to-br from-[#FFF2E6] to-white rounded-2xl p-5 border border-[#FFD673]/20 hover:shadow-lg transition-all cursor-pointer">
             <div className="text-sm text-[#FF8A3D] mb-2">Nov 25, 2026 • 4 min read</div>
-            <h4 className="text-xl text-[#3E2C20] mb-2">5 Common Mistakes When Setting New Year Pakts</h4>
+            <h4 className="text-xl text-[#3E2C20] mb-2">5 Common Mistakes When Setting New Year Resolves</h4>
             <p className="text-[#3E2C20]/70 mb-3">Avoid these pitfalls and set yourself up for success in 2026 and beyond.</p>
             <div className="flex items-center gap-2 text-[#FF8A3D]">
               <span className="text-sm">Read more</span>
@@ -264,7 +264,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 </div>
                 <h4 className="text-[#3E2C20]">Email Support</h4>
               </div>
-              <p className="text-[#3E2C20]/70">support@paktiq.com</p>
+              <p className="text-[#3E2C20]/70">support@resolviq.com</p>
               <p className="text-sm text-[#3E2C20]/50 mt-1">We typically respond within 24 hours</p>
             </div>
             <div className="bg-gradient-to-br from-[#FFF2E6] to-white rounded-2xl p-5 border border-[#FFD673]/20">
@@ -284,7 +284,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 </div>
                 <h4 className="text-[#3E2C20]">Social Media</h4>
               </div>
-              <p className="text-[#3E2C20]/70">@PaktIQ on Twitter, Instagram & LinkedIn</p>
+              <p className="text-[#3E2C20]/70">@resolviq on Twitter, Instagram & LinkedIn</p>
               <p className="text-sm text-[#3E2C20]/50 mt-1">Follow for tips and updates</p>
             </div>
           </div>
@@ -298,11 +298,11 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           <p className="text-sm text-[#3E2C20]/50">Last updated: December 1, 2026</p>
           <div>
             <h4 className="text-lg text-[#3E2C20] mb-2">Data Collection</h4>
-            <p>PaktIQ collects only the information necessary to provide you with the best goal-tracking experience. This includes your Pakts, milestones, progress data, and basic account information.</p>
+            <p>resolviq collects only the information necessary to provide you with the best goal-tracking experience. This includes your Resolves, milestones, progress data, and basic account information.</p>
           </div>
           <div>
             <h4 className="text-lg text-[#3E2C20] mb-2">Data Usage</h4>
-            <p>Your data is used solely to power your PaktIQ experience. We analyze aggregated, anonymized data to improve our features but never sell your personal information to third parties.</p>
+            <p>Your data is used solely to power your resolviq experience. We analyze aggregated, anonymized data to improve our features but never sell your personal information to third parties.</p>
           </div>
           <div>
             <h4 className="text-lg text-[#3E2C20] mb-2">Data Storage</h4>
@@ -325,11 +325,11 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           <p className="text-sm text-[#3E2C20]/50">Last updated: December 1, 2026</p>
           <div>
             <h4 className="text-lg text-[#3E2C20] mb-2">Acceptance of Terms</h4>
-            <p>By accessing and using PaktIQ, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
+            <p>By accessing and using resolviq, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
           </div>
           <div>
             <h4 className="text-lg text-[#3E2C20] mb-2">Use License</h4>
-            <p>PaktIQ grants you a personal, non-transferable license to use this application for personal goal tracking and achievement purposes.</p>
+            <p>resolviq grants you a personal, non-transferable license to use this application for personal goal tracking and achievement purposes.</p>
           </div>
           <div>
             <h4 className="text-lg text-[#3E2C20] mb-2">User Responsibilities</h4>
@@ -342,10 +342,10 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           </div>
           <div>
             <h4 className="text-lg text-[#3E2C20] mb-2">Disclaimer</h4>
-            <p>PaktIQ is provided "as is" without warranties of any kind. We strive for accuracy and reliability but cannot guarantee uninterrupted service.</p>
+            <p>resolviq is provided "as is" without warranties of any kind. We strive for accuracy and reliability but cannot guarantee uninterrupted service.</p>
           </div>
           <div className="bg-gradient-to-br from-[#FFF2E6] to-white rounded-2xl p-5 border border-[#FFD673]/20">
-            <p className="text-sm">Questions about these terms? Contact us at legal@paktiq.com</p>
+            <p className="text-sm">Questions about these terms? Contact us at legal@resolviq.com</p>
           </div>
         </div>
       )
@@ -413,7 +413,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             </div>
           </div>
           <div className="bg-gradient-to-br from-[#FF8A3D]/10 to-[#FF5E6C]/10 rounded-2xl p-5 border border-[#FF8A3D]/30">
-            <p className="text-sm text-[#3E2C20]"><strong>Security Concern?</strong> Report any security issues to security@paktiq.com</p>
+            <p className="text-sm text-[#3E2C20]"><strong>Security Concern?</strong> Report any security issues to security@resolviq.com</p>
           </div>
         </div>
       )
@@ -483,14 +483,14 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
   const steps = [
     {
       number: '01',
-      title: 'Make a Pakt',
+      title: 'Make a Resolve',
       description: 'Create commitments with clear goals and timelines',
       icon: Target
     },
     {
       number: '02',
       title: 'Build Milestones',
-      description: 'Break down your Pakt into actionable steps',
+      description: 'Break down your Resolve into actionable steps',
       icon: TrendingUp
     },
     {
@@ -524,7 +524,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             </div>
 
             <h1 className="text-5xl lg:text-7xl mb-6 leading-tight">
-              PaktIQ
+              resolviq
             </h1>
             <p className="text-xl lg:text-2xl mb-10 opacity-95 max-w-2xl mx-auto">
               Make commitments. Track progress. Achieve your goals with intelligence.
@@ -535,7 +535,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 onClick={onGetStarted}
                 className="px-8 py-4 bg-[#FF3D2E] text-white rounded-full hover:bg-[#CC6A39] transition-all shadow-2xl hover:shadow-[#FF3D2E]/50 hover:scale-105 flex items-center gap-2 group"
               >
-                <span>Start My First Pakt</span>
+                <span>Start My First Resolve</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
@@ -554,7 +554,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-6 border border-white/20 flex flex-col items-center justify-center text-center">
                 <div className="text-4xl mb-2">50K+</div>
-                <div className="text-sm opacity-90">Pakts Achieved</div>
+                <div className="text-sm opacity-90">Resolves Achieved</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-6 border border-white/20 flex flex-col items-center justify-center text-center">
                 <div className="text-4xl mb-2">95%</div>
@@ -608,7 +608,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               Choose Your Path to Growth
             </h2>
             <p className="text-lg text-[#3E2C20]/70 max-w-2xl mx-auto">
-              Make Pakts in any area of your life that matters to you
+              Make Resolves in any area of your life that matters to you
             </p>
           </div>
 
@@ -629,7 +629,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         </div>
       </section>
 
-      {/* Pakt Suggestions Modal */}
+      {/* Resolve Suggestions Modal */}
       {selectedCategory && (
         <div 
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
@@ -651,7 +651,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                   </div>
                 )}
                 <div>
-                  <h3 className="text-2xl">{selectedCategory} Pakts</h3>
+                  <h3 className="text-2xl">{selectedCategory} Resolves</h3>
                   <p className="text-sm opacity-90">Popular goals to get you started</p>
                 </div>
               </div>
@@ -696,7 +696,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 }}
                 className="w-full px-6 py-4 bg-gradient-to-r from-[#FF8A3D] to-[#FF5E6C] text-white rounded-full hover:shadow-xl transition-all flex items-center justify-center gap-2 group"
               >
-                <span>Create Custom Pakt</span>
+                <span>Create Custom Resolve</span>
                 <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               </button>
             </div>
@@ -840,7 +840,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               Complete Your Growth Journey
             </h2>
             <p className="text-lg text-[#3E2C20]/70 max-w-2xl mx-auto">
-              Combine PaktIQ with our sister apps for comprehensive personal and relationship development
+              Combine resolviq with our sister apps for comprehensive personal and relationship development
             </p>
           </div>
 
@@ -1029,7 +1029,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             Ready to Commit?
           </h2>
           <p className="text-xl mb-10 opacity-95">
-            Don't just set goals. Make Pakts and achieve them with intelligence.
+            Don't just set goals. Make Resolves and achieve them with intelligence.
           </p>
           <button
             onClick={onGetStarted}
@@ -1048,10 +1048,10 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             <div>
               <h3 className="text-[#3E2C20] mb-4 flex items-center gap-2">
                 <Target className="w-5 h-5 text-[#FF8A3D]" />
-                PaktIQ
+                resolviq
               </h3>
               <p className="text-sm text-[#3E2C20]/70">
-                Transform your life, one Pakt at a time.
+                Transform your life, one Resolve at a time.
               </p>
             </div>
             <div>
@@ -1113,7 +1113,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             </div>
           </div>
           <div className="text-center text-sm text-[#3E2C20]/60 pt-8 border-t border-[#FFD673]/20">
-            © 2026 PaktIQ. Smart commitments, better results.
+            © 2026 resolviq. Smart commitments, better results.
           </div>
         </div>
       </footer>
@@ -1184,7 +1184,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                     <div className="bg-gradient-to-br from-[#FF8A3D]/10 to-[#FF5E6C]/10 rounded-xl md:rounded-2xl p-2 md:p-4 border-2 border-[#FF8A3D]/30">
                       <div className="flex flex-col items-center text-center mb-1 md:mb-2">
                         <Target className="w-4 h-4 md:w-6 md:h-6 text-[#FF8A3D] mb-1 md:mb-2" />
-                        <h4 className="text-xs md:text-base text-[#3E2C20] leading-tight">PaktIQ</h4>
+                        <h4 className="text-xs md:text-base text-[#3E2C20] leading-tight">resolviq</h4>
                       </div>
                       <p className="text-[10px] md:text-xs text-[#3E2C20]/60 text-center">Goal<br/>Tracking</p>
                     </div>

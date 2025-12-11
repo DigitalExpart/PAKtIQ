@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS public.journal_entries (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-    pakt_id UUID REFERENCES public.pakts(id) ON DELETE SET NULL,
+    pakt_id UUID REFERENCES public.Resolves(id) ON DELETE SET NULL,
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     mood TEXT,
     thoughts TEXT NOT NULL,

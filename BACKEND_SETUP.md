@@ -33,7 +33,7 @@ This will create all necessary tables, indexes, Row Level Security (RLS) policie
 
 After running the migration, verify that the following tables were created:
 - ✅ profiles
-- ✅ pakts
+- ✅ Resolves
 - ✅ milestones
 - ✅ reminders
 - ✅ achievements
@@ -48,9 +48,9 @@ After running the migration, verify that the following tables were created:
 | Table | Description |
 |-------|-------------|
 | `profiles` | User profile information (auto-created on signup) |
-| `pakts` | Main commitments/resolutions |
-| `milestones` | Sub-goals for each pakt |
-| `reminders` | Reminder settings for pakts |
+| `Resolves` | Main commitments/resolutions |
+| `milestones` | Sub-goals for each Resolve |
+| `reminders` | Reminder settings for Resolves |
 | `achievements` | Gamification achievements |
 | `activity_log` | Activity tracking and history |
 
@@ -58,7 +58,7 @@ After running the migration, verify that the following tables were created:
 
 ```
 profiles (user)
-  └── pakts (1:many)
+  └── Resolves (1:many)
       ├── milestones (1:many)
       ├── reminders (1:1)
       └── activity_log (1:many)
@@ -70,7 +70,7 @@ profiles (user)
 
 ✨ **Automatic Profile Creation**: When a user signs up, a profile is automatically created via database trigger
 
-📊 **Auto Progress Tracking**: Pakt progress is automatically calculated based on completed milestones
+📊 **Auto Progress Tracking**: Resolve progress is automatically calculated based on completed milestones
 
 🔒 **Row Level Security**: All tables have RLS enabled - users can only access their own data
 
@@ -97,9 +97,9 @@ ProfileService.updateProfile(userId, updates)
 ProfileService.completeOnboarding(userId)
 ProfileService.upgradeToPremium(userId)
 
-// Pakt Operations
+// Resolve Operations
 PaktService.getUserPakts(userId)
-PaktService.createPakt(pakt)
+PaktService.createPakt(Resolve)
 PaktService.updatePakt(paktId, updates)
 PaktService.deletePakt(paktId)
 PaktService.completePakt(paktId)
@@ -137,12 +137,12 @@ import { useAuth } from '@/contexts/AuthContext';
 const { user, profile, loading, signIn, signOut, updateProfile } = useAuth();
 ```
 
-### Pakts
+### Resolves
 
 ```typescript
 import { usePakts, usePaktStats } from '@/hooks';
 
-const { pakts, loading, createPakt, updatePakt, deletePakt } = usePakts();
+const { Resolves, loading, createPakt, updatePakt, deletePakt } = usePakts();
 const { stats } = usePaktStats();
 ```
 
@@ -203,13 +203,13 @@ function App() {
 
 ## 📝 Usage Examples
 
-### Creating a Pakt with Milestones
+### Creating a Resolve with Milestones
 
 ```typescript
 import { PaktService, MilestoneService } from '@/services';
 
-// Create a pakt
-const pakt = await PaktService.createPakt({
+// Create a Resolve
+const Resolve = await PaktService.createPakt({
   user_id: user.id,
   name: 'Get Fit in 2024',
   description: 'Complete fitness transformation',
@@ -228,7 +228,7 @@ const milestones = [
 for (const milestone of milestones) {
   await MilestoneService.createMilestone({
     ...milestone,
-    pakt_id: pakt.id,
+    pakt_id: Resolve.id,
     user_id: user.id,
   });
 }
@@ -286,7 +286,7 @@ All services throw errors that can be caught:
 try {
   await PaktService.createPakt(data);
 } catch (error) {
-  console.error('Failed to create pakt:', error);
+  console.error('Failed to create Resolve:', error);
 }
 ```
 
@@ -318,7 +318,7 @@ src/
 ├── services/
 │   ├── auth.service.ts        # Authentication service
 │   ├── profile.service.ts     # Profile management
-│   ├── pakt.service.ts        # Pakt operations
+│   ├── Resolve.service.ts        # Resolve operations
 │   ├── milestone.service.ts   # Milestone operations
 │   ├── reminder.service.ts    # Reminder operations
 │   ├── achievement.service.ts # Achievement system
@@ -327,7 +327,7 @@ src/
 ├── contexts/
 │   └── AuthContext.tsx        # Authentication context
 └── hooks/
-    ├── usePakts.ts            # Pakt hooks
+    ├── usePakts.ts            # Resolve hooks
     ├── useMilestones.ts       # Milestone hooks
     ├── useAchievements.ts     # Achievement hooks
     └── index.ts               # Hook exports

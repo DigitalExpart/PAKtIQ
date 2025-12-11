@@ -41,7 +41,7 @@ export interface Database {
           updated_at?: string
         }
       }
-      pakts: {
+      Resolves: {
         Row: {
           id: string
           user_id: string

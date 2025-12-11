@@ -46,7 +46,7 @@ export default function CategorySelection() {
         };
         updatePaktData({ category: categoryNameMap[category.key] || category.key });
       }
-      router.push('/pakt-naming');
+      router.push('/resolve-naming');
     }
   };
 
@@ -54,7 +54,7 @@ export default function CategorySelection() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
+          <Text style={[styles.backButton, { color: colors.primary }]}>← {t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.text }]}>{t('categories.title')}</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{t('categories.subtitle')}</Text>

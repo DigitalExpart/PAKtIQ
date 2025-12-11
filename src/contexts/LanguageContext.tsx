@@ -5,7 +5,7 @@ import { changeLanguage } from '../lib/i18n';
 interface LanguageContextType {
   currentLanguage: 'en' | 'es' | 'fr';
   changeLanguage: (lang: 'en' | 'es' | 'fr') => Promise<void>;
-  t: (key: string) => string;
+  t: (key: string, options?: Record<string, any>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);

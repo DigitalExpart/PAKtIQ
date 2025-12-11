@@ -5,25 +5,25 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, Share2 } from 'lucide-react-native';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
-import { usePakts } from '../src/hooks/usePakts';
+import { useResolves } from '../src/hooks/useResolves';
 import { ShareService } from '../src/services/share.service';
-import { translateCategory, translatePaktName } from '../src/utils/translations';
+import { translateCategory, translateResolveName } from '../src/utils/translations';
 import BottomTabBar from '../src/components/BottomTabBar';
 
 export default function ShareScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useLanguage();
-  const { pakts } = usePakts();
+  const { Resolves } = useResolves();
 
-  const handleSharePakt = async (pakt: any) => {
+  const handleSharePakt = async (resolve: any) => {
     try {
       await ShareService.sharePakt({
-        name: pakt.name,
-        description: pakt.description || '',
-        category: pakt.category,
-        progress: pakt.progress || 0,
-        milestones: pakt.milestones?.map((m: any) => ({
+        name: resolve.name,
+        description: resolve.description || '',
+        category: resolve.category,
+        progress: resolve.progress || 0,
+        milestones: resolve.milestones?.map((m: any) => ({
           name: m.name,
           completed: m.completed,
         })),
@@ -55,7 +55,7 @@ export default function ShareScreen() {
           </Text>
         </View>
 
-        {pakts.length === 0 ? (
+        {Resolves.length === 0 ? (
           <View style={styles.emptyState}>
             <Share2 size={64} color={colors.textSecondary} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
@@ -64,16 +64,16 @@ export default function ShareScreen() {
           </View>
         ) : (
           <View style={styles.paktsList}>
-            {pakts.map((pakt) => (
+            {Resolves.map((Resolve) => (
               <TouchableOpacity
-                key={pakt.id}
+                key={resolve.id}
                 style={[styles.paktCard, { backgroundColor: colors.surface }]}
-                onPress={() => handleSharePakt(pakt)}
+                onPress={() => handleSharePakt(Resolve)}
               >
                 <View style={styles.paktInfo}>
-                  <Text style={[styles.paktName, { color: colors.text }]}>{translatePaktName(pakt.name)}</Text>
+                  <Text style={[styles.paktName, { color: colors.text }]}>{translateResolveName(resolve.name)}</Text>
                   <Text style={[styles.paktDetails, { color: colors.textSecondary }]}>
-                    {translateCategory(pakt.category)} • {pakt.progress}% {t('common.complete') || 'complete'}
+                    {translateCategory(resolve.category)} • {resolve.progress}% {t('common.complete') || 'complete'}
                   </Text>
                 </View>
                 <Share2 size={24} color={colors.primary} />

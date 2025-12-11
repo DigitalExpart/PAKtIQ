@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
+import Constants from 'expo-constants';
 import { supabase } from '../lib/supabase';
 import { PushNotificationSenderService } from '../services/push-notification-sender.service';
 import { NotificationService } from '../services/notification.service';
 import { useAuth } from '../contexts/AuthContext';
+
+// Check if running in Expo Go (push notifications don't work in Expo Go)
+const isExpoGo = Constants.executionEnvironment === 'storeClient';
 
 /**
  * Hook to listen for new notifications and send push notifications
@@ -12,7 +16,7 @@ export function useNotifications() {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || isExpoGo) return;
 
     // Load initial unread count
     const loadUnreadCount = async () => {

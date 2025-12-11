@@ -4,19 +4,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { useAuth } from '../src/contexts/AuthContext';
-import { usePakts } from '../src/hooks/usePakts';
+import { useResolves } from '../src/hooks/useResolves';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
-import { translateCategory, translatePaktName } from '../src/utils/translations';
+import { translateCategory, translateResolveName } from '../src/utils/translations';
 
 export default function AllPaktsScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useLanguage();
-  const { pakts, loading } = usePakts();
+  const { resolves, loading } = useResolves();
 
-  // Filter active pakts
-  const activePakts = pakts.filter(p => p.status === 'active');
+  // Filter active resolves
+  const activeResolves = resolves.filter(p => p.status === 'active');
 
   // Helper to get category icon
   const getCategoryIcon = (category: string): string => {
@@ -48,15 +48,15 @@ export default function AllPaktsScreen() {
     return colors[category] || '#9163F2';
   };
 
-  // Calculate progress percentage for each pakt
-  const getPaktProgress = (pakt: any) => {
+  // Calculate progress percentage for each Resolve
+  const getPaktProgress = (resolve: any) => {
     // Use database progress if available, otherwise calculate from milestones
-    if (pakt.progress !== undefined && pakt.progress !== null) {
-      return pakt.progress;
+    if (resolve.progress !== undefined && resolve.progress !== null) {
+      return resolve.progress;
     }
-    if (!pakt.milestones || pakt.milestones.length === 0) return 0;
-    const completed = pakt.milestones.filter((m: any) => m.completed).length;
-    return Math.round((completed / pakt.milestones.length) * 100);
+    if (!resolve.milestones || resolve.milestones.length === 0) return 0;
+    const completed = resolve.milestones.filter((m: any) => m.completed).length;
+    return Math.round((completed / resolve.milestones.length) * 100);
   };
 
   // Get due date text
@@ -102,7 +102,7 @@ export default function AllPaktsScreen() {
       </View>
 
       <ScrollView style={styles.content}>
-        {activePakts.length === 0 ? (
+        {activeResolves.length === 0 ? (
           <View style={[styles.emptyState, { backgroundColor: colors.surface }]}>
             <Text style={styles.emptyIcon}>🎯</Text>
             <Text style={[styles.emptyTitle, { color: colors.text }]}>{t('allPakts.noActivePakts')}</Text>
@@ -118,27 +118,27 @@ export default function AllPaktsScreen() {
           </View>
         ) : (
           <View style={styles.paktsList}>
-            {activePakts.map((pakt) => {
-              const progress = getPaktProgress(pakt);
-              const icon = getCategoryIcon(pakt.category || '');
-              const color = getCategoryColor(pakt.category || '');
-              const completedMilestones = pakt.milestones?.filter((m: any) => m.completed).length || 0;
-              const totalMilestones = pakt.milestones?.length || 0;
-              const dueDate = getDueDateText(pakt.deadline);
+            {activeResolves.map((resolve) => {
+              const progress = getPaktProgress(resolve);
+              const icon = getCategoryIcon(resolve.category || '');
+              const color = getCategoryColor(resolve.category || '');
+              const completedMilestones = resolve.milestones?.filter((m: any) => m.completed).length || 0;
+              const totalMilestones = resolve.milestones?.length || 0;
+              const dueDate = getDueDateText(resolve.deadline);
 
               return (
                 <TouchableOpacity 
-                  key={pakt.id} 
+                  key={resolve.id} 
                   style={[styles.paktCard, { backgroundColor: colors.surface }]}
-                  onPress={() => router.push(`/pakt-detail?id=${pakt.id}`)}
+                  onPress={() => router.push(`/pakt-detail?id=${resolve.id}`)}
                 >
                   <View style={styles.paktHeader}>
                     <View style={[styles.paktIcon, { backgroundColor: color }]}>
                       <Text style={styles.paktIconText}>{icon}</Text>
                     </View>
                     <View style={styles.paktInfo}>
-                      <Text style={[styles.paktName, { color: colors.text }]}>{translatePaktName(pakt.name)}</Text>
-                      <Text style={[styles.paktCategory, { color: colors.textSecondary }]}>{translateCategory(pakt.category)}</Text>
+                      <Text style={[styles.paktName, { color: colors.text }]}>{translateResolveName(resolve.name)}</Text>
+                      <Text style={[styles.paktCategory, { color: colors.textSecondary }]}>{translateCategory(resolve.category)}</Text>
                     </View>
                     <View style={styles.paktProgress}>
                       <Text style={[styles.progressValue, { color: colors.primary }]}>{progress}%</Text>

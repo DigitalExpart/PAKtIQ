@@ -3,18 +3,18 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/contexts/AuthContext';
-import { usePakts } from '../src/hooks/usePakts';
+import { useResolves } from '../src/hooks/useResolves';
 import { useAnalytics } from '../src/hooks/useAnalytics';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
-import { translateCategory, translatePaktName } from '../src/utils/translations';
+import { translateCategory, translateResolveName } from '../src/utils/translations';
 import { rp, wp, isSmallScreen } from '../src/utils/responsive';
 import BottomTabBar from '../src/components/BottomTabBar';
 
 export default function DashboardScreen() {
   const router = useRouter();
   const { user, profile } = useAuth();
-  const { pakts, loading: paktsLoading, refetch: refetchPakts } = usePakts();
+  const { resolves, loading: resolvesLoading, refetch: refetchResolves } = useResolves();
   const { insights, loading: analyticsLoading, refresh: refreshAnalytics } = useAnalytics();
   const { colors } = useTheme();
   const { t } = useLanguage();
@@ -67,15 +67,15 @@ export default function DashboardScreen() {
     extrapolate: 'clamp',
   });
 
-  const loading = paktsLoading || analyticsLoading;
+  const loading = resolvesLoading || analyticsLoading;
 
   // Handle pull-to-refresh
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      // Refresh both pakts and analytics data
+      // Refresh both Resolves and analytics data
       await Promise.all([
-        refetchPakts(),
+        refetchResolves(),
         refreshAnalytics()
       ]);
     } catch (error) {
@@ -86,12 +86,12 @@ export default function DashboardScreen() {
   };
 
   // Calculate stats from real data
-  const activePaktsList = pakts.filter(p => p.status === 'active');
+  const activeResolvesList = resolves.filter(p => p.status === 'active');
   const stats = {
     streak: insights?.dayStreak ?? 0,
-    totalPakts: activePaktsList.length,
+    totalPakts: activeResolvesList.length,
     completedToday: insights?.milestonesDone || 0, // Use milestones completed from analytics
-    activeHabits: activePaktsList.length, // Active habits (using active pakts as habits)
+    activeHabits: activeResolvesList.length, // Active habits (using active resolves as habits)
   };
 
   // Helper to get category icon
@@ -124,15 +124,15 @@ export default function DashboardScreen() {
     return colors[category] || '#9163F2';
   };
 
-  // Calculate progress percentage for each pakt
-  const getPaktProgress = (pakt: any) => {
+  // Calculate progress percentage for each Resolve
+  const getPaktProgress = (resolve: any) => {
     // Use database progress if available (updated by trigger), otherwise calculate from milestones
-    if (pakt.progress !== undefined && pakt.progress !== null) {
-      return pakt.progress;
+    if (resolve.progress !== undefined && resolve.progress !== null) {
+      return resolve.progress;
     }
-    if (!pakt.milestones || pakt.milestones.length === 0) return 0;
-    const completed = pakt.milestones.filter((m: any) => m.completed).length;
-    return Math.round((completed / pakt.milestones.length) * 100);
+    if (!resolve.milestones || resolve.milestones.length === 0) return 0;
+    const completed = resolve.milestones.filter((m: any) => m.completed).length;
+    return Math.round((completed / resolve.milestones.length) * 100);
   };
 
   // Get due date text
@@ -152,8 +152,8 @@ export default function DashboardScreen() {
     return `${Math.ceil(diffDays / 30)} ${t('dashboard.months')}`;
   };
 
-  // Filter active pakts
-  const activePakts = pakts.filter(p => p.status === 'active');
+  // Filter active Resolves
+  const activeResolves = resolves.filter(p => p.status === 'active');
 
   // Helper to get profile image
   const getProfileImage = () => {
@@ -203,7 +203,7 @@ export default function DashboardScreen() {
       <SafeAreaView style={dynamicStyles.container}>
         <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={dynamicStyles.loadingText}>{t('dashboard.loadingPakts')}</Text>
+          <Text style={dynamicStyles.loadingText}>{t('dashboard.loadingResolves')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -355,7 +355,7 @@ export default function DashboardScreen() {
           <View style={[dynamicStyles.statsCard, styles.statCardWithMargin]}>
             <Text style={styles.statIcon}>🎯</Text>
             <Text style={dynamicStyles.statValue}>{stats.totalPakts}</Text>
-            <Text style={dynamicStyles.statLabel}>{t('dashboard.activePakts')}</Text>
+            <Text style={dynamicStyles.statLabel}>{t('dashboard.activeResolves')}</Text>
           </View>
           <View style={[dynamicStyles.statsCard, styles.statCardWithMargin]}>
             <Text style={styles.statIcon}>✓</Text>
@@ -372,52 +372,52 @@ export default function DashboardScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={dynamicStyles.sectionTitle}>{t('dashboard.activePakts')}</Text>
-            {activePakts.length > 3 && (
-              <TouchableOpacity onPress={() => router.push('/all-pakts')}>
+            <Text style={dynamicStyles.sectionTitle}>{t('dashboard.activeResolves')}</Text>
+            {activeResolves.length > 3 && (
+              <TouchableOpacity onPress={() => router.push('/all-resolves')}>
                 <Text style={dynamicStyles.seeAllText}>{t('dashboard.seeAll')}</Text>
               </TouchableOpacity>
             )}
           </View>
 
-          {activePakts.length === 0 ? (
+          {activeResolves.length === 0 ? (
             <View style={dynamicStyles.emptyState}>
               <Text style={styles.emptyIcon}>🎯</Text>
-              <Text style={dynamicStyles.emptyTitle}>No Pakts Yet</Text>
+              <Text style={dynamicStyles.emptyTitle}>No Resolves Yet</Text>
               <Text style={dynamicStyles.emptyText}>
-                Create your first pakt to start tracking your goals
+                Create your first Resolve to start tracking your goals
               </Text>
               <TouchableOpacity
                 style={styles.createButton}
                 onPress={() => router.push('/category-selection')}
               >
-                <Text style={styles.createButtonText}>Create First Pakt</Text>
+                <Text style={styles.createButtonText}>Create First Resolve</Text>
               </TouchableOpacity>
             </View>
           ) : (
-            activePakts.slice(0, 3).map((pakt) => {
-              const progress = getPaktProgress(pakt);
-              const icon = getCategoryIcon(pakt.category || '');
-              const color = getCategoryColor(pakt.category || '');
+            activeResolves.slice(0, 3).map((resolve) => {
+              const progress = getPaktProgress(resolve);
+              const icon = getCategoryIcon(resolve.category || '');
+              const color = getCategoryColor(resolve.category || '');
               // @ts-ignore: milestones might be injected by extended type or external source
-              const milestones = (pakt as any).milestones || [];
+              const milestones = (resolve as any).milestones || [];
               const completedMilestones = milestones.filter((m: any) => m.completed).length;
               const totalMilestones = milestones.length;
-              const dueDate = getDueDateText(pakt.deadline);
+              const dueDate = getDueDateText(resolve.deadline);
 
               return (
                 <TouchableOpacity 
-                  key={pakt.id} 
+                  key={resolve.id} 
                   style={dynamicStyles.paktCard}
-                  onPress={() => router.push(`/pakt-detail?id=${pakt.id}`)}
+                  onPress={() => router.push(`/pakt-detail?id=${resolve.id}`)}
                 >
                   <View style={styles.paktHeader}>
                     <View style={[styles.paktIcon, { backgroundColor: color }]}>
                       <Text style={styles.paktIconText}>{icon}</Text>
                     </View>
                     <View style={styles.paktInfo}>
-                      <Text style={dynamicStyles.paktName}>{translatePaktName(pakt.name)}</Text>
-                      <Text style={dynamicStyles.paktCategory}>{translateCategory(pakt.category)}</Text>
+                      <Text style={dynamicStyles.paktName}>{translateResolveName(resolve.name)}</Text>
+                      <Text style={dynamicStyles.paktCategory}>{translateCategory(resolve.category)}</Text>
                     </View>
                     <View style={styles.paktProgress}>
                       <Text style={dynamicStyles.progressValue}>{progress}%</Text>

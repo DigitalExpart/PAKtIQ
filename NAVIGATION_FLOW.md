@@ -85,13 +85,13 @@
              └──────────┬──────────┘
                         │
                         ▼
-                [Pakt Created!]
+                [Resolve Created!]
                         │
                         ▼
          ┌──────────────────────────────┐
          │    PaktDashboardLive         │ ◄─── LIVE!
          │    [Main Hub]                │
-         │    - Active Pakts            │
+         │    - Active Resolves            │
          │    - Upcoming Milestones     │
          │    - Today's Tasks           │
          │    - Quick Stats             │
@@ -154,22 +154,22 @@ AuthScreen
             │
             └─► Creates profiles row automatically
                     │
-                    └─► User can now create Pakts!
+                    └─► User can now create Resolves!
 ```
 
-### **When User Creates a Pakt:**
+### **When User Creates a Resolve:**
 ```
 MilestoneBuilder
     │
     └─► ReminderSetupLive
             │
-            ├─► PaktService.createPakt() → Creates pakt in DB
+            ├─► PaktService.createPakt() → Creates Resolve in DB
             │
             ├─► MilestoneService.createMilestone() → Creates milestones
             │       │
             │       └─► Trigger: update_pakt_progress_on_milestone_change
             │               │
-            │               └─► Auto-calculates pakt.progress
+            │               └─► Auto-calculates Resolve.progress
             │
             └─► ReminderService.createReminder() → Saves reminder settings
                     │
@@ -183,7 +183,7 @@ PaktDashboardLive (user checks off milestone)
     ├─► MilestoneService.updateMilestone({completed: true})
     │       │
     │       ├─► Trigger: update_pakt_progress_on_milestone_change
-    │       │       └─► Updates pakt.progress
+    │       │       └─► Updates Resolve.progress
     │       │
     │       └─► Trigger: update_analytics_on_milestone_complete
     │               │
@@ -230,7 +230,7 @@ All operations use Supabase client:
 | Action | Service | Database Table | Trigger |
 |--------|---------|----------------|---------|
 | Sign Up | AuthService | auth.users → profiles | ✅ on_auth_user_created |
-| Create Pakt | PaktService | pakts | - |
+| Create Resolve | PaktService | Resolves | - |
 | Add Milestone | MilestoneService | milestones | ✅ update_pakt_progress |
 | Complete Milestone | MilestoneService | milestones | ✅ 2 triggers |
 | Set Reminder | ReminderService | reminders | - |
@@ -248,9 +248,9 @@ Every table has policies:
 - Enforced at database level (secure!)
 
 ```sql
--- Example: pakts table
-CREATE POLICY "Users can view their own pakts"
-    ON public.pakts FOR SELECT
+-- Example: Resolves table
+CREATE POLICY "Users can view their own Resolves"
+    ON public.Resolves FOR SELECT
     USING (auth.uid() = user_id);
 ```
 
@@ -261,8 +261,8 @@ CREATE POLICY "Users can view their own pakts"
 ✅ **Welcome Screen** → Works  
 ✅ **Auth Screen** → FIXED (added 'auth' to Screen type)  
 ✅ **Sign Up Flow** → Creates user + profile  
-✅ **Dashboard** → Shows real pakts from DB  
-✅ **Milestones** → Track progress, auto-update pakt  
+✅ **Dashboard** → Shows real Resolves from DB  
+✅ **Milestones** → Track progress, auto-update Resolve  
 ✅ **Reminders** → Save to DB + schedule notifications  
 ✅ **Settings** → Dark mode + preferences persist  
 ✅ **Insights** → Real-time analytics  
@@ -278,8 +278,8 @@ CREATE POLICY "Users can view their own pakts"
 2. Click "Get Started" → Auth Screen ✅ FIXED
 3. Sign up → Profile created
 4. Onboarding → Learn about app
-5. Create first Pakt → Goes through all screens
-6. Dashboard → See your pakt
+5. Create first Resolve → Goes through all screens
+6. Dashboard → See your Resolve
 7. Complete milestone → Analytics update
 8. View Insights → See real stats
 9. Toggle Dark Mode → Persists

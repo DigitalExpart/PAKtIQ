@@ -9,40 +9,40 @@ All changes have been successfully committed and pushed to your repository!
 ## 1. ✅ Deadline Picker Added
 
 ### What was added:
-- Date picker in the pakt naming screen
-- Users can now select a deadline when creating a pakt
+- Date picker in the Resolve naming screen
+- Users can now select a deadline when creating a Resolve
 - Default deadline is 90 days from current date
 - Visual calendar icon and formatted date display
 
 ### Files Modified:
-- `app/pakt-naming.tsx` - Added date picker with DateTimePicker component
+- `app/Resolve-naming.tsx` - Added date picker with DateTimePicker component
 - Installed: `@react-native-community/datetimepicker`
 
 ### Features:
 - Native date picker for iOS and Android
 - Minimum date is today (can't select past dates)
 - Displays formatted date (e.g., "Dec 25, 2025")
-- Integrated with pakt creation context
+- Integrated with Resolve creation context
 
 ---
 
-## 2. ✅ Pakt Editing Functionality
+## 2. ✅ Resolve Editing Functionality
 
 ### What was added:
-- Complete edit pakt screen with full CRUD operations
-- Users can edit pakt name, description, target outcome, and deadline
-- Delete pakt with confirmation dialog
-- Navigate from pakt detail screen to edit
+- Complete edit Resolve screen with full CRUD operations
+- Users can edit Resolve name, description, target outcome, and deadline
+- Delete Resolve with confirmation dialog
+- Navigate from Resolve detail screen to edit
 
 ### Files Created:
-- `app/edit-pakt.tsx` - New screen for editing pakts
+- `app/edit-Resolve.tsx` - New screen for editing Resolves
 
 ### Files Modified:
-- `app/pakt-detail.tsx` - Added navigation to edit screen
+- `app/Resolve-detail.tsx` - Added navigation to edit screen
 
 ### Features:
 - **Edit Fields:**
-  - Pakt name
+  - Resolve name
   - Description
   - Target outcome
   - Deadline (with date picker)
@@ -50,11 +50,11 @@ All changes have been successfully committed and pushed to your repository!
 
 - **Actions:**
   - Save changes (updates database)
-  - Delete pakt (with confirmation)
+  - Delete Resolve (with confirmation)
   - Cancel (go back)
 
 - **UI:**
-  - Loading state while fetching pakt data
+  - Loading state while fetching Resolve data
   - Saving state with loading indicator
   - Success/error alerts
   - Theme-aware colors
@@ -124,17 +124,17 @@ All changes have been successfully committed and pushed to your repository!
 
 ## How to Use New Features
 
-### 1. Create Pakt with Deadline:
-1. Click "New Pakt" on dashboard
+### 1. Create Resolve with Deadline:
+1. Click "New Resolve" on dashboard
 2. Select category
-3. Enter pakt name and description
+3. Enter Resolve name and description
 4. **Click the date button to select a deadline** 📅
 5. Continue with milestones and reminders
 
-### 2. Edit Existing Pakt:
-1. Open any pakt from dashboard
+### 2. Edit Existing Resolve:
+1. Open any Resolve from dashboard
 2. Click the menu button (three dots) in top right
-3. Select "Edit Pakt"
+3. Select "Edit Resolve"
 4. Make your changes
 5. Click "Save Changes" or "Delete" if needed
 
@@ -154,10 +154,10 @@ All changes have been successfully committed and pushed to your repository!
 - [x] Cannot select past dates
 - [x] Date displays correctly
 - [x] Saves to database correctly
-- [x] Shows in dashboard/pakt detail
+- [x] Shows in dashboard/Resolve detail
 
-### Pakt Editing:
-- [x] Loads existing pakt data
+### Resolve Editing:
+- [x] Loads existing Resolve data
 - [x] Can edit all fields
 - [x] Save button works
 - [x] Delete button works with confirmation
@@ -176,18 +176,18 @@ All changes have been successfully committed and pushed to your repository!
 
 ### Dark Mode Expansion:
 - [ ] Apply theme to all screens (dashboard, achievements, etc.)
-- [ ] Add theme-aware colors to pakt cards
+- [ ] Add theme-aware colors to Resolve cards
 - [ ] Dark mode for modals and dialogs
 
 ### Edit Functionality:
-- [ ] Edit milestones within pakt edit screen
+- [ ] Edit milestones within Resolve edit screen
 - [ ] Edit reminders
 - [ ] Add categories selection dropdown
 
 ### Additional Features:
-- [ ] Pakt archiving (instead of just delete)
-- [ ] Pakt templates
-- [ ] Share pakt with friends
+- [ ] Resolve archiving (instead of just delete)
+- [ ] Resolve templates
+- [ ] Share Resolve with friends
 
 ---
 
@@ -202,9 +202,9 @@ All changes have been successfully committed and pushed to your repository!
 ```
 
 ### Database Operations:
-- **Update Pakt**: `PaktService.updatePakt(paktId, updates)`
-- **Delete Pakt**: `PaktService.deletePakt(paktId)`
-- **Get Pakt**: `PaktService.getPakt(paktId)`
+- **Update Resolve**: `PaktService.updatePakt(paktId, updates)`
+- **Delete Resolve**: `PaktService.deletePakt(paktId)`
+- **Get Resolve**: `PaktService.getPakt(paktId)`
 
 ### Theme Hook Usage:
 ```typescript
@@ -227,7 +227,7 @@ function MyComponent() {
 
 ### Commit 1:
 ```
-Fix: Resolve pakt creation errors, update SafeAreaView, fix achievements screen
+Fix: Resolve Resolve creation errors, update SafeAreaView, fix achievements screen
 - Fix database column name mismatches
 - Add missing required fields
 - Replace deprecated SafeAreaView
@@ -235,9 +235,9 @@ Fix: Resolve pakt creation errors, update SafeAreaView, fix achievements screen
 
 ### Commit 2:
 ```
-feat: Add deadline picker, pakt editing, and dark mode
-- Add deadline date picker to pakt creation flow
-- Implement edit pakt functionality with full CRUD operations
+feat: Add deadline picker, Resolve editing, and dark mode
+- Add deadline date picker to Resolve creation flow
+- Implement edit Resolve functionality with full CRUD operations
 - Add dark mode support with theme context
 ```
 
@@ -246,9 +246,9 @@ feat: Add deadline picker, pakt editing, and dark mode
 ## Summary
 
 ✅ **All features implemented and working!**
-- Deadline selection during pakt creation
-- Full pakt editing with save/delete
+- Deadline selection during Resolve creation
+- Full Resolve editing with save/delete
 - Dark mode with settings toggle
 - All changes pushed to GitHub
 
-The app now has much better functionality for managing pakts and a more polished user experience with dark mode support! 🎉
+The app now has much better functionality for managing Resolves and a more polished user experience with dark mode support! 🎉

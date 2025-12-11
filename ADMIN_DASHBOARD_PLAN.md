@@ -18,23 +18,23 @@ A comprehensive admin dashboard for managing the Resolute Plan app, monitoring u
 ### 2. **User Management**
 - View all users
 - User search and filters
-- User details (profile, pakts, activity)
+- User details (profile, Resolves, activity)
 - Suspend/activate users
 - Delete users
 - User activity history
 - Export user data
 
 ### 3. **Content Management**
-- View all pakts/resolutions
+- View all Resolves/resolutions
 - Content moderation
 - Flag inappropriate content
-- Edit/delete pakts
+- Edit/delete Resolves
 - View milestones and progress
-- Search and filter pakts
+- Search and filter Resolves
 
 ### 4. **Analytics & Reports**
 - User engagement metrics
-- Pakt creation/completion rates
+- Resolve creation/completion rates
 - Category distribution
 - Streak statistics
 - Achievement distribution
@@ -91,7 +91,7 @@ CREATE TABLE system_settings (
 -- Content flags table (for moderation)
 CREATE TABLE content_flags (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  pakt_id UUID REFERENCES pakts(id) ON DELETE CASCADE,
+  pakt_id UUID REFERENCES Resolves(id) ON DELETE CASCADE,
   flagged_by UUID REFERENCES profiles(id),
   reason TEXT NOT NULL,
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewed', 'resolved', 'dismissed')),
@@ -129,7 +129,7 @@ Admin Dashboard
 ├── Sidebar Navigation
 │   ├── Dashboard (Home)
 │   ├── Users
-│   ├── Pakts/Content
+│   ├── Resolves/Content
 │   ├── Analytics
 │   ├── Settings
 │   └── Support
@@ -142,8 +142,8 @@ Admin Dashboard
 ### Key Screens:
 
 1. **Dashboard Home**
-   - Stats cards (Total Users, Active Users, Total Pakts, etc.)
-   - Charts (User growth, Pakt creation trends)
+   - Stats cards (Total Users, Active Users, Total Resolves, etc.)
+   - Charts (User growth, Resolve creation trends)
    - Recent activity feed
    - Quick actions
 
@@ -153,8 +153,8 @@ Admin Dashboard
    - Bulk actions
    - Export functionality
 
-3. **Pakts/Content Page**
-   - Pakt list with filters
+3. **Resolves/Content Page**
+   - Resolve list with filters
    - Content moderation queue
    - Flagged content review
    - Search and filter
@@ -211,7 +211,7 @@ app/
     _layout.tsx (Admin layout with sidebar)
     index.tsx (Dashboard home)
     users.tsx
-    pakts.tsx
+    Resolves.tsx
     analytics.tsx
     settings.tsx
     support.tsx
@@ -259,7 +259,7 @@ src/
 - Export functionality
 
 ### Phase 4: Content Management (8-10 hours)
-- Pakt list and filters
+- Resolve list and filters
 - Content moderation
 - Flagged content review
 - Content actions
@@ -317,7 +317,7 @@ src/
 1. Admin authentication
 2. Dashboard overview (basic stats)
 3. User management (view, search, basic actions)
-4. Content moderation (view pakts, flag/delete)
+4. Content moderation (view Resolves, flag/delete)
 
 **MVP Price**: $4,500 - $6,000  
 **MVP Time**: 25-35 hours

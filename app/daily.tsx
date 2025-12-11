@@ -7,7 +7,7 @@ import { useHabits, useHabitSchedules } from '../src/hooks/useHabits';
 import { HabitService } from '../src/services/habit.service';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
-import { translatePaktName } from '../src/utils/translations';
+import { translateResolveName } from '../src/utils/translations';
 import BottomTabBar from '../src/components/BottomTabBar';
 
 export default function DailyScreen() {
@@ -417,7 +417,7 @@ export default function DailyScreen() {
                       onPress={() => router.push(`/habit-detail?id=${habit.id}`)}
                     >
                       <View style={styles.completedHabitHeader}>
-                        <Text style={[styles.completedHabitName, { color: colors.text }]}>{translatePaktName(habit.name)}</Text>
+                        <Text style={[styles.completedHabitName, { color: colors.text }]}>{translateResolveName(habit.name)}</Text>
                         {habit.completion_rate !== null && habit.completion_rate !== undefined && (
                           <View style={[styles.completionRateBadge, { backgroundColor: colors.primary + '20' }]}>
                             <Text style={[styles.completionRateText, { color: colors.primary }]}>
@@ -506,7 +506,7 @@ function HabitCard({ habit, isCompleted, onToggleComplete, onPress, currentDay, 
           <Circle size={28} color={colors.textSecondary} />
         )}
         <View style={styles.habitInfo}>
-          <Text style={[styles.habitName, { color: colors.text }]}>{translatePaktName(habit.name)}</Text>
+          <Text style={[styles.habitName, { color: colors.text }]}>{translateResolveName(habit.name)}</Text>
           {habit.description && (
             <Text style={[styles.habitDescription, { color: colors.textSecondary }]} numberOfLines={1}>
               {habit.description}

@@ -22,19 +22,19 @@ To set up your database schema in Supabase:
 User profile information automatically created on signup.
 - Stores user metadata, onboarding status, and premium status
 
-#### `pakts`
+#### `Resolves`
 Main table for user commitments/resolutions.
-- Each pakt has a name, description, target outcome, deadline, and category
+- Each Resolve has a name, description, target outcome, deadline, and category
 - Progress is automatically calculated based on completed milestones
 
 #### `milestones`
-Sub-goals for each pakt.
-- Linked to a specific pakt
+Sub-goals for each Resolve.
+- Linked to a specific Resolve
 - Can be ordered and marked as completed
-- Automatically updates pakt progress when completed
+- Automatically updates Resolve progress when completed
 
 #### `reminders`
-Reminder settings for pakts.
+Reminder settings for Resolves.
 - Supports daily, weekly, and custom frequencies
 
 #### `achievements`
@@ -52,7 +52,7 @@ Row Level Security (RLS) is enabled on all tables:
 ## Features
 
 - **Automatic Profile Creation**: When a user signs up, a profile is automatically created
-- **Progress Tracking**: Pakt progress is automatically calculated based on completed milestones
+- **Progress Tracking**: Resolve progress is automatically calculated based on completed milestones
 - **Timestamps**: All tables have automatic `created_at` and `updated_at` timestamps
 - **Indexes**: Optimized with indexes for common queries
 

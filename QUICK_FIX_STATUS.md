@@ -8,9 +8,9 @@
 
 ## Current Status:
 - ✅ **App works now!** No more crashes
-- ✅ **Pakt creation works** with default 90-day deadline
+- ✅ **Resolve creation works** with default 90-day deadline
 - ✅ **Dark mode works** in settings
-- ✅ **Edit pakt works** (shows deadline but can't change it yet)
+- ✅ **Edit Resolve works** (shows deadline but can't change it yet)
 - ⏳ **Date picker** will be enabled after Metro restart
 
 ## To Enable Date Picker (Do This When Convenient):
@@ -37,22 +37,22 @@ The `-c` flag clears all caches.
 ### Step 3: Uncomment the Date Picker Code
 
 After Metro restarts successfully, I can uncomment the DateTimePicker code in:
-- `app/pakt-naming.tsx`
-- `app/edit-pakt.tsx`
+- `app/Resolve-naming.tsx`
+- `app/edit-Resolve.tsx`
 
 ## What Works Right Now:
 
-### ✅ Create Pakt
+### ✅ Create Resolve
 - Name, description, category ✅
 - Milestones ✅
 - Reminders ✅
 - Default deadline (90 days) ✅
 - **Date picker: Not yet** (shows default)
 
-### ✅ Edit Pakt
+### ✅ Edit Resolve
 - Edit name, description ✅
 - View deadline ✅
-- Delete pakt ✅
+- Delete Resolve ✅
 - **Change deadline: Not yet** (shows current)
 
 ### ✅ Dark Mode
@@ -60,8 +60,8 @@ After Metro restarts successfully, I can uncomment the DateTimePicker code in:
 - Persists across restarts ✅
 - Settings screen fully themed ✅
 
-### ✅ View Pakts
-- Dashboard shows all pakts ✅
+### ✅ View Resolves
+- Dashboard shows all Resolves ✅
 - Progress tracking ✅
 - Milestones ✅
 
@@ -76,9 +76,9 @@ After Metro restarts successfully, I can uncomment the DateTimePicker code in:
 ## Test It Now:
 
 1. **Reload your app** (shake device → Reload)
-2. **Create a new pakt** - should work perfectly!
+2. **Create a new Resolve** - should work perfectly!
 3. **Toggle dark mode** in Settings
-4. **Edit existing pakts**
+4. **Edit existing Resolves**
 
 Everything works except the interactive date picker (you get 90 days default, which is fine).
 

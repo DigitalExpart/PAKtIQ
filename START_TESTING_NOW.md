@@ -90,7 +90,7 @@ I just created 5 helpful guides for you:
 
 ### ✅ **Core Features (100%)**
 - Authentication (sign up, sign in, sign out)
-- Pakt creation & management
+- Resolve creation & management
 - Milestone tracking with auto-progress
 - Reminders with push notifications
 - Dark mode with persistence
@@ -99,7 +99,7 @@ I just created 5 helpful guides for you:
 - Settings management
 
 ### ✅ **Live Components**
-- `PaktDashboardLive` - Real pakts from DB
+- `PaktDashboardLive` - Real Resolves from DB
 - `ReminderSetupLive` - Saves to DB + schedules push
 - `SettingsScreenLive` - Persists preferences
 - `InsightsOverviewLive` - Real-time analytics
@@ -135,7 +135,7 @@ export type Screen =
 ### 3. Added TemplateService
 **File:** `src/services/template.service.ts`
 - Provides hardcoded templates (works without DB)
-- Can convert template to pakt data
+- Can convert template to Resolve data
 - Ready for future DB integration
 
 ### 4. Updated App.tsx
@@ -157,7 +157,7 @@ Run through this entire flow:
    - Go through onboarding screens
    - Completes onboarding
 
-3. ✅ **Create Pakt**
+3. ✅ **Create Resolve**
    - Category selection
    - Name & description
    - Add milestones
@@ -165,7 +165,7 @@ Run through this entire flow:
    - Save → Dashboard
 
 4. ✅ **Dashboard**
-   - See your pakt
+   - See your Resolve
    - See milestones
    - Check progress bar
 
@@ -203,7 +203,7 @@ Run through this entire flow:
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Authentication | ✅ LIVE | Sign up, sign in work |
-| Pakts | ✅ LIVE | Full CRUD working |
+| Resolves | ✅ LIVE | Full CRUD working |
 | Milestones | ✅ LIVE | Auto-updates progress |
 | Reminders | ✅ LIVE | Saves + schedules push |
 | Push Notifications | ✅ LIVE | Daily, weekly, custom |
@@ -285,7 +285,7 @@ Ctrl+Shift+R (hard refresh)
 
 ### **Immediate (Today)**
 - [ ] Test sign-up flow
-- [ ] Create a test pakt
+- [ ] Create a test Resolve
 - [ ] Complete a milestone
 - [ ] Verify data in Supabase
 - [ ] Test dark mode persistence
@@ -293,7 +293,7 @@ Ctrl+Shift+R (hard refresh)
 ### **Soon (This Week)**
 - [ ] Test on mobile device
 - [ ] Test push notifications work
-- [ ] Create multiple pakts
+- [ ] Create multiple Resolves
 - [ ] Test all screens
 - [ ] Share with friends for feedback
 
@@ -329,7 +329,7 @@ npm run dev
 
 # 3. Click "Get Started"
 # 4. Sign up with test account
-# 5. Create your first Pakt
+# 5. Create your first Resolve
 # 6. See it appear in dashboard!
 
 # ✅ EVERYTHING WORKS!

@@ -15,7 +15,7 @@ export interface PaktTemplate {
     name: string;
     notes: string;
     importance: number;
-    days_offset: number; // Days from pakt start
+    days_offset: number; // Days from Resolve start
   }>;
   created_at?: string;
   updated_at?: string;
@@ -110,7 +110,7 @@ export class TemplateService {
   }
 
   /**
-   * Create custom template from existing pakt
+   * Create custom template from existing Resolve
    */
   static async createTemplateFromPakt(
     userId: string,
@@ -120,7 +120,7 @@ export class TemplateService {
     isPublic: boolean = false
   ): Promise<PaktTemplate | null> {
     // This would:
-    // 1. Get the pakt data
+    // 1. Get the Resolve data
     // 2. Get its milestones
     // 3. Create a template entry in templates table
     // 4. Return the template
@@ -131,7 +131,7 @@ export class TemplateService {
   }
 
   /**
-   * Apply template to create a new pakt
+   * Apply template to create a new Resolve
    */
   static prepareTemplateForPakt(template: PaktTemplate): Partial<any> {
     const startDate = new Date();

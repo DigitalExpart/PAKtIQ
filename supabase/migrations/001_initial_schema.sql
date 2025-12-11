@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Create pakts table (resolutions/commitments)
-CREATE TABLE IF NOT EXISTS public.pakts (
+-- Create Resolves table (resolutions/commitments)
+CREATE TABLE IF NOT EXISTS public.Resolves (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS public.pakts (
 -- Create milestones table
 CREATE TABLE IF NOT EXISTS public.milestones (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    pakt_id UUID NOT NULL REFERENCES public.pakts(id) ON DELETE CASCADE,
+    pakt_id UUID NOT NULL REFERENCES public.Resolves(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     due_date TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS public.milestones (
 -- Create reminders table
 CREATE TABLE IF NOT EXISTS public.reminders (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    pakt_id UUID NOT NULL REFERENCES public.pakts(id) ON DELETE CASCADE,
+    pakt_id UUID NOT NULL REFERENCES public.Resolves(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     frequency TEXT NOT NULL CHECK (frequency IN ('daily', 'weekly', 'custom')),
     time TEXT NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS public.achievements (
 CREATE TABLE IF NOT EXISTS public.activity_log (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-    pakt_id UUID REFERENCES public.pakts(id) ON DELETE CASCADE,
+    pakt_id UUID REFERENCES public.Resolves(id) ON DELETE CASCADE,
     milestone_id UUID REFERENCES public.milestones(id) ON DELETE CASCADE,
     action_type TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -82,8 +82,8 @@ CREATE TABLE IF NOT EXISTS public.activity_log (
 );
 
 -- Create indexes for better query performance
-CREATE INDEX IF NOT EXISTS idx_pakts_user_id ON public.pakts(user_id);
-CREATE INDEX IF NOT EXISTS idx_pakts_status ON public.pakts(status);
+CREATE INDEX IF NOT EXISTS idx_pakts_user_id ON public.Resolves(user_id);
+CREATE INDEX IF NOT EXISTS idx_pakts_status ON public.Resolves(status);
 CREATE INDEX IF NOT EXISTS idx_milestones_pakt_id ON public.milestones(pakt_id);
 CREATE INDEX IF NOT EXISTS idx_milestones_user_id ON public.milestones(user_id);
 CREATE INDEX IF NOT EXISTS idx_milestones_completed ON public.milestones(completed);
@@ -94,7 +94,7 @@ CREATE INDEX IF NOT EXISTS idx_activity_log_pakt_id ON public.activity_log(pakt_
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.pakts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.Resolves ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.milestones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reminders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.achievements ENABLE ROW LEVEL SECURITY;
@@ -109,21 +109,21 @@ CREATE POLICY "Users can update their own profile"
     ON public.profiles FOR UPDATE
     USING (auth.uid() = id);
 
--- Create RLS policies for pakts
-CREATE POLICY "Users can view their own pakts"
-    ON public.pakts FOR SELECT
+-- Create RLS policies for Resolves
+CREATE POLICY "Users can view their own Resolves"
+    ON public.Resolves FOR SELECT
     USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can create their own pakts"
-    ON public.pakts FOR INSERT
+CREATE POLICY "Users can create their own Resolves"
+    ON public.Resolves FOR INSERT
     WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can update their own pakts"
-    ON public.pakts FOR UPDATE
+CREATE POLICY "Users can update their own Resolves"
+    ON public.Resolves FOR UPDATE
     USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can delete their own pakts"
-    ON public.pakts FOR DELETE
+CREATE POLICY "Users can delete their own Resolves"
+    ON public.Resolves FOR DELETE
     USING (auth.uid() = user_id);
 
 -- Create RLS policies for milestones
@@ -194,7 +194,7 @@ CREATE TRIGGER set_updated_at_profiles
     EXECUTE FUNCTION public.handle_updated_at();
 
 CREATE TRIGGER set_updated_at_pakts
-    BEFORE UPDATE ON public.pakts
+    BEFORE UPDATE ON public.Resolves
     FOR EACH ROW
     EXECUTE FUNCTION public.handle_updated_at();
 
@@ -229,7 +229,7 @@ CREATE TRIGGER on_auth_user_created
     FOR EACH ROW
     EXECUTE FUNCTION public.handle_new_user();
 
--- Create function to calculate pakt progress based on completed milestones
+-- Create function to calculate Resolve progress based on completed milestones
 CREATE OR REPLACE FUNCTION public.calculate_pakt_progress(pakt_uuid UUID)
 RETURNS INTEGER AS $$
 DECLARE
@@ -255,11 +255,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create function to update pakt progress when milestone changes
+-- Create function to update Resolve progress when milestone changes
 CREATE OR REPLACE FUNCTION public.update_pakt_progress()
 RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE public.pakts
+    UPDATE public.Resolves
     SET progress = public.calculate_pakt_progress(
         CASE 
             WHEN TG_OP = 'DELETE' THEN OLD.pakt_id
@@ -275,7 +275,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create trigger to auto-update pakt progress
+-- Create trigger to auto-update Resolve progress
 CREATE TRIGGER update_pakt_progress_on_milestone_change
     AFTER INSERT OR UPDATE OR DELETE ON public.milestones
     FOR EACH ROW

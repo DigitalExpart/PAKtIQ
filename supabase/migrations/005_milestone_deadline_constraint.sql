@@ -1,18 +1,18 @@
--- Optional: Add a database-level constraint to ensure milestone due_date doesn't exceed pakt deadline
+-- Optional: Add a database-level constraint to ensure milestone due_date doesn't exceed Resolve deadline
 -- This provides an additional layer of validation beyond the application code
 
--- Create a function to check if milestone due_date is within pakt deadline
+-- Create a function to check if milestone due_date is within Resolve deadline
 CREATE OR REPLACE FUNCTION check_milestone_deadline()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- Check if milestone due_date exceeds the parent pakt's deadline
+  -- Check if milestone due_date exceeds the parent Resolve's deadline
   IF EXISTS (
     SELECT 1 
-    FROM public.pakts 
+    FROM public.Resolves 
     WHERE id = NEW.pakt_id 
     AND NEW.due_date > deadline
   ) THEN
-    RAISE EXCEPTION 'Milestone due_date (%) cannot exceed the Pakt deadline', NEW.due_date;
+    RAISE EXCEPTION 'Milestone due_date (%) cannot exceed the Resolve deadline', NEW.due_date;
   END IF;
   RETURN NEW;
 END;

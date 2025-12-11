@@ -2,11 +2,11 @@ import { supabase } from '../lib/supabase';
 
 export type NotificationType = 
   | 'password_changed'
-  | 'pakt_created'
+  | 'resolve_created'
   | 'milestone_achieved'
   | 'milestone_missed'
   | 'milestone_upcoming'
-  | 'pakt_completed'
+  | 'resolve_completed'
   | 'achievement'
   | 'reminder'
   | 'streak_milestone'
@@ -133,8 +133,8 @@ export class NotificationService {
     await this.createNotification({
       user_id: userId,
       type: 'welcome',
-      title: '🎉 Welcome to PaktIQ!',
-      message: `Hi ${name}! Welcome to PaktIQ. We're excited to help you achieve your goals. Start by creating your first Pakt and breaking it down into milestones. Let's make this year your best one yet! 💪`,
+      title: '🎉 Welcome to resolviq!',
+      message: `Hi ${name}! Welcome to resolviq. We're excited to help you achieve your goals. Start by creating your first Resolve and breaking it down into milestones. Let's make this year your best one yet! 💪`,
       metadata: { welcome: true, created_at: new Date().toISOString() },
     });
   }
@@ -152,15 +152,15 @@ export class NotificationService {
   }
 
   /**
-   * Helper: Create pakt created notification with congratulations and milestone info
+   * Helper: Create Resolve created notification with congratulations and milestone info
    */
-  static async notifyPaktCreated(
+  static async notifyResolveCreated(
     userId: string, 
-    paktName: string, 
-    paktId: string,
+    resolveName: string, 
+    resolveId: string,
     milestoneCount?: number
   ): Promise<void> {
-    let message = `🎉 Congratulations! You've created a new Pakt: "${paktName}"`;
+    let message = `🎉 Congratulations! You've created a new Resolve: "${resolveName}"`;
     
     if (milestoneCount && milestoneCount > 0) {
       message += `\n\nYou've set up ${milestoneCount} milestone${milestoneCount > 1 ? 's' : ''} to help you achieve this goal. Keep up the momentum! 💪`;
@@ -170,10 +170,10 @@ export class NotificationService {
     
     await this.createNotification({
       user_id: userId,
-      type: 'pakt_created',
-      title: '🎊 New Pakt Created!',
+      type: 'resolve_created',
+      title: '🎊 New Resolve Created!',
       message: message,
-      metadata: { pakt_id: paktId, milestone_count: milestoneCount || 0 },
+      metadata: { resolve_id: resolveId, milestone_count: milestoneCount || 0 },
     });
   }
 
@@ -183,16 +183,16 @@ export class NotificationService {
   static async notifyMilestoneAchieved(
     userId: string,
     milestoneName: string,
-    paktName: string,
+    resolveName: string,
     milestoneId: string,
-    paktId: string
+    resolveId: string
   ): Promise<void> {
     await this.createNotification({
       user_id: userId,
       type: 'milestone_achieved',
       title: 'Milestone Achieved! 🎉',
-      message: `You've completed "${milestoneName}" in "${paktName}"`,
-      metadata: { milestone_id: milestoneId, pakt_id: paktId },
+      message: `You've completed "${milestoneName}" in "${resolveName}"`,
+      metadata: { milestone_id: milestoneId, resolve_id: resolveId },
     });
   }
 
@@ -202,16 +202,16 @@ export class NotificationService {
   static async notifyMilestoneMissed(
     userId: string,
     milestoneName: string,
-    paktName: string,
+    resolveName: string,
     milestoneId: string,
-    paktId: string
+    resolveId: string
   ): Promise<void> {
     await this.createNotification({
       user_id: userId,
       type: 'milestone_missed',
       title: 'Milestone Missed',
-      message: `The deadline for "${milestoneName}" in "${paktName}" has passed.`,
-      metadata: { milestone_id: milestoneId, pakt_id: paktId },
+      message: `The deadline for "${milestoneName}" in "${resolveName}" has passed.`,
+      metadata: { milestone_id: milestoneId, resolve_id: resolveId },
     });
   }
 
@@ -221,34 +221,34 @@ export class NotificationService {
   static async notifyMilestoneUpcoming(
     userId: string,
     milestoneName: string,
-    paktName: string,
+    resolveName: string,
     daysUntil: number,
     milestoneId: string,
-    paktId: string
+    resolveId: string
   ): Promise<void> {
     const message = daysUntil === 0
-      ? `"${milestoneName}" in "${paktName}" is due today!`
-      : `"${milestoneName}" in "${paktName}" is due in ${daysUntil} day${daysUntil > 1 ? 's' : ''}.`;
+      ? `"${milestoneName}" in "${resolveName}" is due today!`
+      : `"${milestoneName}" in "${resolveName}" is due in ${daysUntil} day${daysUntil > 1 ? 's' : ''}.`;
 
     await this.createNotification({
       user_id: userId,
       type: 'milestone_upcoming',
       title: 'Milestone Deadline Approaching',
       message,
-      metadata: { milestone_id: milestoneId, pakt_id: paktId, days_until: daysUntil },
+      metadata: { milestone_id: milestoneId, resolve_id: resolveId, days_until: daysUntil },
     });
   }
 
   /**
-   * Helper: Create pakt completed notification
+   * Helper: Create Resolve completed notification
    */
-  static async notifyPaktCompleted(userId: string, paktName: string, paktId: string): Promise<void> {
+  static async notifyResolveCompleted(userId: string, resolveName: string, resolveId: string): Promise<void> {
     await this.createNotification({
       user_id: userId,
       type: 'pakt_completed',
-      title: 'Pakt Completed! 🎊',
-      message: `Congratulations! You've completed "${paktName}"`,
-      metadata: { pakt_id: paktId },
+      title: 'Resolve Completed! 🎊',
+      message: `Congratulations! You've completed "${resolveName}"`,
+      metadata: { resolve_id: resolveId },
     });
   }
 
@@ -276,16 +276,16 @@ export class NotificationService {
    */
   static async notifyReminder(
     userId: string,
-    paktName: string,
+    resolveName: string,
     message: string,
-    paktId: string
+    resolveId: string
   ): Promise<void> {
     await this.createNotification({
       user_id: userId,
       type: 'reminder',
-      title: `Reminder: ${paktName}`,
+      title: `Reminder: ${resolveName}`,
       message: message,
-      metadata: { pakt_id: paktId },
+      metadata: { resolve_id: resolveId },
     });
   }
 

@@ -24,7 +24,7 @@ PaktIQ is a comprehensive goal tracking and commitment management app built with
    - Visual selection with checkmarks
    - Continue button
 
-4. **Pakt Naming** (`app/pakt-naming.tsx`)
+4. **Resolve Naming** (`app/Resolve-naming.tsx`)
    - Name and description inputs
    - Popular suggestion chips
    - Tips section
@@ -44,9 +44,9 @@ PaktIQ is a comprehensive goal tracking and commitment management app built with
 
 7. **Dashboard** (`app/dashboard.tsx`)
    - Welcome header with greeting
-   - Stats cards (Streak, Active Pakts, Today's Tasks)
+   - Stats cards (Streak, Active Resolves, Today's Tasks)
    - Quick action buttons
-   - Active pakts with progress bars
+   - Active Resolves with progress bars
    - Bottom navigation bar with FAB
    - Premium banner
 
@@ -118,7 +118,7 @@ PaktIQ is a comprehensive goal tracking and commitment management app built with
 ## Navigation Flow
 
 ```
-Welcome → Onboarding → Category Selection → Pakt Naming → 
+Welcome → Onboarding → Category Selection → Resolve Naming → 
 Milestone Builder → Reminder Setup → Dashboard
 
 Dashboard ↔ [Achievements, Insights, Templates, Premium, Settings]
@@ -128,7 +128,7 @@ Dashboard ↔ [Achievements, Insights, Templates, Premium, Settings]
 
 ✅ Complete onboarding flow
 ✅ Goal creation workflow (4 steps)
-✅ Dashboard with stats and pakts
+✅ Dashboard with stats and Resolves
 ✅ Achievement tracking system
 ✅ Analytics and insights
 ✅ Template library
@@ -145,7 +145,7 @@ Dashboard ↔ [Achievements, Insights, Templates, Premium, Settings]
 - **TypeScript**
 
 ## Mock Data
-- 3 sample pakts with progress
+- 3 sample Resolves with progress
 - 8 achievements (3 unlocked, 5 locked)
 - 6 goal templates
 - Stats and insights data

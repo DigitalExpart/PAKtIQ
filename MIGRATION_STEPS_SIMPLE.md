@@ -41,7 +41,7 @@ If you see errors, let me know!
 1. Click **"Table Editor"** in the left sidebar
 2. You should now see **6 new tables**:
    - profiles
-   - pakts
+   - Resolves
    - milestones
    - reminders
    - achievements
@@ -61,7 +61,7 @@ npm run dev
 # 2. Open in browser
 # 3. Click "Get Started"
 # 4. Sign up with any email/password
-# 5. Create a pakt
+# 5. Create a Resolve
 # 6. Check Supabase - data will be there!
 ```
 
@@ -76,9 +76,9 @@ npm run dev
 - Go to **Table Editor** → **profiles** table
 - Your profile was automatically created!
 
-### After you create a pakt:
-- Go to **Table Editor** → **pakts** table
-- Your pakt is saved in the database!
+### After you create a Resolve:
+- Go to **Table Editor** → **Resolves** table
+- Your Resolve is saved in the database!
 
 - Go to **Table Editor** → **milestones** table
 - Your milestones are there too!

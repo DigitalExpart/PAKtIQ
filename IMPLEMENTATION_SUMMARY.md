@@ -10,14 +10,14 @@ Your PaktIQ application now has a **complete, production-ready Supabase backend*
 - ✅ 6 tables with proper relationships
 - ✅ Row Level Security (RLS) policies on all tables
 - ✅ Automatic triggers for timestamps and profile creation
-- ✅ Progress calculation function (auto-updates pakt progress)
+- ✅ Progress calculation function (auto-updates Resolve progress)
 - ✅ Optimized indexes for performance
 - ✅ Complete security policies
 
 **Tables Created:**
 - `profiles` - User accounts and settings
-- `pakts` - Main commitments/resolutions
-- `milestones` - Sub-goals for each pakt
+- `Resolves` - Main commitments/resolutions
+- `milestones` - Sub-goals for each Resolve
 - `reminders` - Notification settings
 - `achievements` - Gamification badges
 - `activity_log` - User action tracking
@@ -50,7 +50,7 @@ Complete business logic layer with 7 services:
 - ✅ `AuthContext.tsx` - Global authentication state management
 
 **Hooks:**
-- ✅ `usePakts()` - Fetch and manage pakts
+- ✅ `usePakts()` - Fetch and manage Resolves
 - ✅ `usePaktsByStatus()` - Filter by status
 - ✅ `usePaktStats()` - Get statistics
 - ✅ `useMilestones()` - Milestone operations
@@ -95,12 +95,12 @@ Complete business logic layer with 7 services:
 ### 🎮 Gamification
 - Achievement system with auto-awarding
 - Milestone-based achievements
-- Pakt completion achievements
+- Resolve completion achievements
 - Achievement metadata tracking
 
 ### 📈 Analytics & Insights
 - Activity logging for all actions
-- User statistics (pakts, milestones, progress)
+- User statistics (Resolves, milestones, progress)
 - Recent activity feed
 - Progress tracking over time
 
@@ -153,7 +153,7 @@ import { usePakts } from './hooks';
 
 function MyComponent() {
   const { user } = useAuth();
-  const { pakts, createPakt } = usePakts();
+  const { Resolves, createPakt } = usePakts();
   
   // Now you can use the backend!
 }
@@ -223,12 +223,12 @@ await signUp('email@example.com', 'password123', 'John Doe');
 await signIn('email@example.com', 'password123');
 ```
 
-### Example 2: Create a Pakt with Milestones
+### Example 2: Create a Resolve with Milestones
 ```typescript
 import { PaktService, MilestoneService } from './services';
 
-// Create pakt
-const pakt = await PaktService.createPakt({
+// Create Resolve
+const Resolve = await PaktService.createPakt({
   user_id: userId,
   name: 'Get Fit',
   description: 'Fitness transformation',
@@ -239,9 +239,9 @@ const pakt = await PaktService.createPakt({
 
 // Add milestones
 await MilestoneService.createMilestones([
-  { pakt_id: pakt.id, user_id: userId, name: 'Run 1K', due_date: '2024-06-30', importance: 3 },
-  { pakt_id: pakt.id, user_id: userId, name: 'Run 3K', due_date: '2024-09-30', importance: 4 },
-  { pakt_id: pakt.id, user_id: userId, name: 'Run 5K', due_date: '2024-12-31', importance: 5 },
+  { pakt_id: Resolve.id, user_id: userId, name: 'Run 1K', due_date: '2024-06-30', importance: 3 },
+  { pakt_id: Resolve.id, user_id: userId, name: 'Run 3K', due_date: '2024-09-30', importance: 4 },
+  { pakt_id: Resolve.id, user_id: userId, name: 'Run 5K', due_date: '2024-12-31', importance: 5 },
 ]);
 ```
 
@@ -250,15 +250,15 @@ await MilestoneService.createMilestones([
 import { usePakts, useMilestones } from './hooks';
 
 function Dashboard() {
-  const { pakts, loading } = usePakts();
+  const { Resolves, loading } = usePakts();
   const { milestones, toggleMilestone } = useMilestones(paktId);
   
   return (
     <div>
-      {pakts.map(pakt => (
-        <div key={pakt.id}>
-          <h3>{pakt.name}</h3>
-          <p>Progress: {pakt.progress}%</p>
+      {Resolves.map(Resolve => (
+        <div key={Resolve.id}>
+          <h3>{Resolve.name}</h3>
+          <p>Progress: {Resolve.progress}%</p>
         </div>
       ))}
     </div>
@@ -282,18 +282,18 @@ const profile = await ProfileService.getProfile(userId);
 console.log(profile); // Should exist!
 ```
 
-### Test Pakt Creation
+### Test Resolve Creation
 ```typescript
-const pakt = await PaktService.createPakt({
+const Resolve = await PaktService.createPakt({
   user_id: userId,
-  name: 'Test Pakt',
+  name: 'Test Resolve',
   description: 'Testing',
   target_outcome: 'Success',
   deadline: new Date().toISOString(),
   category: 'other',
 });
 
-console.log(pakt.progress); // Should be 0
+console.log(Resolve.progress); // Should be 0
 ```
 
 ### Test Progress Tracking
@@ -310,7 +310,7 @@ const milestone = await MilestoneService.createMilestone({
 // Complete it
 await MilestoneService.toggleMilestone(milestone.id, true);
 
-// Check pakt progress (should auto-update!)
+// Check Resolve progress (should auto-update!)
 const updatedPakt = await PaktService.getPakt(paktId);
 console.log(updatedPakt.progress); // Should be > 0!
 ```
@@ -336,11 +336,11 @@ import { useAuth } from './contexts/AuthContext';
 import { usePakts } from './hooks';
 
 function PaktDashboard() {
-  const { pakts, loading } = usePakts();
+  const { Resolves, loading } = usePakts();
   
   if (loading) return <LoadingSpinner />;
   
-  return <div>{pakts.map(renderPakt)}</div>;
+  return <div>{Resolves.map(renderPakt)}</div>;
 }
 ```
 
@@ -378,7 +378,7 @@ With this backend, you can implement:
 
 ✅ User registration and login
 ✅ Onboarding flow with profile setup
-✅ Pakt creation with categories
+✅ Resolve creation with categories
 ✅ Milestone tracking and completion
 ✅ Progress visualization
 ✅ Reminder scheduling

@@ -5,7 +5,7 @@
 | Feature | Backend | Frontend | Status |
 |---------|---------|----------|--------|
 | 🔐 **Authentication** | ✅ | ✅ | LIVE |
-| 📝 **Pakts** | ✅ | ✅ | LIVE |
+| 📝 **Resolves** | ✅ | ✅ | LIVE |
 | 🎯 **Milestones** | ✅ | ✅ | LIVE |
 | ⏰ **Reminders** | ✅ | ✅ | LIVE |
 | 🔔 **Push Notifications** | ✅ | ✅ | LIVE |
@@ -42,7 +42,7 @@
 
 **You can now:**
 - ✅ Create accounts
-- ✅ Create and track Pakts
+- ✅ Create and track Resolves
 - ✅ Set milestones with auto-progress
 - ✅ Get push notifications
 - ✅ View real-time analytics
@@ -57,7 +57,7 @@
 | Table | Purpose | RLS | Triggers |
 |-------|---------|-----|----------|
 | `profiles` | User data | ✅ | ✅ |
-| `pakts` | Resolutions | ✅ | ✅ |
+| `Resolves` | Resolutions | ✅ | ✅ |
 | `milestones` | Sub-goals | ✅ | ✅ |
 | `reminders` | Notification settings | ✅ | ✅ |
 | `achievements` | Badges earned | ✅ | - |
@@ -92,7 +92,7 @@ All in `src/services/`:
 
 1. ✅ `auth.service.ts` - Sign up/in/out
 2. ✅ `profile.service.ts` - User profiles
-3. ✅ `pakt.service.ts` - CRUD pakts
+3. ✅ `Resolve.service.ts` - CRUD Resolves
 4. ✅ `milestone.service.ts` - CRUD milestones
 5. ✅ `reminder.service.ts` - CRUD reminders
 6. ✅ `achievement.service.ts` - Track achievements
@@ -100,7 +100,7 @@ All in `src/services/`:
 8. ✅ `notification.service.ts` - Push notifications
 9. ✅ `settings.service.ts` - User preferences
 10. ✅ `analytics.service.ts` - Stats & insights
-11. ✅ `template.service.ts` - Pakt templates
+11. ✅ `template.service.ts` - Resolve templates
 
 ---
 
@@ -109,13 +109,13 @@ All in `src/services/`:
 All in `src/hooks/`:
 
 1. ✅ `useAuth.ts` - Authentication state
-2. ✅ `usePakts.ts` - Pakts CRUD
+2. ✅ `usePakts.ts` - Resolves CRUD
 3. ✅ `useMilestones.ts` - Milestones CRUD
 4. ✅ `useAchievements.ts` - Achievement data
 5. ✅ `useNotifications.ts` - Notification management
 6. ✅ `useSettings.ts` - User settings
 7. ✅ `useAnalytics.ts` - Analytics data
-8. ✅ `usePaktStats.ts` - Pakt statistics
+8. ✅ `usePaktStats.ts` - Resolve statistics
 
 ---
 
@@ -123,7 +123,7 @@ All in `src/hooks/`:
 
 Replaced mock data with real data:
 
-1. ✅ `PaktDashboardLive.tsx` - Real pakts/milestones
+1. ✅ `PaktDashboardLive.tsx` - Real Resolves/milestones
 2. ✅ `ReminderSetupLive.tsx` - Saves to DB + schedules notifications
 3. ✅ `SettingsScreenLive.tsx` - Persists dark mode & preferences
 4. ✅ `InsightsOverviewLive.tsx` - Real-time analytics
@@ -136,8 +136,8 @@ Replaced mock data with real data:
 Test these flows:
 
 - [ ] Sign up → Profile created in DB
-- [ ] Create Pakt → Shows in dashboard
-- [ ] Add Milestone → Pakt progress updates
+- [ ] Create Resolve → Shows in dashboard
+- [ ] Add Milestone → Resolve progress updates
 - [ ] Complete Milestone → Analytics update + notification
 - [ ] Set Reminder → Saves to DB + schedules push
 - [ ] Toggle Dark Mode → Saves to profiles.dark_mode

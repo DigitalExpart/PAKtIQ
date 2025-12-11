@@ -40,7 +40,7 @@ Go to **Table Editor**:
 - Tracks daily user statistics
 - Current streak & longest streak
 - Completion rates
-- Milestones & pakts completed
+- Milestones & Resolves completed
 - Badges earned
 - Time spent
 
@@ -50,7 +50,7 @@ Go to **Table Editor**:
 
 ### Creates Automatic Triggers:
 - Auto-updates analytics when milestone completed
-- Auto-updates analytics when pakt completed
+- Auto-updates analytics when Resolve completed
 - Auto-calculates streaks daily
 - Auto-calculates completion rates
 

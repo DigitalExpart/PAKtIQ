@@ -54,13 +54,13 @@ export default function ReminderSetup({ currentPakt, onUpdate, onComplete, onBac
           <p className="text-lg text-[#3C2B63]/70">Stay on track with smart notifications</p>
         </motion.div>
 
-        {/* Pakt Name Display */}
+        {/* Resolve Name Display */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           className="bg-gradient-to-r from-[#9163F2] to-[#3C2B63] text-white rounded-2xl p-4 mb-8"
         >
-          <div className="text-sm opacity-80 mb-1">Your Pakt:</div>
+          <div className="text-sm opacity-80 mb-1">Your Resolve:</div>
           <div className="text-xl">{currentPakt.name}</div>
           <div className="text-sm opacity-80 mt-2">
             {currentPakt.milestones?.length || 0} milestones
@@ -193,7 +193,7 @@ export default function ReminderSetup({ currentPakt, onUpdate, onComplete, onBac
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
           >
-            <span>Finish Pakt</span>
+            <span>Finish Resolve</span>
             <Check className="w-5 h-5" />
           </button>
         </div>

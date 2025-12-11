@@ -7,7 +7,7 @@ type MilestoneUpdate = Database['public']['Tables']['milestones']['Update'];
 
 export class MilestoneService {
   /**
-   * Get all milestones for a pakt
+   * Get all milestones for a Resolve
    */
   static async getPaktMilestones(paktId: string): Promise<Milestone[]> {
     const { data, error } = await supabase
@@ -166,7 +166,7 @@ export class MilestoneService {
   }
 
   /**
-   * Get milestone completion stats for a pakt
+   * Get milestone completion stats for a Resolve
    */
   static async getMilestoneStats(paktId: string) {
     const milestones = await this.getPaktMilestones(paktId);

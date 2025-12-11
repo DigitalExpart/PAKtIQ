@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Platform, Modal, Alert, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert, Dimensions } from 'react-native';
 import { Share } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
@@ -34,6 +34,7 @@ interface DaySchedule {
   time: string | null;
   enabled: boolean;
   scheduleId?: string;
+  isLocked?: boolean; // Past day - all past days are locked from editing
 }
 
 export default function HabitDetailScreen() {
@@ -80,14 +81,59 @@ export default function HabitDetailScreen() {
         
         // Load schedules
         const schedules = await HabitService.getHabitSchedules(habitId);
+        
+        // Get current week dates for each day
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const dayOfWeek = today.getDay();
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - dayOfWeek);
+        startOfWeek.setHours(0, 0, 0, 0);
+        
+        // Load week completions to check for locked days
+        const startDate = startOfWeek.toISOString().split('T')[0];
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        const endDate = endOfWeek.toISOString().split('T')[0];
+        const completions = await HabitService.getHabitCompletions(habitId, startDate, endDate);
+        const completionMap = new Map<string, 'completed' | 'missed'>();
+        completions.forEach(c => {
+          const status = c.status || 'completed';
+          if (status === 'completed' || status === 'missed') {
+            completionMap.set(c.completion_date, status);
+          }
+        });
+        
         const allDays = DAYS.map(day => {
           const schedule = schedules.find(s => s.day_of_week === day.id);
+          // Calculate the date for this day in the current week
+          const dayDate = new Date(startOfWeek);
+          dayDate.setDate(startOfWeek.getDate() + day.id);
+          dayDate.setHours(0, 0, 0, 0);
+          const dayDateString = dayDate.toISOString().split('T')[0];
+          const isPast = dayDate < today;
+          const isToday = dayDateString === today.toISOString().split('T')[0];
+          const dayStatus = completionMap.get(dayDateString);
+          
+          // Lock past days (before today) - they cannot be edited
+          // Lock today only if it's been completed or missed
+          // Future days are always editable
+          let isLocked = false;
+          if (isPast) {
+            isLocked = true; // All past days are locked
+          } else if (isToday) {
+            // Today is locked only if it's been completed or missed
+            isLocked = dayStatus === 'completed' || dayStatus === 'missed';
+          }
+          // Future days (isPast = false, isToday = false) are not locked
+          
           return {
             day: day.id,
             label: day.label,
             time: schedule?.time || null,
             enabled: !!schedule,
             scheduleId: schedule?.id,
+            isLocked: isLocked,
           };
         });
         setDaySchedules(allDays);
@@ -257,6 +303,34 @@ export default function HabitDetailScreen() {
   const handleDayToggle = async (dayId: number) => {
     const schedule = daySchedules.find(s => s.day === dayId);
     
+    // Check if day is locked
+    if (schedule?.isLocked) {
+      // Determine the reason for locking
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const dayOfWeek = today.getDay();
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - dayOfWeek);
+      startOfWeek.setHours(0, 0, 0, 0);
+      const dayDate = new Date(startOfWeek);
+      dayDate.setDate(startOfWeek.getDate() + dayId);
+      dayDate.setHours(0, 0, 0, 0);
+      const isPast = dayDate < today;
+      
+      if (isPast) {
+        Alert.alert(
+          t('habit.locked') || 'Locked',
+          t('habit.lockedMessage') || 'This day cannot be edited because it has already passed. Only today and future days can be edited.'
+        );
+      } else {
+        Alert.alert(
+          t('habit.locked') || 'Locked',
+          t('habit.lockedMessageToday') || 'This day cannot be edited because it has already been marked as completed or missed.'
+        );
+      }
+      return;
+    }
+    
     if (schedule?.enabled && schedule.scheduleId) {
       // Remove schedule
       try {
@@ -290,6 +364,35 @@ export default function HabitDetailScreen() {
 
   const handleTimeSelect = (dayId: number) => {
     const schedule = daySchedules.find(s => s.day === dayId);
+    
+    // Check if day is locked
+    if (schedule?.isLocked) {
+      // Determine the reason for locking
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const dayOfWeek = today.getDay();
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - dayOfWeek);
+      startOfWeek.setHours(0, 0, 0, 0);
+      const dayDate = new Date(startOfWeek);
+      dayDate.setDate(startOfWeek.getDate() + dayId);
+      dayDate.setHours(0, 0, 0, 0);
+      const isPast = dayDate < today;
+      
+      if (isPast) {
+        Alert.alert(
+          t('habit.locked') || 'Locked',
+          t('habit.lockedMessage') || 'This day cannot be edited because it has already passed. Only today and future days can be edited.'
+        );
+      } else {
+        Alert.alert(
+          t('habit.locked') || 'Locked',
+          t('habit.lockedMessageToday') || 'This day cannot be edited because it has already been marked as completed or missed.'
+        );
+      }
+      return;
+    }
+    
     const date = new Date();
     
     if (schedule?.time) {
@@ -412,7 +515,8 @@ export default function HabitDetailScreen() {
       
       setEditing(false);
       Alert.alert(t('common.success'), t('habit.habitUpdated'));
-      loadHabit();
+      // Reload habit to refresh locked status
+      await loadHabit();
     } catch (error: any) {
       showErrorAlert(t('common.error'), error.message || t('habit.failedToUpdate'));
     }
@@ -517,7 +621,7 @@ export default function HabitDetailScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
+          <Text style={[styles.backButton, { color: colors.primary }]}>← {t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.text }]}>
           {editing ? t('habit.editHabit') : habit.name}
@@ -527,8 +631,12 @@ export default function HabitDetailScreen() {
             <TouchableOpacity onPress={handleShare} style={styles.shareButton}>
               <Share2 size={20} color={colors.primary} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setEditing(true)}>
-              <Text style={[styles.editButton, { color: colors.primary }]}>Edit</Text>
+            <TouchableOpacity onPress={() => {
+              setHabitName(habit.name);
+              setDescription(habit.description || '');
+              setEditing(true);
+            }}>
+              <Text style={[styles.editButton, { color: colors.primary }]}>{t('common.edit')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -543,6 +651,7 @@ export default function HabitDetailScreen() {
                 style={[styles.input, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.border }]}
                 value={habitName}
                 onChangeText={setHabitName}
+                placeholder={t('habit.habitNamePlaceholder')}
               />
             </View>
 
@@ -552,58 +661,10 @@ export default function HabitDetailScreen() {
                 style={[styles.textArea, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.border }]}
                 value={description}
                 onChangeText={setDescription}
+                placeholder={t('habit.descriptionPlaceholder')}
                 multiline
                 numberOfLines={3}
               />
-            </View>
-
-            {/* Schedule Section in Edit Mode */}
-            <View style={styles.section}>
-              <Text style={[styles.label, { color: colors.text }]}>{t('habit.schedule')}</Text>
-              <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 12 }]}>
-                {t('habit.scheduleHint')}
-              </Text>
-              
-              <View style={styles.daysContainer}>
-                {daySchedules.map((schedule) => {
-                  return (
-                    <View key={schedule.day} style={styles.scheduleRow}>
-                      {/* Day Button */}
-                      <TouchableOpacity
-                        style={[
-                          styles.dayToggle,
-                          schedule.enabled && { backgroundColor: colors.primary },
-                          { borderColor: colors.border }
-                        ]}
-                        onPress={() => handleDayToggle(schedule.day)}
-                      >
-                        <Text style={[
-                          styles.dayToggleText,
-                          { color: schedule.enabled ? '#FFFFFF' : colors.text }
-                        ]}>
-                          {DAYS.find(d => d.id === schedule.day)?.short}
-                        </Text>
-                      </TouchableOpacity>
-                      
-                      {/* Time Button */}
-                      {schedule.enabled && (
-                        <TouchableOpacity
-                          style={[
-                            styles.timeButton, 
-                            { backgroundColor: colors.surface, borderColor: colors.border }
-                          ]}
-                          onPress={() => handleTimeSelect(schedule.day)}
-                        >
-                          <Clock size={16} color={colors.primary} />
-                          <Text style={[styles.timeText, { color: schedule.time ? colors.text : colors.textSecondary }]}>
-                            {formatTime(schedule.time)}
-                          </Text>
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  );
-                })}
-              </View>
             </View>
 
             <View style={styles.buttonRow}>
@@ -620,7 +681,6 @@ export default function HabitDetailScreen() {
                   setEditing(false);
                   setHabitName(habit.name);
                   setDescription(habit.description || '');
-                  // Reload habit to get latest schedule state
                   loadHabit();
                 }}
               >
@@ -783,66 +843,19 @@ export default function HabitDetailScreen() {
                 })}
               </View>
             </View>
+
+            {/* Delete Button */}
+            <TouchableOpacity
+              style={[styles.deleteButton, { borderColor: colors.error }]}
+              onPress={handleDelete}
+            >
+              <Trash2 size={20} color={colors.error} />
+              <Text style={[styles.deleteButtonText, { color: colors.error }]}>{t('habit.deleteHabit')}</Text>
+            </TouchableOpacity>
           </>
         )}
-
-        {/* Delete Button */}
-        <TouchableOpacity
-          style={[styles.deleteButton, { borderColor: colors.error }]}
-          onPress={handleDelete}
-        >
-          <Trash2 size={20} color={colors.error} />
-          <Text style={[styles.deleteButtonText, { color: colors.error }]}>{t('habit.deleteHabit')}</Text>
-        </TouchableOpacity>
       </ScrollView>
 
-      {/* Time Picker Modal */}
-      {showTimePicker && (
-        Platform.OS === 'ios' && DateTimePicker ? (
-          <Modal
-            visible={showTimePicker}
-            transparent
-            animationType="slide"
-            onRequestClose={() => setShowTimePicker(false)}
-          >
-            <View style={styles.modalOverlay}>
-              <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-                <View style={styles.modalHeader}>
-                  <TouchableOpacity onPress={() => setShowTimePicker(false)}>
-                    <Text style={[styles.modalButton, { color: colors.primary }]}>{t('common.cancel')}</Text>
-                  </TouchableOpacity>
-                  <Text style={[styles.modalTitle, { color: colors.text }]}>{t('habit.selectTime')}</Text>
-                  <TouchableOpacity onPress={handleTimeConfirm}>
-                    <Text style={[styles.modalButton, { color: colors.primary }]}>{t('common.done')}</Text>
-                  </TouchableOpacity>
-                </View>
-                <DateTimePicker
-                  value={tempTime}
-                  mode="time"
-                  display="spinner"
-                  onChange={(event: any, date?: Date) => {
-                    if (date) setTempTime(date);
-                  }}
-                  textColor={colors.text}
-                />
-              </View>
-            </View>
-          </Modal>
-        ) : Platform.OS === 'android' && DateTimePicker ? (
-          <DateTimePicker
-            value={tempTime}
-            mode="time"
-            display="default"
-            onChange={(event: any, date?: Date) => {
-              setShowTimePicker(false);
-              if (date && selectedDay !== null) {
-                setTempTime(date);
-                handleTimeConfirm();
-              }
-            }}
-          />
-        ) : null
-      )}
 
       <BottomTabBar />
     </SafeAreaView>
@@ -974,6 +987,11 @@ const styles = StyleSheet.create({
   timeText: {
     fontSize: 14,
     fontWeight: '500',
+  },
+  lockedLabel: {
+    fontSize: 12,
+    fontStyle: 'italic',
+    marginLeft: 4,
   },
   buttonRow: {
     flexDirection: 'row',

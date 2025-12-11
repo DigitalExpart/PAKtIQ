@@ -30,22 +30,22 @@ export class ShareService {
   }
 
   /**
-   * Share a pakt/resolution
+   * Share a Resolve/resolution
    */
-  static async sharePakt(pakt: {
+  static async sharePakt(Resolve: {
     name: string;
     description: string;
     category: string;
     progress: number;
     milestones?: Array<{ name: string; completed: boolean }>;
   }): Promise<void> {
-    const milestonesText = pakt.milestones
-      ? `\n\nMilestones:\n${pakt.milestones.map(m => `• ${m.name} ${m.completed ? '✅' : '⏳'}`).join('\n')}`
+    const milestonesText = Resolve.milestones
+      ? `\n\nMilestones:\n${Resolve.milestones.map(m => `• ${m.name} ${m.completed ? '✅' : '⏳'}`).join('\n')}`
       : '';
 
-    const message = `🎯 ${pakt.name}\n\n${pakt.description}\n\nCategory: ${pakt.category}\nProgress: ${pakt.progress}%${milestonesText}\n\nTrack your goals with Resolute Plan!`;
+    const message = `🎯 ${Resolve.name}\n\n${Resolve.description}\n\nCategory: ${Resolve.category}\nProgress: ${Resolve.progress}%${milestonesText}\n\nTrack your goals with Resolute Plan!`;
 
-    await this.shareText(pakt.name, message);
+    await this.shareText(Resolve.name, message);
   }
 
   /**
@@ -53,7 +53,7 @@ export class ShareService {
    */
   static async shareAsLink(paktId: string, paktName: string): Promise<void> {
     // TODO: Generate deep link when deep linking is set up
-    const url = `https://resoluteplan.app/pakt/${paktId}`;
+    const url = `https://resoluteplan.app/Resolve/${paktId}`;
     const message = `Check out my resolution: ${paktName}\n\n${url}`;
     
     await Share.share({
@@ -67,7 +67,7 @@ export class ShareService {
    * Uses Share API as fallback since Clipboard API is deprecated in newer React Native versions
    */
   static async copyLink(paktId: string): Promise<void> {
-    const url = `https://resoluteplan.app/pakt/${paktId}`;
+    const url = `https://resoluteplan.app/Resolve/${paktId}`;
     
     if (Platform.OS === 'web') {
       // For web, use navigator.clipboard

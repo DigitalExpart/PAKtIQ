@@ -4,7 +4,7 @@
 
 You're experiencing two issues:
 1. **No sign-up/sign-in screen shows** in your Expo app
-2. **Pakts you create don't save** to the database
+2. **Resolves you create don't save** to the database
 
 ## 🔍 **Root Cause**
 
@@ -19,7 +19,7 @@ This means:
 - ❌ Supabase can't connect in Expo
 - ❌ Authentication doesn't work
 - ❌ Database operations fail silently
-- ❌ Your pakts never reach the database
+- ❌ Your Resolves never reach the database
 
 ---
 
@@ -75,8 +75,8 @@ Then scan the QR code again.
    - Email: `yourname@example.com`
    - Password: `YourPassword123!`
 4. **Profile created** in Supabase automatically
-5. **Create pakt** → Saves to database ✓
-6. **View in Supabase** → See your pakt in `pakts` table ✓
+5. **Create Resolve** → Saves to database ✓
+6. **View in Supabase** → See your Resolve in `Resolves` table ✓
 
 ---
 

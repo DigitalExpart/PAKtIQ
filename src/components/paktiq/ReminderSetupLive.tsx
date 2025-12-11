@@ -37,7 +37,7 @@ export default function ReminderSetupLive({ currentPakt, onUpdate, onComplete, o
   const handleComplete = async () => {
     setLoading(true);
     try {
-      // Update pakt with reminder settings
+      // Update Resolve with reminder settings
       const reminders: ReminderSettings = {
         frequency,
         time,
@@ -52,13 +52,13 @@ export default function ReminderSetupLive({ currentPakt, onUpdate, onComplete, o
         }
 
         // Schedule the notification
-        // Note: This will be linked to the pakt after it's created
+        // Note: This will be linked to the Resolve after it's created
         // The actual notification identifier will be saved in the database
         await scheduleReminder(
           currentPakt.name,
           frequency,
           time,
-          '', // Will be filled with actual pakt ID after creation
+          '', // Will be filled with actual Resolve ID after creation
           frequency === 'custom' ? selectedDays : undefined
         );
 
@@ -97,13 +97,13 @@ export default function ReminderSetupLive({ currentPakt, onUpdate, onComplete, o
           <p className="text-lg text-[#3C2B63]/70">Stay on track with smart notifications</p>
         </motion.div>
 
-        {/* Pakt Name Display */}
+        {/* Resolve Name Display */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           className="bg-gradient-to-r from-[#9163F2] to-[#3C2B63] text-white rounded-2xl p-4 mb-8"
         >
-          <div className="text-sm opacity-80 mb-1">Your Pakt:</div>
+          <div className="text-sm opacity-80 mb-1">Your Resolve:</div>
           <div className="text-xl">{currentPakt.name}</div>
           <div className="text-sm opacity-80 mt-2">
             {currentPakt.milestones?.length || 0} milestones

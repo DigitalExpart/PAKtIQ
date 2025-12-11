@@ -58,17 +58,17 @@ Go to Supabase Dashboard:
 - **Authentication → Users**: See your new user
 - **Table Editor → profiles**: Profile auto-created!
 
-### 5. Create Test Pakt
+### 5. Create Test Resolve
 - Complete onboarding
 - Select category (e.g., "Fitness")
-- Name: "Test Pakt"
+- Name: "Test Resolve"
 - Description: "Testing the backend"
 - Add 2-3 milestones
 - Complete the flow
 
 ### 6. Verify in Database
 Go to Supabase Dashboard:
-- **Table Editor → pakts**: See your pakt!
+- **Table Editor → Resolves**: See your Resolve!
 - **Table Editor → milestones**: See your milestones!
 
 ---
@@ -123,7 +123,7 @@ Onboarding Flow
     ↓
 Category Selection
     ↓
-Pakt Creation     ← Saves to database
+Resolve Creation     ← Saves to database
     ↓
 Milestone Setup   ← Saves to database
     ↓
@@ -145,10 +145,10 @@ User Action → React Hook → Service → Supabase → Database
 When user signs up → Profile automatically created in database
 
 ### 2. Auto Progress Tracking
-Mark milestone complete → Pakt progress updates automatically
+Mark milestone complete → Resolve progress updates automatically
 
 ### 3. Real-time Data
-All pakts/milestones from database → Always in sync
+All Resolves/milestones from database → Always in sync
 
 ### 4. Secure by Default
 Row Level Security → Users only see their own data
@@ -163,7 +163,7 @@ TypeScript types → Catch errors before runtime
 ```
 profiles (user accounts)
    ↓
-pakts (commitments)
+Resolves (commitments)
    ├── milestones (sub-goals)
    ├── reminders (notifications)
    └── activity_log (history)
@@ -206,7 +206,7 @@ Your best friend for debugging! See data in real-time.
 
 ### Tip 3: Use Hooks
 ```tsx
-const { pakts, loading, createPakt } = usePakts();
+const { Resolves, loading, createPakt } = usePakts();
 ```
 Hooks handle everything automatically!
 
@@ -259,7 +259,7 @@ You can build:
 
 ### Features
 - ✅ User profiles with avatars
-- ✅ Pakt categories & templates
+- ✅ Resolve categories & templates
 - ✅ Milestone tracking & completion
 - ✅ Progress visualization
 - ✅ Reminder notifications
@@ -273,8 +273,8 @@ You can build:
 
 ### Future Enhancements
 - Push notifications (with additional setup)
-- Team pakts (collaboration)
-- Public pakts (social features)
+- Team Resolves (collaboration)
+- Public Resolves (social features)
 - Analytics dashboard
 - Mobile app (React Native)
 
@@ -288,8 +288,8 @@ After database migration, verify:
 - [ ] Can sign up new user
 - [ ] Profile auto-created
 - [ ] Can sign in
-- [ ] Can create pakt
-- [ ] Pakt appears in dashboard
+- [ ] Can create Resolve
+- [ ] Resolve appears in dashboard
 - [ ] Can add milestones
 - [ ] Progress updates automatically
 - [ ] No console errors
@@ -343,7 +343,7 @@ Your app is ready to deploy! Just ensure:
 ### Then (10 minutes)
 1. ✅ `npm run dev`
 2. ✅ Test sign up/sign in
-3. ✅ Create test pakt
+3. ✅ Create test Resolve
 4. ✅ Verify in Supabase dashboard
 
 ### Next (Ongoing)

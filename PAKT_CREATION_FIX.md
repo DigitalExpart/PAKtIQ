@@ -1,13 +1,13 @@
-# ✅ Pakt Creation Fix - Database Integration Complete
+# ✅ Resolve Creation Fix - Database Integration Complete
 
 ## 🐛 **The Problem**
 
-User created a pakt in the app but it **never saved to Supabase**. The `pakts` table remained empty.
+User created a Resolve in the app but it **never saved to Supabase**. The `Resolves` table remained empty.
 
 ### **Root Cause:**
-The pakt creation flow (4 screens) was **not connected to the backend**:
+The Resolve creation flow (4 screens) was **not connected to the backend**:
 - ❌ Category Selection → No database save
-- ❌ Pakt Naming → No database save
+- ❌ Resolve Naming → No database save
 - ❌ Milestone Builder → No database save
 - ❌ Reminder Setup → Just navigated to dashboard without saving
 
@@ -17,7 +17,7 @@ The pakt creation flow (4 screens) was **not connected to the backend**:
 
 ## ✅ **The Solution**
 
-Created a **Pakt Creation Context** to:
+Created a **Resolve Creation Context** to:
 1. Store data across all screens
 2. Save everything to Supabase at the end
 
@@ -25,11 +25,11 @@ Created a **Pakt Creation Context** to:
 
 ## 📝 **What Was Changed**
 
-### **1. Created Pakt Creation Context**
+### **1. Created Resolve Creation Context**
 **File:** `src/contexts/PaktCreationContext.tsx` (NEW)
 
 This context stores:
-- Pakt name & description
+- Resolve name & description
 - Category
 - Milestones
 - Reminder settings
@@ -61,13 +61,13 @@ const handleContinue = () => {
   if (selectedCategory) {
     const category = categories.find(c => c.id === selectedCategory);
     updatePaktData({ category: category.name }); // ← Saves to context
-    router.push('/pakt-naming');
+    router.push('/Resolve-naming');
   }
 };
 ```
 
-### **4. Updated Pakt Naming**
-**File:** `app/pakt-naming.tsx`
+### **4. Updated Resolve Naming**
+**File:** `app/Resolve-naming.tsx`
 
 Now stores name & description in context:
 
@@ -118,7 +118,7 @@ const handleComplete = async () => {
   setSaving(true);
 
   try {
-    // 1. Create the pakt
+    // 1. Create the Resolve
     const newPakt = await PaktService.createPakt({
       user_id: user.id,
       name: paktData.name,
@@ -149,7 +149,7 @@ const handleComplete = async () => {
 
     // Reset context and show success
     resetPaktData();
-    Alert.alert('Success! 🎉', `Your pakt "${paktData.name}" has been created!`);
+    Alert.alert('Success! 🎉', `Your Resolve "${paktData.name}" has been created!`);
     router.push('/dashboard');
   } catch (error: any) {
     Alert.alert('Error', error.message);
@@ -166,12 +166,12 @@ const handleComplete = async () => {
 ### **Complete Flow:**
 
 ```
-User clicks "New Pakt"
+User clicks "New Resolve"
     ↓
 1. Category Selection
    → Saves category to context
     ↓
-2. Pakt Naming
+2. Resolve Naming
    → Saves name & description to context
     ↓
 3. Milestone Builder
@@ -179,11 +179,11 @@ User clicks "New Pakt"
     ↓
 4. Reminder Setup
    → Saves reminder settings to context
-   → 🔥 CREATES PAKT IN SUPABASE
+   → 🔥 CREATES Resolve IN SUPABASE
    → Creates milestones in database
    → Creates reminder in database
     ↓
-Dashboard shows new pakt! ✅
+Dashboard shows new Resolve! ✅
 ```
 
 ---
@@ -195,12 +195,12 @@ Dashboard shows new pakt! ✅
 npx expo start --clear
 ```
 
-### **Step 2: Create a Pakt**
+### **Step 2: Create a Resolve**
 1. Open app on your phone
 2. Sign in with your account
-3. Click **"New Pakt"** button
+3. Click **"New Resolve"** button
 4. **Select a category** (e.g., "Health & Fitness")
-5. **Name your pakt** (e.g., "Morning Workout")
+5. **Name your Resolve** (e.g., "Morning Workout")
 6. **Add milestones:**
    - "Do 10 push-ups"
    - "Run 1 mile"
@@ -210,16 +210,16 @@ npx expo start --clear
 
 ### **Step 3: Verify in Supabase**
 1. Go to Supabase Dashboard
-2. Open **`pakts`** table
-3. You should see your new pakt! ✅
+2. Open **`Resolves`** table
+3. You should see your new Resolve! ✅
 4. Check **`milestones`** table
 5. You should see your 3 milestones! ✅
 6. Check **`reminders`** table (if you enabled reminders)
 
 ### **Step 4: Verify in App**
 1. Go back to dashboard
-2. Your new pakt should appear in **"Active Pakts"** ✅
-3. **Active Pakts** count should increase ✅
+2. Your new Resolve should appear in **"Active Resolves"** ✅
+3. **Active Resolves** count should increase ✅
 
 ---
 
@@ -227,17 +227,17 @@ npx expo start --clear
 
 ### **Before Fix:**
 ```
-Create pakt → Nothing saves → Table empty ❌
+Create Resolve → Nothing saves → Table empty ❌
 ```
 
 ### **After Fix:**
 ```
-Create pakt → Saves to Supabase → Shows in dashboard ✅
+Create Resolve → Saves to Supabase → Shows in dashboard ✅
 ```
 
-### **Supabase Tables After Creating 1 Pakt:**
+### **Supabase Tables After Creating 1 Resolve:**
 
-**`pakts` table:**
+**`Resolves` table:**
 | id | user_id | name | category | status |
 |----|---------|------|----------|--------|
 | abc-123 | user-456 | Morning Workout | Health & Fitness | active |
@@ -274,7 +274,7 @@ After successful creation:
 
 ```
 ✅ Success! 🎉
-Your pakt "Morning Workout" has been created!
+Your Resolve "Morning Workout" has been created!
 
 [View Dashboard]
 ```
@@ -284,32 +284,32 @@ If something fails:
 
 ```
 ❌ Error
-Failed to create pakt. Please try again.
+Failed to create Resolve. Please try again.
 ```
 
 ---
 
 ## 🎯 **Summary**
 
-**Problem:** Pakts weren't saving to database  
-**Cause:** No backend integration in pakt creation flow  
+**Problem:** Resolves weren't saving to database  
+**Cause:** No backend integration in Resolve creation flow  
 **Solution:** Created context to store data and save to Supabase on final screen  
 
 **Files Changed:**
 - ✅ Created `PaktCreationContext.tsx`
 - ✅ Updated `app/_layout.tsx`
 - ✅ Updated `app/category-selection.tsx`
-- ✅ Updated `app/pakt-naming.tsx`
+- ✅ Updated `app/Resolve-naming.tsx`
 - ✅ Updated `app/milestone-builder.tsx`
 - ✅ Updated `app/reminder-setup.tsx`
 
-**Result:** Pakts now save correctly to Supabase! 🎊
+**Result:** Resolves now save correctly to Supabase! 🎊
 
 ---
 
 ## 📞 **Support**
 
-If pakts still don't appear:
+If Resolves still don't appear:
 1. Check you're signed in
 2. Check internet connection
 3. Look for error messages in the app

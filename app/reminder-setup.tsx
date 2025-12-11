@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { usePaktCreation } from '../src/contexts/PaktCreationContext';
 import { useAuth } from '../src/contexts/AuthContext';
-import { PaktService } from '../src/services/pakt.service';
+import { ResolveService } from '../src/services/resolve.service';
 import { MilestoneService } from '../src/services/milestone.service';
 import { ReminderService } from '../src/services/reminder.service';
 import { NotificationService } from '../src/services/notification.service';
@@ -57,42 +57,42 @@ export default function ReminderSetup() {
 
   const handleComplete = async () => {
     if (!user) {
-      Alert.alert('Error', 'You must be logged in to create a pakt');
+      Alert.alert('Error', 'You must be logged in to create a Resolve');
       return;
     }
 
     if (!paktData.name) {
-      Alert.alert('Error', 'Please provide a name for your pakt');
+      Alert.alert('Error', 'Please provide a name for your Resolve');
       return;
     }
 
     setSaving(true);
 
     try {
-      // 1. Create the pakt
-      const newPakt = await PaktService.createPakt({
+      // 1. Create the Resolve
+      const newResolve = await ResolveService.createResolve({
         user_id: user.id,
         name: paktData.name,
         description: paktData.description || '',
-        target_outcome: paktData.description || 'Complete this pakt successfully',
+        target_outcome: paktData.description || 'Complete this Resolve successfully',
         deadline: paktData.targetDate || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // Default to 90 days from now
         category: paktData.category || 'other',
         status: 'active',
       });
 
-      console.log('✅ Pakt created:', newPakt.id);
+      console.log('✅ Resolve created:', newResolve.id);
 
       // 2. Create milestones
       let milestoneCount = 0;
       if (paktData.milestones && paktData.milestones.length > 0) {
         for (const milestone of paktData.milestones) {
-          // Use milestone's own dueDate if provided, otherwise use pakt deadline
+          // Use milestone's own dueDate if provided, otherwise use Resolve deadline
           const milestoneDueDate = milestone.dueDate 
             ? new Date(milestone.dueDate).toISOString()
             : (paktData.targetDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString());
           
           await MilestoneService.createMilestone({
-            pakt_id: newPakt.id,
+            pakt_id: newResolve.id,
             user_id: user.id,
             name: milestone.title,
             due_date: milestoneDueDate,
@@ -106,23 +106,23 @@ export default function ReminderSetup() {
         console.log(`✅ Created ${milestoneCount} milestones`);
       }
 
-      // Create notification for pakt creation with milestone info
+      // Create notification for Resolve creation with milestone info
       try {
-        await NotificationService.notifyPaktCreated(
+        await NotificationService.notifyResolveCreated(
           user.id, 
-          paktData.name || 'New Pakt', 
-          newPakt.id,
+          paktData.name || 'New Resolve', 
+          newResolve.id,
           milestoneCount
         );
       } catch (notifError) {
         console.error('Error creating notification:', notifError);
-        // Don't fail pakt creation if notification fails
+        // Don't fail Resolve creation if notification fails
       }
 
       // 3. Create reminder if enabled
       if (remindersEnabled) {
         await ReminderService.createReminder({
-          pakt_id: newPakt.id,
+          pakt_id: newResolve.id,
           user_id: user.id,
           frequency: selectedFrequency,
           time: times.find(t => t.id === selectedTime)?.time || '8:00 AM',
@@ -136,8 +136,8 @@ export default function ReminderSetup() {
       resetPaktData();
       setShowSuccessModal(true);
     } catch (error: any) {
-      console.error('Error creating pakt:', error);
-      Alert.alert('Error', error.message || 'Failed to create pakt. Please try again.');
+      console.error('Error creating Resolve:', error);
+      Alert.alert('Error', error.message || 'Failed to create resolve. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -147,7 +147,7 @@ export default function ReminderSetup() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
+          <Text style={[styles.backButton, { color: colors.primary }]}>← {t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.text }]}>Set Reminders</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Stay on track with smart notifications</Text>
@@ -298,9 +298,9 @@ export default function ReminderSetup() {
 
       <SuccessModal
         visible={showSuccessModal}
-        title={t('paktCreation.successTitle')}
-        message={t('paktCreation.successMessage', { paktName: paktData.name })}
-        buttonText={t('paktCreation.viewDashboard')}
+        title={t('resolveCreation.successTitle')}
+        message={t('resolveCreation.successMessage', { resolveName: paktData.name })}
+        buttonText={t('resolveCreation.viewDashboard')}
         onButtonPress={() => {
           setShowSuccessModal(false);
           router.push('/dashboard');

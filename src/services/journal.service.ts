@@ -49,7 +49,7 @@ export class JournalService {
   }
 
   /**
-   * Get journal entries for a specific pakt
+   * Get journal entries for a specific Resolve
    */
   static async getPaktEntries(userId: string, paktId: string): Promise<JournalEntry[]> {
     const { data, error } = await supabase

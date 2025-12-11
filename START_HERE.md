@@ -69,7 +69,7 @@ Now you can use the backend in your app!
 ### Quick Navigation
 
 - **"How do I authenticate users?"** → See `BACKEND_SETUP.md` > Authentication Flow
-- **"How do I create a pakt?"** → See `BACKEND_SETUP.md` > Usage Examples
+- **"How do I create a Resolve?"** → See `BACKEND_SETUP.md` > Usage Examples
 - **"How do I use hooks?"** → See `src/hooks/` files or `BACKEND_README.md`
 - **"What's in the database?"** → See `supabase/README.md`
 - **"How do I integrate with my UI?"** → See `IMPLEMENTATION_SUMMARY.md` > Integration
@@ -119,7 +119,7 @@ function TestComponent() {
 With the backend ready, you can:
 
 ✅ Add user authentication to your app
-✅ Create and manage pakts
+✅ Create and manage Resolves
 ✅ Track milestones and progress
 ✅ Set up reminders
 ✅ Award achievements
@@ -147,7 +147,7 @@ With the backend ready, you can:
 ### Database Tables (6 tables):
 ```
 ✅ profiles      - User accounts
-✅ pakts         - Main commitments
+✅ Resolves         - Main commitments
 ✅ milestones    - Sub-goals
 ✅ reminders     - Notifications
 ✅ achievements  - Badges
@@ -186,7 +186,7 @@ import { usePakts } from './hooks';
 
 function Dashboard() {
   const { user } = useAuth();
-  const { pakts, loading } = usePakts();
+  const { Resolves, loading } = usePakts();
   
   if (loading) return <div>Loading...</div>;
   if (!user) return <div>Please sign in</div>;
@@ -194,7 +194,7 @@ function Dashboard() {
   return (
     <div>
       <h1>Welcome {user.email}!</h1>
-      <p>You have {pakts.length} pakts</p>
+      <p>You have {Resolves.length} Resolves</p>
     </div>
   );
 }

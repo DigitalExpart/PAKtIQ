@@ -6,21 +6,21 @@ This document summarizes all the translation and UI improvements made to ensure 
 
 ## Issues Fixed
 
-### 1. ✅ All Active Pakts Screen Translation
+### 1. ✅ All Active Resolves Screen Translation
 **Problem:** Screen title, milestone text, and due dates were not translated.
 
 **Solution:**
 - Added `allPakts` translation keys to all locale files
-- Updated `app/all-pakts.tsx` to use translations for:
-  - Screen title: "All Active Pakts"
-  - Loading text: "Loading pakts..."
+- Updated `app/all-Resolves.tsx` to use translations for:
+  - Screen title: "All Active Resolves"
+  - Loading text: "Loading Resolves..."
   - Empty state messages
   - Milestone counts: "X/Y milestones"
   - Due dates: "Due in X months/days"
 
 **Files Modified:**
 - `src/locales/en.json`, `src/locales/fr.json`, `src/locales/es.json`
-- `app/all-pakts.tsx`
+- `app/all-Resolves.tsx`
 
 ### 2. ✅ Premium/Subscribe Screen Translation & Dark Mode
 **Problem:** Premium screen was not translated and not in dark mode.
@@ -51,9 +51,9 @@ This document summarizes all the translation and UI improvements made to ensure 
 **Solution:**
 - Added `notificationsFeed` translation keys
 - Created `translateNotification()` function in `app/notifications-feed.tsx` to:
-  - Translate common notification titles (Milestone Due, Milestone Achieved, Pakt Reminder)
+  - Translate common notification titles (Milestone Due, Milestone Achieved, Resolve Reminder)
   - Translate notification messages with dynamic content replacement
-  - Handle milestone and pakt name interpolation
+  - Handle milestone and Resolve name interpolation
 
 **Files Modified:**
 - `src/locales/en.json`, `src/locales/fr.json`, `src/locales/es.json`
@@ -63,9 +63,9 @@ This document summarizes all the translation and UI improvements made to ensure 
 - `notificationsFeed.milestoneDueTomorrow`
 - `notificationsFeed.milestoneAchieved`
 - `notificationsFeed.paktReminder`
-- `notificationsFeed.milestoneDueMessage` (with {{milestone}} and {{pakt}} placeholders)
-- `notificationsFeed.milestoneCompletedMessage` (with {{milestone}} and {{pakt}} placeholders)
-- `notificationsFeed.paktReminderMessage` (with {{count}} and {{pakt}} placeholders)
+- `notificationsFeed.milestoneDueMessage` (with {{milestone}} and {{Resolve}} placeholders)
+- `notificationsFeed.milestoneCompletedMessage` (with {{milestone}} and {{Resolve}} placeholders)
+- `notificationsFeed.paktReminderMessage` (with {{count}} and {{Resolve}} placeholders)
 
 ### 4. ✅ Logout Button Moved to Bottom of Profile
 **Problem:** Logout button was not easily accessible.
@@ -131,16 +131,16 @@ This document summarizes all the translation and UI improvements made to ensure 
 - `dateTime.jan` through `dateTime.dec` (short month names)
 - `daily.loadingHabits`
 
-### 8. ✅ Additional Pakt Name Translations
-**Problem:** Some habit/pakt names like "Walk", "New habit", "Build a Side Project" were not translated.
+### 8. ✅ Additional Resolve Name Translations
+**Problem:** Some habit/Resolve names like "Walk", "New habit", "Build a Side Project" were not translated.
 
 **Solution:**
-- Added more pakt name translations to `paktNames` section
+- Added more Resolve name translations to `paktNames` section
 
 **Files Modified:**
 - `src/locales/en.json`, `src/locales/fr.json`, `src/locales/es.json`
 
-**New Pakt Names Added:**
+**New Resolve Names Added:**
 - `paktNames.walk`: "Walk" / "Marcher" / "Caminar"
 - `paktNames.newHabit`: "New habit" / "Nouvelle habitude" / "Nuevo hábito"
 - `paktNames.buildSideProject`: "Build a Side Project" / "Créer un Projet Secondaire" / "Crear un Proyecto Secundario"
@@ -164,7 +164,7 @@ This document summarizes all the translation and UI improvements made to ensure 
 
 ## Screens Updated
 
-1. **`app/all-pakts.tsx`**
+1. **`app/all-Resolves.tsx`**
    - Screen title
    - Loading states
    - Empty states
@@ -202,7 +202,7 @@ This document summarizes all the translation and UI improvements made to ensure 
 ## Testing Checklist
 
 After implementation, verify:
-- [ ] All Active Pakts screen shows translated title
+- [ ] All Active Resolves screen shows translated title
 - [ ] Premium screen is in dark mode and fully translated
 - [ ] Notification feed shows translated notifications
 - [ ] Logout button is at bottom of profile screen
@@ -218,6 +218,6 @@ After implementation, verify:
 - Dark mode is now fully supported on premium screen
 - Logout requires confirmation before signing out
 - Language selector is available on welcome screen (upper right)
-- All pakt names use `translatePaktName()` utility function
+- All Resolve names use `translatePaktName()` utility function
 - All categories use `translateCategory()` utility function
 

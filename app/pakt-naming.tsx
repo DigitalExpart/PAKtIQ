@@ -75,7 +75,7 @@ export default function PaktNaming() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
+          <Text style={[styles.backButton, { color: colors.primary }]}>← {t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.text }]}>{t('paktNaming.title')}</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{t('paktNaming.subtitle')}</Text>
@@ -222,7 +222,7 @@ export default function PaktNaming() {
         </View>
 
         <View style={[styles.tipsSection, { backgroundColor: colors.primaryLight }]}>
-          <Text style={[styles.tipsTitle, { color: colors.text }]}>✨ Tips for a Great Pakt</Text>
+          <Text style={[styles.tipsTitle, { color: colors.text }]}>✨ Tips for a Great Resolve</Text>
           <Text style={[styles.tipItem, { color: colors.textSecondary }]}>• Be specific and measurable</Text>
           <Text style={[styles.tipItem, { color: colors.textSecondary }]}>• Make it challenging but achievable</Text>
           <Text style={[styles.tipItem, { color: colors.textSecondary }]}>• Focus on one clear outcome</Text>

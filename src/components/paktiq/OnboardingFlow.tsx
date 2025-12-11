@@ -12,16 +12,16 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
 
   const pages = [
     {
-      title: "What is a Pakt?",
+      title: "What is a Resolve?",
       subtitle: "A commitment you make to yourself",
-      content: "A Pakt is your personal pledge—whether it's building a habit, achieving a goal, or making a lifestyle change. It's your accountability partner in digital form.",
+      content: "A Resolve is your personal pledge—whether it's building a habit, achieving a goal, or making a lifestyle change. It's your accountability partner in digital form.",
       icon: <Target className="w-20 h-20 text-[#FFD88A]" />,
     },
     {
       title: "How It Works",
       subtitle: "Simple, powerful, effective",
       steps: [
-        { icon: <Target className="w-8 h-8 text-[#9163F2]" />, title: "Make a Pakt", desc: "Define your commitment" },
+        { icon: <Target className="w-8 h-8 text-[#9163F2]" />, title: "Make a Resolve", desc: "Define your commitment" },
         { icon: <CheckCircle2 className="w-8 h-8 text-[#96E6B3]" />, title: "Build Milestones", desc: "Break it into steps" },
         { icon: <TrendingUp className="w-8 h-8 text-[#FFD88A]" />, title: "Track Progress", desc: "Watch yourself succeed" },
       ],
@@ -97,7 +97,7 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
             transition={{ duration: 0.3 }}
             className="min-h-[500px] flex flex-col"
           >
-            {/* Page 0: What is a Pakt */}
+            {/* Page 0: What is a Resolve */}
             {currentPage === 0 && (
               <div className="text-center flex-1 flex flex-col justify-center">
                 <motion.div

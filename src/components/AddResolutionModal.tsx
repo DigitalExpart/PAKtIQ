@@ -41,7 +41,7 @@ export function AddResolutionModal({ onClose, onAdd }: AddResolutionModalProps) 
       <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between rounded-t-3xl">
-          <h2>New Pakt</h2>
+          <h2>New Resolve</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -54,7 +54,7 @@ export function AddResolutionModal({ onClose, onAdd }: AddResolutionModalProps) 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
             <label className="block text-sm text-gray-700 mb-2">
-              Pakt Title *
+              Resolve Title *
             </label>
             <input
               type="text"
@@ -74,7 +74,7 @@ export function AddResolutionModal({ onClose, onAdd }: AddResolutionModalProps) 
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe your Pakt..."
+              placeholder="Describe your Resolve..."
               rows={3}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
             />
@@ -129,7 +129,7 @@ export function AddResolutionModal({ onClose, onAdd }: AddResolutionModalProps) 
               type="submit"
               className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-lg transition-all"
             >
-              Create Pakt
+              Create Resolve
             </button>
           </div>
         </form>

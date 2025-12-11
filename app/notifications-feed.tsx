@@ -8,7 +8,7 @@ import { useLanguage } from '../src/contexts/LanguageContext';
 import { useAuth } from '../src/contexts/AuthContext';
 import { supabase } from '../src/lib/supabase';
 import { NotificationService } from '../src/services/notification.service';
-import { translatePaktName } from '../src/utils/translations';
+import { translateResolveName } from '../src/utils/translations';
 import BottomTabBar from '../src/components/BottomTabBar';
 
 interface Notification {
@@ -165,7 +165,7 @@ export default function NotificationsFeedScreen() {
       translatedTitle = t('notificationsFeed.milestoneMissed');
     } else if (notification.title.includes('Milestone Achieved')) {
       translatedTitle = t('notificationsFeed.milestoneAchieved');
-    } else if (notification.title.includes('Pakt Reminder')) {
+    } else if (notification.title.includes('Resolve Reminder')) {
       translatedTitle = t('notificationsFeed.paktReminder');
     }
 
@@ -174,67 +174,67 @@ export default function NotificationsFeedScreen() {
       const match = notification.message.match(/"([^"]+)" in "([^"]+)"/);
       if (match) {
         const milestoneName = match[1];
-        const paktName = translatePaktName(match[2]);
+        const paktName = translateResolveName(match[2]);
         translatedMessage = t('notificationsFeed.milestoneDueTodayMessage')
           .replace('{{milestone}}', milestoneName)
-          .replace('{{pakt}}', paktName);
+          .replace('{{Resolve}}', paktName);
       }
     } else if (notification.message.includes('is due tomorrow')) {
       const match = notification.message.match(/"([^"]+)" in "([^"]+)"/);
       if (match) {
         const milestoneName = match[1];
-        const paktName = translatePaktName(match[2]);
+        const paktName = translateResolveName(match[2]);
         translatedMessage = t('notificationsFeed.milestoneDueMessage')
           .replace('{{milestone}}', milestoneName)
-          .replace('{{pakt}}', paktName);
+          .replace('{{Resolve}}', paktName);
       }
     } else if (notification.message.includes('is due in')) {
       const match = notification.message.match(/"([^"]+)" in "([^"]+)" is due in (\d+) days/);
       if (match) {
         const milestoneName = match[1];
-        const paktName = translatePaktName(match[2]);
+        const paktName = translateResolveName(match[2]);
         const days = match[3];
         translatedMessage = t('notificationsFeed.milestoneDeadlineApproachingMessage')
           .replace('{{milestone}}', milestoneName)
-          .replace('{{pakt}}', paktName)
+          .replace('{{Resolve}}', paktName)
           .replace('{{days}}', days);
       }
     } else if (notification.message.includes('deadline for') && notification.message.includes('has passed')) {
       const match = notification.message.match(/"([^"]+)" in "([^"]+)"/);
       if (match) {
         const milestoneName = match[1];
-        const paktName = translatePaktName(match[2]);
+        const paktName = translateResolveName(match[2]);
         translatedMessage = t('notificationsFeed.milestoneMissedMessage')
           .replace('{{milestone}}', milestoneName)
-          .replace('{{pakt}}', paktName);
+          .replace('{{Resolve}}', paktName);
       }
     } else if (notification.message.includes("You've completed")) {
       const match = notification.message.match(/"([^"]+)" in "([^"]+)"/);
       if (match) {
         const milestoneName = match[1];
-        const paktName = translatePaktName(match[2]);
+        const paktName = translateResolveName(match[2]);
         translatedMessage = t('notificationsFeed.milestoneCompletedMessage')
           .replace('{{milestone}}', milestoneName)
-          .replace('{{pakt}}', paktName);
+          .replace('{{Resolve}}', paktName);
       }
     } else if (notification.message.includes('milestone to work on today') || notification.message.includes('milestones to work on today')) {
       // Handle both singular and plural
       const match = notification.message.match(/(\d+) milestones? to work on today in "([^"]+)"/);
       if (match) {
         const count = match[1];
-        const paktName = translatePaktName(match[2]);
+        const paktName = translateResolveName(match[2]);
         translatedMessage = t('notificationsFeed.paktReminderMessage')
           .replace('{{count}}', count)
-          .replace('{{pakt}}', paktName);
+          .replace('{{Resolve}}', paktName);
       } else {
         // Try singular form
         const match2 = notification.message.match(/You have (\d+) milestone to work on today in "([^"]+)"/);
         if (match2) {
           const count = match2[1];
-          const paktName = translatePaktName(match2[2]);
+          const paktName = translateResolveName(match2[2]);
           translatedMessage = t('notificationsFeed.paktReminderMessage')
             .replace('{{count}}', count)
-            .replace('{{pakt}}', paktName);
+            .replace('{{Resolve}}', paktName);
         }
       }
     } else if (notification.message.includes("Don't wait for motivation")) {

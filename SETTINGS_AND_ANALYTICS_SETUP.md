@@ -14,7 +14,7 @@
 - ✅ Stores all notification settings:
   - Push notifications
   - Email notifications
-  - Pakt reminders
+  - Resolve reminders
   - Milestone deadlines
   - Streak protection
   - Daily motivation
@@ -118,7 +118,7 @@ await toggleDarkMode(true); // Saves to database!
   enabled: boolean,              // Master toggle
   push_enabled: boolean,         // Push notifications on device
   email_enabled: boolean,        // Email notifications
-  pakt_reminders: boolean,       // Reminders for pakts
+  pakt_reminders: boolean,       // Reminders for Resolves
   milestone_deadlines: boolean,  // Deadline reminders
   streak_protection: boolean,    // Streak at risk alerts
   daily_motivation: boolean,     // Daily motivational messages
@@ -149,7 +149,7 @@ await updateQuietHours('22:00', '08:00');
 ### What's Tracked:
 1. **Daily Statistics**
    - Milestones completed today
-   - Pakts worked on today
+   - Resolves worked on today
    - Time spent (minutes)
 
 2. **Streaks**
@@ -160,7 +160,7 @@ await updateQuietHours('22:00', '08:00');
 3. **Completion Metrics**
    - Overall completion rate
    - Total milestones completed
-   - Total pakts completed
+   - Total Resolves completed
 
 4. **Achievements**
    - Total badges earned
@@ -187,7 +187,7 @@ const { insights, loading } = useAnalytics();
 ### Auto-Tracking:
 Analytics updates automatically when:
 - ✅ Milestone completed
-- ✅ Pakt completed
+- ✅ Resolve completed
 - ✅ Achievement earned
 - ✅ User active each day
 
@@ -296,7 +296,7 @@ Day 4: Complete a milestone → Streak = 1 (starts new)
 1. User taps checkbox
 2. MilestoneService.toggleMilestone(id, true)
 3. Database trigger fires:
-   → Updates pakt.progress automatically
+   → Updates Resolve.progress automatically
    → Updates analytics.milestones_completed_today
    → Updates analytics.total_milestones_completed
    → Updates analytics.completion_rate
@@ -415,7 +415,7 @@ Your app now has:
 
 4. ✅ **Auto-Tracking**
    - Milestones → Analytics
-   - Pakts → Analytics
+   - Resolves → Analytics
    - Streaks → Daily updates
    - No manual work needed!
 

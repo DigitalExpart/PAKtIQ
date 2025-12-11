@@ -37,7 +37,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 
 In Supabase dashboard, go to **Table Editor**. You should see these tables:
 - ✅ profiles
-- ✅ pakts
+- ✅ Resolves
 - ✅ milestones
 - ✅ reminders
 - ✅ achievements
@@ -111,7 +111,7 @@ You now have a fully functional backend with:
 
 ## Next Steps
 
-1. **Create your first Pakt**: Use `PaktService.createPakt()`
+1. **Create your first Resolve**: Use `PaktService.createPakt()`
 2. **Add milestones**: Use `MilestoneService.createMilestone()`
 3. **Track progress**: It updates automatically!
 4. **Earn achievements**: Happens automatically when you hit milestones

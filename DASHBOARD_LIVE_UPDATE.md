@@ -32,8 +32,8 @@ const currentStreak = analytics?.current_streak || 0;
    - Updates when you complete milestones
    - Resets if you miss a day
 
-2. **🎯 Active Pakts** - From `pakts` table
-   - Counts pakts with status = 'active'
+2. **🎯 Active Resolves** - From `Resolves` table
+   - Counts Resolves with status = 'active'
    - Real-time count from database
 
 3. **✅ Today** - From `analytics.milestones_completed_today`
@@ -45,8 +45,8 @@ const currentStreak = analytics?.current_streak || 0;
 - All buttons navigate to real screens
 - Data-driven navigation
 
-### **Active Pakts List**
-- **Pakt Name** - Real from database
+### **Active Resolves List**
+- **Resolve Name** - Real from database
 - **Category** - Real from database
 - **Target Outcome** - Real from database
 - **Progress %** - Auto-calculated from milestones
@@ -64,7 +64,7 @@ const currentStreak = analytics?.current_streak || 0;
 2. MilestoneService.updateMilestone({completed: true})
    ↓
 3. Database Trigger: update_pakt_progress_on_milestone_change
-   └─→ Updates pakt.progress automatically
+   └─→ Updates Resolve.progress automatically
    ↓
 4. Database Trigger: update_analytics_on_milestone_complete
    ├─→ Increments analytics.milestones_completed_today
@@ -86,10 +86,10 @@ Every piece of data on the dashboard is now pulled from Supabase:
 | Element | Data Source | Updates |
 |---------|-------------|---------|
 | Day Streak | `analytics.current_streak` | Real-time |
-| Active Pakts Count | `pakts` table (filtered) | Real-time |
+| Active Resolves Count | `Resolves` table (filtered) | Real-time |
 | Today Count | `analytics.milestones_completed_today` | Real-time |
-| Pakt List | `pakts` table | Real-time |
-| Pakt Progress | Auto-calculated by triggers | Real-time |
+| Resolve List | `Resolves` table | Real-time |
+| Resolve Progress | Auto-calculated by triggers | Real-time |
 | Milestones | `milestones` table | Real-time |
 | Achievements Count | `achievements` table | Real-time |
 
@@ -99,8 +99,8 @@ Every piece of data on the dashboard is now pulled from Supabase:
 
 1. **Open your app** (should be running in Expo)
 2. **Sign in** (or create account if needed)
-3. **Create a Pakt** with some milestones
-4. **Go to Dashboard** - See your real pakt!
+3. **Create a Resolve** with some milestones
+4. **Go to Dashboard** - See your real Resolve!
 5. **Complete a milestone** - Watch:
    - Progress bar update
    - Today count increase
@@ -126,7 +126,7 @@ After completing a milestone:
 ## 🎯 **What This Means**
 
 Your dashboard now shows:
-- ✅ **Real pakts** you created
+- ✅ **Real Resolves** you created
 - ✅ **Real progress** auto-calculated
 - ✅ **Real streaks** from actual activity
 - ✅ **Real milestones** with completion tracking
@@ -151,7 +151,7 @@ Your dashboard now shows:
 If you're a brand new user with no activity yet:
 
 - **Day Streak**: Shows `0` (no activity yet)
-- **Active Pakts**: Shows your pakt count
+- **Active Resolves**: Shows your Resolve count
 - **Today**: Shows `0` (no milestones completed today)
 
 **After you complete your first milestone:**

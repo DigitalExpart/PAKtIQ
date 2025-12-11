@@ -1,5 +1,5 @@
 // Export all hooks for easy importing
-export { usePakts, usePaktsByStatus, usePaktStats } from './usePakts';
+export { useResolves, useResolvesByStatus, useResolveStats } from './useResolves';
 export { useMilestones, useUpcomingMilestones, useOverdueMilestones, useMilestoneStats } from './useMilestones';
 export { useAchievements, useRecentAchievements, useAchievementCount } from './useAchievements';
 export { useNotifications } from './useNotifications';

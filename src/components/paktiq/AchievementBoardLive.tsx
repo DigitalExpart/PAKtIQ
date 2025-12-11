@@ -23,14 +23,14 @@ export default function AchievementBoardLive({ onBack, isDarkMode }: Achievement
 
   // All available achievements (mix of earned and locked)
   const allAchievements = [
-    { type: 'first_pakt', title: 'First Step', requirement: 'Complete 1 Pakt', icon: '🎯' },
+    { type: 'first_pakt', title: 'First Step', requirement: 'Complete 1 Resolve', icon: '🎯' },
     { type: 'first_milestone', title: 'Getting Started', requirement: 'Complete 1 milestone', icon: '⭐' },
     { type: 'milestone_10', title: 'On a Roll', requirement: 'Complete 10 milestones', icon: '🔥' },
     { type: 'milestone_25', title: 'Half Century', requirement: 'Complete 25 milestones', icon: '💯' },
     { type: 'milestone_50', title: 'Century', requirement: 'Complete 50 milestones', icon: '💪' },
     { type: 'milestone_100', title: 'Legend', requirement: 'Complete 100 milestones', icon: '👑' },
-    { type: 'pakt_5', title: 'Dedicated', requirement: 'Complete 5 Pakts', icon: '🌟' },
-    { type: 'pakt_10', title: 'Champion', requirement: 'Complete 10 Pakts', icon: '🏆' },
+    { type: 'pakt_5', title: 'Dedicated', requirement: 'Complete 5 Resolves', icon: '🌟' },
+    { type: 'pakt_10', title: 'Champion', requirement: 'Complete 10 Resolves', icon: '🏆' },
     { type: 'streak_7', title: 'Week Warrior', requirement: '7-day streak', icon: '⚡' },
     { type: 'streak_30', title: 'Month Master', requirement: '30-day streak', icon: '🔥' },
   ];

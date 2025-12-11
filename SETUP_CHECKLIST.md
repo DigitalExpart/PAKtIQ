@@ -57,7 +57,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 
 **Tables Created:**
 - ✅ profiles
-- ✅ pakts
+- ✅ Resolves
 - ✅ milestones
 - ✅ reminders
 - ✅ achievements
@@ -207,21 +207,21 @@ import { useAuth } from './contexts/AuthContext';
 
 ## 🎨 Integration Examples
 
-### Example 1: Show User's Pakts
+### Example 1: Show User's Resolves
 ```tsx
 import { usePakts } from './hooks';
 
 function PaktList() {
-  const { pakts, loading } = usePakts();
+  const { Resolves, loading } = usePakts();
   
   if (loading) return <div>Loading...</div>;
   
   return (
     <div>
-      {pakts.map(pakt => (
-        <div key={pakt.id}>
-          <h3>{pakt.name}</h3>
-          <p>Progress: {pakt.progress}%</p>
+      {Resolves.map(Resolve => (
+        <div key={Resolve.id}>
+          <h3>{Resolve.name}</h3>
+          <p>Progress: {Resolve.progress}%</p>
         </div>
       ))}
     </div>
@@ -229,7 +229,7 @@ function PaktList() {
 }
 ```
 
-### Example 2: Create New Pakt
+### Example 2: Create New Resolve
 ```tsx
 import { PaktService } from './services';
 import { useAuth } from './contexts/AuthContext';
@@ -240,7 +240,7 @@ function CreatePakt() {
   const handleCreate = async () => {
     await PaktService.createPakt({
       user_id: user!.id,
-      name: 'My New Pakt',
+      name: 'My New Resolve',
       description: 'Description here',
       target_outcome: 'Success!',
       deadline: '2024-12-31',
@@ -319,7 +319,7 @@ You'll know everything is working when:
 - ✅ 6 tables visible in Supabase Table Editor
 - ✅ Can sign up a test user
 - ✅ Profile automatically created for new user
-- ✅ Can create a pakt
+- ✅ Can create a Resolve
 - ✅ Can add milestones
 - ✅ Progress updates automatically
 - ✅ No console errors
@@ -337,7 +337,7 @@ With the backend ready, you can now:
    - Profile editing
 
 2. **Core Features**
-   - Pakt creation wizard
+   - Resolve creation wizard
    - Milestone builder
    - Progress dashboard
    - Reminder settings

@@ -5,7 +5,7 @@
 ### 1. **Dashboard** ✅
 - Background, cards, text all themed
 - Stats cards adapt to dark/light
-- Pakt cards with proper colors
+- Resolve cards with proper colors
 
 ### 2. **Settings** ✅  
 - Fully themed UI
@@ -22,7 +22,7 @@
 - Charts and graphs
 - All text colors
 
-### 5. **Edit Pakt** ✅
+### 5. **Edit Resolve** ✅
 - Forms and inputs
 - Buttons and actions
 - Theme-aware colors
@@ -59,14 +59,14 @@ function MyScreen() {
 
 ### Easy to Add (Same Pattern):
 - ✅ **Profile** - Just needs color application
-- ✅ **Pakt Detail** - Cards and text
+- ✅ **Resolve Detail** - Cards and text
 - ✅ **Templates** - List items
 - ✅ **Premium** - Feature cards
 - ✅ **Notifications** - Toggle switches
 - ✅ **Auth/Login** - Forms
 - ✅ **Onboarding** - Slides
 - ✅ **Category Selection** - Cards
-- ✅ **Pakt Naming** - Forms
+- ✅ **Resolve Naming** - Forms
 - ✅ **Milestone Builder** - List items
 - ✅ **Reminder Setup** - Options
 
@@ -82,7 +82,7 @@ function MyScreen() {
 - ✅ Settings (themed)
 - ✅ Achievements (themed)
 - ✅ Insights (themed)
-- ✅ Edit Pakt (themed)
+- ✅ Edit Resolve (themed)
 - ⏳ Persistence (needs AsyncStorage)
 - ⏳ Other screens (easy to add)
 

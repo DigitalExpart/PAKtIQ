@@ -23,7 +23,7 @@ export default function CreateChoiceScreen() {
         </View>
 
         <View style={styles.optionsContainer}>
-          {/* Create Pakt Option */}
+          {/* Create Resolve Option */}
           <TouchableOpacity
             style={[styles.optionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
             onPress={() => router.push('/category-selection')}
@@ -32,9 +32,9 @@ export default function CreateChoiceScreen() {
             <View style={[styles.iconContainer, { backgroundColor: colors.primary + '20' }]}>
               <Target size={32} color={colors.primary} />
             </View>
-            <Text style={[styles.optionTitle, { color: colors.text }]}>{t('createChoice.createPakt')}</Text>
+            <Text style={[styles.optionTitle, { color: colors.text }]}>{t('createChoice.createResolve')}</Text>
             <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
-              {t('createChoice.createPaktDesc')}
+              {t('createChoice.createResolveDesc')}
             </Text>
           </TouchableOpacity>
 

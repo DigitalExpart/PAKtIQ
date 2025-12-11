@@ -132,7 +132,7 @@ export class AchievementService {
   }
 
   /**
-   * Check and award pakt-based achievements
+   * Check and award Resolve-based achievements
    */
   static async checkPaktAchievements(
     userId: string,
@@ -140,23 +140,23 @@ export class AchievementService {
   ): Promise<Achievement[]> {
     const newAchievements: Achievement[] = [];
 
-    const pakts = [
-      { count: 1, type: 'first_pakt', title: 'Committed', description: 'Completed your first Pakt', icon: '🎉' },
-      { count: 5, type: 'pakt_5', title: 'Dedicated', description: 'Completed 5 Pakts', icon: '💪' },
-      { count: 10, type: 'pakt_10', title: 'Achiever', description: 'Completed 10 Pakts', icon: '🌟' },
-      { count: 25, type: 'pakt_25', title: 'Champion', description: 'Completed 25 Pakts', icon: '👑' },
+    const Resolves = [
+      { count: 1, type: 'first_pakt', title: 'Committed', description: 'Completed your first Resolve', icon: '🎉' },
+      { count: 5, type: 'pakt_5', title: 'Dedicated', description: 'Completed 5 Resolves', icon: '💪' },
+      { count: 10, type: 'pakt_10', title: 'Achiever', description: 'Completed 10 Resolves', icon: '🌟' },
+      { count: 25, type: 'pakt_25', title: 'Champion', description: 'Completed 25 Resolves', icon: '👑' },
     ];
 
-    for (const pakt of pakts) {
-      if (completedPaktsCount >= pakt.count) {
-        const hasIt = await this.hasAchievement(userId, pakt.type);
+    for (const Resolve of Resolves) {
+      if (completedPaktsCount >= Resolve.count) {
+        const hasIt = await this.hasAchievement(userId, Resolve.type);
         if (!hasIt) {
           const achievement = await this.awardAchievement({
             user_id: userId,
-            type: pakt.type,
-            title: pakt.title,
-            description: pakt.description,
-            icon: pakt.icon,
+            type: Resolve.type,
+            title: Resolve.title,
+            description: Resolve.description,
+            icon: Resolve.icon,
             metadata: { pakts_completed: completedPaktsCount },
           });
           newAchievements.push(achievement);

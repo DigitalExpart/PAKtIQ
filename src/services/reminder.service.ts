@@ -7,7 +7,7 @@ type ReminderUpdate = Database['public']['Tables']['reminders']['Update'];
 
 export class ReminderService {
   /**
-   * Get reminder for a pakt
+   * Get reminder for a Resolve
    */
   static async getPaktReminder(paktId: string): Promise<Reminder | null> {
     const { data, error } = await supabase
@@ -89,7 +89,7 @@ export class ReminderService {
   }
 
   /**
-   * Create or update reminder for a pakt
+   * Create or update reminder for a Resolve
    */
   static async upsertPaktReminder(
     paktId: string,

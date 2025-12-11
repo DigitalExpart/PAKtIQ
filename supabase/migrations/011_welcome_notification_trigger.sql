@@ -12,8 +12,8 @@ BEGIN
   VALUES (
     NEW.id,
     'welcome',
-    '🎉 Welcome to PaktIQ!',
-    'Hi ' || user_name || '! Welcome to PaktIQ. We''re excited to help you achieve your goals. Start by creating your first Pakt and breaking it down into milestones. Let''s make this year your best one yet! 💪',
+    '🎉 Welcome to resolviq!',
+    'Hi ' || user_name || '! Welcome to resolviq. We''re excited to help you achieve your goals. Start by creating your first Resolve and breaking it down into milestones. Let''s make this year your best one yet! 💪',
     jsonb_build_object('welcome', true, 'created_at', CURRENT_TIMESTAMP)
   );
   

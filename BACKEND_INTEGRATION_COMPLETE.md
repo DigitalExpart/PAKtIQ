@@ -23,8 +23,8 @@ Your PaktIQ application is now fully integrated with Supabase backend!
 - [x] Integrated `AuthProvider` into App.tsx
 - [x] Created authentication UI (`AuthScreen.tsx`)
 - [x] Updated App.tsx to use real backend data
-- [x] Connected pakts to database via `usePakts` hook
-- [x] Implemented pakt creation with database persistence
+- [x] Connected Resolves to database via `usePakts` hook
+- [x] Implemented Resolve creation with database persistence
 - [x] Added milestone creation with database
 - [x] Added reminder creation with database
 - [x] Added loading states
@@ -68,15 +68,15 @@ await signIn(email, password);
 const { user, profile } = useAuth();
 ```
 
-### Pakt Management
+### Resolve Management
 ```tsx
-// Get all pakts for current user
-const { pakts, loading } = usePakts();
+// Get all Resolves for current user
+const { Resolves, loading } = usePakts();
 
-// Create a new pakt
+// Create a new Resolve
 await createPakt({
   user_id: userId,
-  name: 'My Pakt',
+  name: 'My Resolve',
   description: 'Description',
   target_outcome: 'Goal',
   deadline: '2024-12-31',
@@ -86,7 +86,7 @@ await createPakt({
 
 ### Milestone Tracking
 ```tsx
-// Get milestones for a pakt
+// Get milestones for a Resolve
 const { milestones, toggleMilestone } = useMilestones(paktId);
 
 // Complete a milestone
@@ -115,7 +115,7 @@ src/
 ├── services/                    # 7 service classes
 │   ├── auth.service.ts
 │   ├── profile.service.ts
-│   ├── pakt.service.ts
+│   ├── Resolve.service.ts
 │   ├── milestone.service.ts
 │   ├── reminder.service.ts
 │   ├── achievement.service.ts
@@ -167,16 +167,16 @@ Navigate to `http://localhost:5173` (or your dev server URL)
    - Name: Test User
 4. Check Supabase dashboard → Authentication → Users
 
-### Step 4: Test Pakt Creation
+### Step 4: Test Resolve Creation
 1. Complete onboarding
 2. Select a category
-3. Create a pakt with details
+3. Create a Resolve with details
 4. Add milestones
 5. Complete the flow
-6. Check Supabase dashboard → Table Editor → pakts
+6. Check Supabase dashboard → Table Editor → Resolves
 
 ### Step 5: Test Milestone Completion
-1. View your pakt in dashboard
+1. View your Resolve in dashboard
 2. Mark milestones as complete
 3. Watch progress auto-update!
 4. Check database to see updated progress
@@ -190,18 +190,18 @@ Your database has 6 tables:
 | Table | Purpose | Key Features |
 |-------|---------|--------------|
 | **profiles** | User accounts | Auto-created on signup |
-| **pakts** | Main commitments | Progress auto-calculates |
+| **Resolves** | Main commitments | Progress auto-calculates |
 | **milestones** | Sub-goals | Ordered, importance rated |
 | **reminders** | Notifications | Daily/weekly/custom |
 | **achievements** | Badges | Auto-awarded |
 | **activity_log** | History | All user actions |
 
 **Relationships:**
-- User → Many Pakts
-- Pakt → Many Milestones
-- Pakt → One Reminder
+- User → Many Resolves
+- Resolve → Many Milestones
+- Resolve → One Reminder
 - User → Many Achievements
-- User/Pakt → Many Activities
+- User/Resolve → Many Activities
 
 ---
 
@@ -227,11 +227,11 @@ All tables have RLS enabled:
 1. **Welcome Screen** → Shows on first visit
 2. **Auth Screen** → Sign up/Sign in (NEW!)
 3. **Onboarding** → Profile setup
-4. **Category Selection** → Choose pakt type
-5. **Pakt Naming** → Enter details
+4. **Category Selection** → Choose Resolve type
+5. **Resolve Naming** → Enter details
 6. **Milestone Builder** → Add milestones
 7. **Reminder Setup** → Configure notifications
-8. **Dashboard** → View pakts (from database!)
+8. **Dashboard** → View Resolves (from database!)
 
 ### Components Updated
 
@@ -239,7 +239,7 @@ All tables have RLS enabled:
 - Wrapped with `<AuthProvider>`
 - Uses `useAuth()` hook
 - Uses `usePakts()` hook
-- Saves pakts to database
+- Saves Resolves to database
 - Shows loading states
 - Handles authentication flow
 
@@ -299,7 +299,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### Immediate (After Database Setup)
 - ✅ Test authentication
-- ✅ Create pakts
+- ✅ Create Resolves
 - ✅ Add milestones
 - ✅ Track progress
 - ✅ View achievements
@@ -309,7 +309,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - Add activity feed
 - Create statistics dashboard
 - Implement search/filter
-- Add pakt templates
+- Add Resolve templates
 
 ### Medium Term
 - Push notifications
@@ -387,8 +387,8 @@ You'll know everything is working when:
 
 - ✅ Can sign up new users
 - ✅ Profile auto-created in database
-- ✅ Can create pakts
-- ✅ Pakts appear in dashboard
+- ✅ Can create Resolves
+- ✅ Resolves appear in dashboard
 - ✅ Can add milestones
 - ✅ Progress updates automatically
 - ✅ No console errors
@@ -403,7 +403,7 @@ Your backend integration is **complete and tested**!
 1. 🔴 **Run database migration** (see DATABASE_SETUP_INSTRUCTIONS.md)
 2. ✅ Start dev server: `npm run dev`
 3. ✅ Test authentication
-4. ✅ Create your first pakt
+4. ✅ Create your first Resolve
 5. 🚀 Build more features!
 
 ---

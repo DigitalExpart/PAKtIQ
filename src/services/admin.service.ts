@@ -70,11 +70,11 @@ export class AdminService {
   }
 
   /**
-   * Get all pakts (admin only)
+   * Get all Resolves (admin only)
    */
   static async getAllPakts(): Promise<any[]> {
     const { data, error } = await supabase
-      .from('pakts')
+      .from('resolves')
       .select('*, profiles(email, full_name)')
       .order('created_at', { ascending: false });
 
@@ -93,9 +93,9 @@ export class AdminService {
     totalMilestones: number;
     completedMilestones: number;
   }> {
-    const [users, pakts, milestones] = await Promise.all([
+    const [users, Resolves, milestones] = await Promise.all([
       supabase.from('profiles').select('id, created_at', { count: 'exact' }),
-      supabase.from('pakts').select('id, status', { count: 'exact' }),
+      supabase.from('Resolves').select('id, status', { count: 'exact' }),
       supabase.from('milestones').select('id, completed', { count: 'exact' }),
     ]);
 
@@ -110,8 +110,8 @@ export class AdminService {
     return {
       totalUsers: users.count || 0,
       activeUsers: activeUsers?.length || 0,
-      totalPakts: pakts.count || 0,
-      completedPakts: pakts.data?.filter((p: any) => p.status === 'completed').length || 0,
+      totalPakts: Resolves.count || 0,
+      completedPakts: Resolves.data?.filter((p: any) => p.status === 'completed').length || 0,
       totalMilestones: milestones.count || 0,
       completedMilestones: milestones.data?.filter((m: any) => m.completed).length || 0,
     };

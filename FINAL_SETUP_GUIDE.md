@@ -13,7 +13,7 @@ All code changes have been committed and pushed successfully!
 - ✅ **Dashboard** - Dynamic colors based on theme
 - ✅ **Dark Mode Toggle** - In Settings → Appearance
 - ✅ **Persistence** - Dark mode preference saves across restarts
-- ✅ **Edit Pakt Screen** - Theme-aware
+- ✅ **Edit Resolve Screen** - Theme-aware
 
 ### To Expand Dark Mode to All Screens:
 The theme context is ready! To add dark mode to any screen:
@@ -46,21 +46,21 @@ function MyScreen() {
 ## 📅 Manual Deadline Selection - Enabled
 
 ### Features:
-- ✅ **Create Pakt** - Select custom deadline when creating
-- ✅ **Edit Pakt** - Change deadline after creation
+- ✅ **Create Resolve** - Select custom deadline when creating
+- ✅ **Edit Resolve** - Change deadline after creation
 - ✅ **Default** - 90 days from creation if not selected
 - ✅ **Validation** - Can't select past dates
 - ✅ **Display** - Shows formatted date (e.g., "Mar 15, 2026")
 
 ### How It Works:
-1. **Create Pakt Flow:**
-   - Category Selection → Pakt Naming
+1. **Create Resolve Flow:**
+   - Category Selection → Resolve Naming
    - Click calendar icon to pick date
    - Native date picker appears
    - Select deadline → Continue
 
-2. **Edit Existing Pakt:**
-   - Open pakt → Menu (three dots) → Edit
+2. **Edit Existing Resolve:**
+   - Open Resolve → Menu (three dots) → Edit
    - Click calendar icon next to deadline
    - Select new date → Save Changes
 
@@ -74,17 +74,17 @@ The database schema is already set up! But if you need to verify or recreate it,
 
 ```sql
 -- ============================================
--- PAKTS TABLE STRUCTURE
+-- Resolves TABLE STRUCTURE
 -- ============================================
 
--- The pakts table already exists with correct schema:
+-- The Resolves table already exists with correct schema:
 -- - id: UUID (primary key)
 -- - user_id: UUID (foreign key to profiles)
--- - name: TEXT (pakt name)
--- - description: TEXT (pakt description)
+-- - name: TEXT (Resolve name)
+-- - description: TEXT (Resolve description)
 -- - target_outcome: TEXT (what user wants to achieve)
--- - deadline: TIMESTAMP (when pakt should be completed)
--- - category: TEXT (pakt category)
+-- - deadline: TIMESTAMP (when Resolve should be completed)
+-- - category: TEXT (Resolve category)
 -- - status: TEXT ('active', 'completed', 'archived')
 -- - progress: INTEGER (0-100)
 -- - created_at: TIMESTAMP
@@ -94,17 +94,17 @@ The database schema is already set up! But if you need to verify or recreate it,
 -- VERIFY YOUR SCHEMA
 -- ============================================
 
--- Run this to check your pakts table structure:
+-- Run this to check your Resolves table structure:
 SELECT column_name, data_type, is_nullable
 FROM information_schema.columns
-WHERE table_name = 'pakts'
+WHERE table_name = 'Resolves'
 ORDER BY ordinal_position;
 
 -- ============================================
--- CHECK EXISTING PAKTS
+-- CHECK EXISTING Resolves
 -- ============================================
 
--- View all pakts with deadlines:
+-- View all Resolves with deadlines:
 SELECT 
   id,
   name,
@@ -113,15 +113,15 @@ SELECT
   status,
   progress,
   created_at
-FROM pakts
+FROM Resolves
 ORDER BY created_at DESC;
 
 -- ============================================
--- UPDATE EXISTING PAKTS (Optional)
+-- UPDATE EXISTING Resolves (Optional)
 -- ============================================
 
--- If you have pakts without deadlines, set them to 90 days from creation:
-UPDATE pakts
+-- If you have Resolves without deadlines, set them to 90 days from creation:
+UPDATE Resolves
 SET deadline = created_at + INTERVAL '90 days'
 WHERE deadline IS NULL;
 
@@ -129,26 +129,26 @@ WHERE deadline IS NULL;
 -- USEFUL QUERIES
 -- ============================================
 
--- Get pakts with upcoming deadlines (next 7 days):
+-- Get Resolves with upcoming deadlines (next 7 days):
 SELECT name, deadline, 
   EXTRACT(DAY FROM (deadline - NOW())) as days_until_deadline
-FROM pakts
+FROM Resolves
 WHERE status = 'active'
   AND deadline > NOW()
   AND deadline < NOW() + INTERVAL '7 days'
 ORDER BY deadline ASC;
 
--- Get overdue pakts:
+-- Get overdue Resolves:
 SELECT name, deadline,
   EXTRACT(DAY FROM (NOW() - deadline)) as days_overdue
-FROM pakts
+FROM Resolves
 WHERE status = 'active'
   AND deadline < NOW()
 ORDER BY deadline ASC;
 
--- Get pakts by completion percentage:
+-- Get Resolves by completion percentage:
 SELECT name, progress, deadline, status
-FROM pakts
+FROM Resolves
 ORDER BY progress DESC, deadline ASC;
 ```
 
@@ -185,13 +185,13 @@ Once Metro restarts:
    - App should change instantly
    - Close and reopen app - should stay dark
 
-2. **Create Pakt with Deadline:**
-   - New Pakt → Pick category
+2. **Create Resolve with Deadline:**
+   - New Resolve → Pick category
    - Enter name → Click calendar icon
-   - Select date → Create pakt
+   - Select date → Create Resolve
 
-3. **Edit Pakt Deadline:**
-   - Open any pakt → Menu → Edit Pakt
+3. **Edit Resolve Deadline:**
+   - Open any Resolve → Menu → Edit Resolve
    - Click calendar icon → Change date
    - Save changes
 
@@ -200,14 +200,14 @@ Once Metro restarts:
 ## 📊 What's Been Completed
 
 ### Features ✅
-- ✅ Pakt creation with deadline picker
-- ✅ Edit pakt with deadline modification
+- ✅ Resolve creation with deadline picker
+- ✅ Edit Resolve with deadline modification
 - ✅ Dark mode toggle in settings
 - ✅ Dark mode persistence across restarts
 - ✅ Theme-aware dashboard
 - ✅ Theme-aware settings screen
 - ✅ Theme context for entire app
-- ✅ Delete pakt functionality
+- ✅ Delete Resolve functionality
 - ✅ All changes pushed to GitHub
 
 ### Database ✅

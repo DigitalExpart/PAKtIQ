@@ -121,7 +121,7 @@ export default function AdminDashboardScreen() {
               <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
                 <FileText size={24} color="#FFD88A" />
                 <Text style={[styles.statValue, { color: colors.text }]}>{stats.totalPakts}</Text>
-                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Total Pakts</Text>
+                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Total Resolves</Text>
               </View>
               <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
                 <BarChart3 size={24} color="#FF6B6B" />
@@ -153,7 +153,7 @@ export default function AdminDashboardScreen() {
 
           <TouchableOpacity
             style={[styles.actionCard, { backgroundColor: colors.surface }]}
-            onPress={() => router.push('/admin/pakts')}
+            onPress={() => router.push('/admin/Resolves')}
           >
             <View style={[styles.actionIcon, { backgroundColor: '#FFD88A20' }]}>
               <FileText size={24} color="#FFD88A" />
@@ -161,7 +161,7 @@ export default function AdminDashboardScreen() {
             <View style={styles.actionContent}>
               <Text style={[styles.actionTitle, { color: colors.text }]}>Content Management</Text>
               <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>
-                View and moderate pakts
+                View and moderate Resolves
               </Text>
             </View>
           </TouchableOpacity>

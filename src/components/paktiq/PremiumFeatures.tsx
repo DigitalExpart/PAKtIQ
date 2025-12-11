@@ -9,7 +9,7 @@ type PremiumFeaturesProps = {
 
 export default function PremiumFeatures({ onBack, onUpgrade }: PremiumFeaturesProps) {
   const features = [
-    { icon: Zap, title: 'Unlimited Pakts', description: 'Create as many commitments as you want' },
+    { icon: Zap, title: 'Unlimited Resolves', description: 'Create as many commitments as you want' },
     { icon: BarChart3, title: 'Unlimited Milestones', description: 'Break down goals into detailed steps' },
     { icon: Sparkles, title: 'Streak Recovery', description: 'Don\'t lose your progress on tough days' },
     { icon: BarChart3, title: 'Full Insights Dashboard', description: 'Deep analytics and trends' },
@@ -22,7 +22,7 @@ export default function PremiumFeatures({ onBack, onUpgrade }: PremiumFeaturesPr
       name: 'Single App',
       price: '$4.99',
       period: '/mo',
-      apps: ['PaktIQ'],
+      apps: ['resolviq'],
       savings: null,
       color: 'from-[#FFD88A] to-[#FF8A8A]',
     },
@@ -31,7 +31,7 @@ export default function PremiumFeatures({ onBack, onUpgrade }: PremiumFeaturesPr
       price: '$7.99',
       period: '/mo',
       original: '$9.98',
-      apps: ['PaktIQ', 'One2OneLove or MyMatchIQ'],
+      apps: ['resolviq', 'One2OneLove or MyMatchIQ'],
       savings: 'Save 20%',
       color: 'from-[#96E6B3] to-[#9163F2]',
       popular: true,
@@ -41,7 +41,7 @@ export default function PremiumFeatures({ onBack, onUpgrade }: PremiumFeaturesPr
       price: '$9.99',
       period: '/mo',
       original: '$14.97',
-      apps: ['PaktIQ', 'One2OneLove', 'MyMatchIQ'],
+      apps: ['resolviq', 'One2OneLove', 'MyMatchIQ'],
       savings: 'Save 33%',
       color: 'from-[#9163F2] to-[#3C2B63]',
       best: true,
@@ -70,7 +70,7 @@ export default function PremiumFeatures({ onBack, onUpgrade }: PremiumFeaturesPr
           <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20">
             <div className="text-center">
               <Sparkles className="w-12 h-12 mx-auto mb-3 text-[#FFD88A]" />
-              <h2 className="text-2xl mb-2">PaktIQ Pro</h2>
+              <h2 className="text-2xl mb-2">resolviq Pro</h2>
               <p className="text-sm opacity-90">Everything you need to achieve your goals</p>
             </div>
           </div>
@@ -199,7 +199,7 @@ export default function PremiumFeatures({ onBack, onUpgrade }: PremiumFeaturesPr
                 🎯
               </div>
               <div className="flex-1">
-                <div className="text-sm text-[#3C2B63]">PaktIQ</div>
+                <div className="text-sm text-[#3C2B63]">resolviq</div>
                 <div className="text-xs text-[#3C2B63]/70">Goal tracking</div>
               </div>
             </div>

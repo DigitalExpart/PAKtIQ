@@ -34,14 +34,14 @@
 
 ---
 
-### Test 2: Create a Pakt 📊
+### Test 2: Create a Resolve 📊
 
 **Steps:**
 1. Complete the onboarding (or skip if available)
 2. You'll see **"Choose a Category"** screen (like in your screenshot!)
 3. Pick a category (e.g., "Health & Fitness")
-4. Enter pakt details:
-   - **Name:** Test Pakt
+4. Enter Resolve details:
+   - **Name:** Test Resolve
    - **Description:** Testing backend
    - **Target:** Complete testing
    - **Deadline:** Any future date
@@ -52,13 +52,13 @@
 7. Complete the flow
 
 **Expected Result:**
-- ✅ Pakt created successfully
+- ✅ Resolve created successfully
 - ✅ You see it in the dashboard
 - ✅ No errors in console
 
 **Verify in Supabase:**
-1. Go to **Table Editor** → **pakts**
-2. You should see your "Test Pakt" in the table!
+1. Go to **Table Editor** → **Resolves**
+2. You should see your "Test Resolve" in the table!
 3. Click on it to see details
 4. Go to **Table Editor** → **milestones**
 5. You should see your test milestones!
@@ -68,7 +68,7 @@
 ### Test 3: Complete a Milestone ✅
 
 **Steps:**
-1. In your dashboard, open your test pakt
+1. In your dashboard, open your test Resolve
 2. Find a milestone
 3. Mark it as complete (checkbox/toggle)
 
@@ -81,7 +81,7 @@
 1. Go to **Table Editor** → **milestones**
 2. The milestone's `completed` field should be `true`
 3. The `completed_at` timestamp should be set
-4. Go to **Table Editor** → **pakts**
+4. Go to **Table Editor** → **Resolves**
 5. The `progress` field should have updated! (e.g., if you had 2 milestones and completed 1, progress = 50)
 
 ---
@@ -89,7 +89,7 @@
 ### Test 4: Data Persistence 💾
 
 **Steps:**
-1. Note what pakts you have
+1. Note what Resolves you have
 2. **Close your browser tab**
 3. Stop the dev server (Ctrl+C)
 4. Restart: `npm run dev`
@@ -97,7 +97,7 @@
 6. Sign in with the same account
 
 **Expected Result:**
-- ✅ Your pakts are still there!
+- ✅ Your Resolves are still there!
 - ✅ Your progress is preserved
 - ✅ Everything loads from database
 
@@ -109,7 +109,7 @@
 - Auth screen appears
 - Sign up creates account
 - Sign in works
-- Dashboard shows pakts from database
+- Dashboard shows Resolves from database
 - Progress updates automatically
 - Data persists across sessions
 - No red errors in browser console
@@ -156,9 +156,9 @@ After all tests, you should have:
 
 - ✅ At least 1 user in Authentication → Users
 - ✅ At least 1 profile in Table Editor → profiles
-- ✅ At least 1 pakt in Table Editor → pakts
+- ✅ At least 1 Resolve in Table Editor → Resolves
 - ✅ At least 2 milestones in Table Editor → milestones
-- ✅ Progress field in pakts table showing correct percentage
+- ✅ Progress field in Resolves table showing correct percentage
 - ✅ No console errors
 - ✅ App works smoothly
 
@@ -199,8 +199,8 @@ You now have:
 ## 📸 Evidence of Success
 
 Take screenshots of:
-1. Supabase Table Editor showing your pakt
-2. App dashboard with pakts
+1. Supabase Table Editor showing your Resolve
+2. App dashboard with Resolves
 3. Browser console showing no errors
 
 Share if you want to verify everything is working correctly!

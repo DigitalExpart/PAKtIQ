@@ -5,13 +5,13 @@ import { PaktData } from '../../App';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 type InsightsOverviewProps = {
-  pakts: PaktData[];
+  Resolves: PaktData[];
   onBack: () => void;
   isDarkMode: boolean;
 };
 
-export default function InsightsOverview({ pakts, onBack, isDarkMode }: InsightsOverviewProps) {
-  // Calculate weekly data from pakts (last 7 days of milestone completions)
+export default function InsightsOverview({ Resolves, onBack, isDarkMode }: InsightsOverviewProps) {
+  // Calculate weekly data from Resolves (last 7 days of milestone completions)
   // This is a simplified calculation - in production, you'd fetch from analytics table
   const today = new Date();
   const weeklyData = [
@@ -24,10 +24,10 @@ export default function InsightsOverview({ pakts, onBack, isDarkMode }: Insights
     { day: 'Sun', completed: 0 },
   ];
   
-  // Calculate category breakdown from actual pakts
+  // Calculate category breakdown from actual Resolves
   const categoryMap = new Map<string, number>();
-  pakts.forEach(pakt => {
-    const category = pakt.category || 'Other';
+  Resolves.forEach(Resolve => {
+    const category = Resolve.category || 'Other';
     categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
   });
   
@@ -36,15 +36,15 @@ export default function InsightsOverview({ pakts, onBack, isDarkMode }: Insights
     count,
   }));
   
-  // Calculate real stats from pakts
-  const totalMilestones = pakts.reduce((sum, p) => sum + (p.milestones?.length || 0), 0);
-  const completedMilestones = pakts.reduce((sum, p) => 
+  // Calculate real stats from Resolves
+  const totalMilestones = Resolves.reduce((sum, p) => sum + (p.milestones?.length || 0), 0);
+  const completedMilestones = Resolves.reduce((sum, p) => 
     sum + (p.milestones?.filter(m => m.completed).length || 0), 0
   );
   const completionRate = totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;
   
   // Calculate streak (simplified - in production, use analytics table)
-  const allCompletedDates = pakts
+  const allCompletedDates = Resolves
     .flatMap(p => p.milestones?.filter(m => m.completedAt).map(m => new Date(m.completedAt!)) || [])
     .map(d => {
       d.setHours(0, 0, 0, 0);
@@ -197,7 +197,7 @@ export default function InsightsOverview({ pakts, onBack, isDarkMode }: Insights
                 <div key={index}>
                   <div className="flex items-center justify-between mb-2">
                     <span className={`text-sm ${textPrimary}`}>{item.category}</span>
-                    <span className={`text-sm ${textSecondary}`}>{item.count} Pakts</span>
+                    <span className={`text-sm ${textSecondary}`}>{item.count} Resolves</span>
                   </div>
                   <div className={`h-3 ${isDarkMode ? 'bg-white/10' : 'bg-gray-200'} rounded-full overflow-hidden`}>
                     <motion.div
@@ -298,7 +298,7 @@ export default function InsightsOverview({ pakts, onBack, isDarkMode }: Insights
             <div className="text-4xl mb-3">🤖</div>
             <h3 className={`text-xl ${textPrimary} mb-2`}>AI Insights Coming Soon</h3>
             <p className={`text-sm ${textSecondary} mb-4`}>
-              Get personalized suggestions and optimize your Pakt strategy with AI
+              Get personalized suggestions and optimize your Resolve strategy with AI
             </p>
             <button className="bg-gradient-to-r from-[#9163F2] to-[#3C2B63] text-white px-6 py-3 rounded-2xl text-sm hover:shadow-xl transition-all">
               Join Waitlist

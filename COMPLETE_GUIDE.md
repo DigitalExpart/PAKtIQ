@@ -14,7 +14,7 @@ Every single change has been committed and pushed successfully!
 3. ✅ **Achievements** - Complete
 4. ✅ **Insights** - Complete
 5. ✅ **Profile** - Complete
-6. ✅ **Edit Pakt** - Complete
+6. ✅ **Edit Resolve** - Complete
 
 ### How to Use Dark Mode:
 1. Open app → Profile tab (bottom right)
@@ -28,7 +28,7 @@ Every single change has been committed and pushed successfully!
 ## 📅 DEADLINE SELECTION - SQL & SETUP
 
 ### Current Status:
-- ✅ Pakts created with 90-day default deadline
+- ✅ Resolves created with 90-day default deadline
 - ✅ Deadlines saved to database
 - ✅ Displayed on dashboard
 - ⏳ Manual selection (ready, needs Metro restart)
@@ -41,7 +41,7 @@ Your database schema is correct! But here are useful SQL commands:
 ```sql
 SELECT column_name, data_type, is_nullable
 FROM information_schema.columns
-WHERE table_name = 'pakts' AND column_name = 'deadline';
+WHERE table_name = 'Resolves' AND column_name = 'deadline';
 ```
 
 **Expected Result:**
@@ -50,7 +50,7 @@ column_name | data_type                   | is_nullable
 deadline    | timestamp with time zone    | NO
 ```
 
-#### 2. View All Pakts with Deadlines:
+#### 2. View All Resolves with Deadlines:
 ```sql
 SELECT 
   name,
@@ -59,21 +59,21 @@ SELECT
   status,
   progress,
   created_at
-FROM pakts
+FROM Resolves
 ORDER BY deadline ASC;
 ```
 
-#### 3. Update Deadline for Specific Pakt:
+#### 3. Update Deadline for Specific Resolve:
 ```sql
--- Replace 'YOUR_PAKT_ID' with actual pakt ID
-UPDATE pakts
+-- Replace 'YOUR_PAKT_ID' with actual Resolve ID
+UPDATE Resolves
 SET deadline = '2026-03-15 00:00:00+00'
 WHERE id = 'YOUR_PAKT_ID';
 ```
 
-#### 4. Set All Active Pakts to 90 Days from Now:
+#### 4. Set All Active Resolves to 90 Days from Now:
 ```sql
-UPDATE pakts
+UPDATE Resolves
 SET deadline = NOW() + INTERVAL '90 days'
 WHERE status = 'active' AND deadline IS NULL;
 ```
@@ -85,21 +85,21 @@ SELECT
   deadline,
   EXTRACT(DAY FROM (deadline - NOW())) as days_until_deadline,
   progress
-FROM pakts
+FROM Resolves
 WHERE status = 'active'
   AND deadline > NOW()
   AND deadline < NOW() + INTERVAL '30 days'
 ORDER BY deadline ASC;
 ```
 
-#### 6. Get Overdue Pakts:
+#### 6. Get Overdue Resolves:
 ```sql
 SELECT 
   name,
   deadline,
   EXTRACT(DAY FROM (NOW() - deadline)) as days_overdue,
   progress
-FROM pakts  
+FROM Resolves  
 WHERE status = 'active'
   AND deadline < NOW()
 ORDER BY deadline ASC;
@@ -113,7 +113,7 @@ SELECT
   COUNT(*) FILTER (WHERE status = 'completed') as completed_pakts,
   COUNT(*) FILTER (WHERE deadline < NOW() AND status = 'active') as overdue_pakts,
   AVG(progress) FILTER (WHERE status = 'active') as avg_progress
-FROM pakts;
+FROM Resolves;
 ```
 
 ---
@@ -148,12 +148,12 @@ npx expo start -c
 ## 📱 CURRENT APP FEATURES
 
 ### Working Now (Without Metro Restart):
-- ✅ Create pakts (90-day default deadline)
-- ✅ Edit pakts (view deadline)
-- ✅ Delete pakts
+- ✅ Create Resolves (90-day default deadline)
+- ✅ Edit Resolves (view deadline)
+- ✅ Delete Resolves
 - ✅ Dark mode toggle (resets on restart)
 - ✅ Dark mode on: Dashboard, Settings, Achievements, Insights, Profile, Edit
-- ✅ View pakts, milestones, achievements
+- ✅ View Resolves, milestones, achievements
 - ✅ All navigation
 
 ### After Metro Restart:
@@ -176,7 +176,7 @@ npx expo start -c
 - [ ] Cards have proper contrast
 
 ### Deadline (After Metro Restart):
-- [ ] Can select date when creating pakt
+- [ ] Can select date when creating Resolve
 - [ ] Date picker shows correctly
 - [ ] Can't select past dates
 - [ ] Selected date saves to database
@@ -184,10 +184,10 @@ npx expo start -c
 - [ ] Can edit deadline later
 
 ### Database:
-- [ ] Pakts have deadline column
+- [ ] Resolves have deadline column
 - [ ] Deadlines save correctly
 - [ ] Can query by deadline
-- [ ] No NULL deadlines on new pakts
+- [ ] No NULL deadlines on new Resolves
 
 ---
 

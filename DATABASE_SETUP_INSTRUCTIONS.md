@@ -37,7 +37,7 @@ You should see: **"Success. No rows returned"**
 
 Then go to **Table Editor** (left sidebar) and verify these 6 tables exist:
 - ✅ profiles
-- ✅ pakts
+- ✅ Resolves
 - ✅ milestones
 - ✅ reminders
 - ✅ achievements
@@ -62,7 +62,7 @@ Once the migration is complete, your app will have:
 - Session management
 
 ### 📊 Features
-- Pakt creation and tracking
+- Resolve creation and tracking
 - Milestone management
 - Progress calculation
 - Reminder settings
@@ -93,11 +93,11 @@ After signing up, check Supabase dashboard:
 - Go to **Table Editor** → **profiles**
 - Your profile should be automatically created!
 
-### 4. Create a Test Pakt
+### 4. Create a Test Resolve
 1. Complete the onboarding flow
-2. Create a pakt with a few milestones
-3. Go to Supabase **Table Editor** → **pakts**
-4. You should see your pakt!
+2. Create a Resolve with a few milestones
+3. Go to Supabase **Table Editor** → **Resolves**
+4. You should see your Resolve!
 5. Check **milestones** table too
 
 ---
@@ -147,7 +147,7 @@ After signing up, check Supabase dashboard:
 1. ✅ Run the database migration (instructions above)
 2. ✅ Start your dev server
 3. ✅ Test sign up/sign in
-4. ✅ Create your first pakt
+4. ✅ Create your first Resolve
 5. ✅ Watch progress auto-update!
 6. 🚀 Build more features!
 

@@ -40,10 +40,10 @@ export const translateCategory = (category: string | null | undefined): string =
 };
 
 /**
- * Common pakt name translations
- * Maps common English pakt names to translation keys
+ * Common Resolve name translations
+ * Maps common English Resolve names to translation keys
  */
-const commonPaktNames: Record<string, string> = {
+const commonResolveNames: Record<string, string> = {
   // English -> Translation Key
   'Book Reading': 'paktNames.bookReading',
   'Reading': 'paktNames.reading',
@@ -85,14 +85,14 @@ const commonPaktNames: Record<string, string> = {
 };
 
 /**
- * Translate pakt name
- * Tries to translate common pakt names, falls back to original if not found
+ * Translate Resolve name
+ * Tries to translate common Resolve names, falls back to original if not found
  */
-export const translatePaktName = (name: string | null | undefined): string => {
+export const translateResolveName = (name: string | null | undefined): string => {
   if (!name) return '';
   
   // Check if it's a common name we have translations for
-  const translationKey = commonPaktNames[name];
+  const translationKey = commonResolveNames[name];
   if (translationKey) {
     const translated = i18n.t(translationKey);
     // If translation exists (not the same as key), return it
@@ -103,7 +103,7 @@ export const translatePaktName = (name: string | null | undefined): string => {
   
   // Try case-insensitive match
   const nameLower = name.toLowerCase();
-  for (const [englishName, key] of Object.entries(commonPaktNames)) {
+  for (const [englishName, key] of Object.entries(commonResolveNames)) {
     if (englishName.toLowerCase() === nameLower) {
       const translated = i18n.t(key);
       if (translated !== key) {

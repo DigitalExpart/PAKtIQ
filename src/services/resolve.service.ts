@@ -1,17 +1,17 @@
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database';
 
-type Pakt = Database['public']['Tables']['pakts']['Row'];
-type PaktInsert = Database['public']['Tables']['pakts']['Insert'];
-type PaktUpdate = Database['public']['Tables']['pakts']['Update'];
+type Resolve = Database['public']['Tables']['Resolves']['Row'];
+type ResolveInsert = Database['public']['Tables']['Resolves']['Insert'];
+type ResolveUpdate = Database['public']['Tables']['Resolves']['Update'];
 
-export class PaktService {
+export class ResolveService {
   /**
-   * Get all pakts for the current user
+   * Get all Resolves for the current user
    */
-  static async getUserPakts(userId: string): Promise<Pakt[]> {
+  static async getUserResolves(userId: string): Promise<Resolve[]> {
     const { data, error } = await supabase
-      .from('pakts')
+      .from('resolves')
       .select(`
         *,
         milestones (
@@ -32,11 +32,11 @@ export class PaktService {
 
     if (error) throw error;
     
-    // Sort milestones by order_index for each pakt
+    // Sort milestones by order_index for each Resolve
     if (data) {
-      data.forEach((pakt: any) => {
-        if (pakt.milestones) {
-          pakt.milestones.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
+      data.forEach((Resolve: any) => {
+        if (Resolve.milestones) {
+          Resolve.milestones.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
         }
       });
     }
@@ -45,11 +45,11 @@ export class PaktService {
   }
 
   /**
-   * Get a single pakt by ID
+   * Get a single Resolve by ID
    */
-  static async getPakt(paktId: string): Promise<Pakt | null> {
+  static async getResolve(resolveId: string): Promise<Resolve | null> {
     const { data, error } = await supabase
-      .from('pakts')
+      .from('resolves')
       .select(`
         *,
         milestones (
@@ -65,7 +65,7 @@ export class PaktService {
           updated_at
         )
       `)
-      .eq('id', paktId)
+      .eq('id', resolveId)
       .single();
     
     // Sort milestones by order_index if they exist
@@ -78,14 +78,14 @@ export class PaktService {
   }
 
   /**
-   * Get pakts by status
+   * Get Resolves by status
    */
-  static async getPaktsByStatus(
+  static async getResolvesByStatus(
     userId: string,
     status: 'active' | 'completed' | 'archived'
-  ): Promise<Pakt[]> {
+  ): Promise<Resolve[]> {
     const { data, error } = await supabase
-      .from('pakts')
+      .from('resolves')
       .select(`
         *,
         milestones (
@@ -107,11 +107,11 @@ export class PaktService {
 
     if (error) throw error;
     
-    // Sort milestones by order_index for each pakt
+    // Sort milestones by order_index for each Resolve
     if (data) {
-      data.forEach((pakt: any) => {
-        if (pakt.milestones) {
-          pakt.milestones.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
+      data.forEach((Resolve: any) => {
+        if (Resolve.milestones) {
+          Resolve.milestones.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0));
         }
       });
     }
@@ -120,11 +120,11 @@ export class PaktService {
   }
 
   /**
-   * Get pakts by category
+   * Get Resolves by category
    */
-  static async getPaktsByCategory(userId: string, category: string): Promise<Pakt[]> {
+  static async getPaktsByCategory(userId: string, category: string): Promise<Resolve[]> {
     const { data, error } = await supabase
-      .from('pakts')
+      .from('resolves')
       .select('*')
       .eq('user_id', userId)
       .eq('category', category)
@@ -135,12 +135,12 @@ export class PaktService {
   }
 
   /**
-   * Create a new pakt
+   * Create a new Resolve
    */
-  static async createPakt(pakt: PaktInsert): Promise<Pakt> {
+  static async createResolve(Resolve: ResolveInsert): Promise<Resolve> {
     const { data, error } = await supabase
-      .from('pakts')
-      .insert(pakt)
+      .from('resolves')
+      .insert(Resolve)
       .select()
       .single();
 
@@ -149,13 +149,13 @@ export class PaktService {
   }
 
   /**
-   * Update a pakt
+   * Update a Resolve
    */
-  static async updatePakt(paktId: string, updates: PaktUpdate): Promise<Pakt> {
+  static async updateResolve(resolveId: string, updates: ResolveUpdate): Promise<Resolve> {
     const { data, error } = await supabase
-      .from('pakts')
+      .from('resolves')
       .update(updates)
-      .eq('id', paktId)
+      .eq('id', resolveId)
       .select()
       .single();
 
@@ -164,44 +164,44 @@ export class PaktService {
   }
 
   /**
-   * Delete a pakt
+   * Delete a Resolve
    */
-  static async deletePakt(paktId: string): Promise<void> {
+  static async deleteResolve(resolveId: string): Promise<void> {
     const { error } = await supabase
-      .from('pakts')
+      .from('resolves')
       .delete()
-      .eq('id', paktId);
+      .eq('id', resolveId);
 
     if (error) throw error;
   }
 
   /**
-   * Mark pakt as completed
+   * Mark Resolve as completed
    */
-  static async completePakt(paktId: string): Promise<Pakt> {
-    return this.updatePakt(paktId, { status: 'completed', progress: 100 });
+  static async completeResolve(resolveId: string): Promise<Resolve> {
+    return this.updateResolve(resolveId, { status: 'completed', progress: 100 });
   }
 
   /**
-   * Archive a pakt
+   * Archive a Resolve
    */
-  static async archivePakt(paktId: string): Promise<Pakt> {
-    return this.updatePakt(paktId, { status: 'archived' });
+  static async archiveResolve(resolveId: string): Promise<Resolve> {
+    return this.updateResolve(resolveId, { status: 'archived' });
   }
 
   /**
    * Get user statistics
    */
   static async getUserStats(userId: string) {
-    const pakts = await this.getUserPakts(userId);
+    const Resolves = await this.getUserResolves(userId);
     
     const stats = {
-      total: pakts.length,
-      active: pakts.filter(p => p.status === 'active').length,
-      completed: pakts.filter(p => p.status === 'completed').length,
-      archived: pakts.filter(p => p.status === 'archived').length,
-      averageProgress: pakts.length > 0
-        ? Math.round(pakts.reduce((sum, p) => sum + p.progress, 0) / pakts.length)
+      total: Resolves.length,
+      active: Resolves.filter(p => p.status === 'active').length,
+      completed: Resolves.filter(p => p.status === 'completed').length,
+      archived: Resolves.filter(p => p.status === 'archived').length,
+      averageProgress: Resolves.length > 0
+        ? Math.round(Resolves.reduce((sum, p) => sum + p.progress, 0) / Resolves.length)
         : 0,
     };
 

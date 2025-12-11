@@ -200,7 +200,7 @@ export default function HabitCreateScreen() {
       })
       .join(', ');
 
-    const shareMessage = `I'm starting a new daily habit: "${habitName}"\n\nSchedule:\n${enabledDays}\n\nJoin me on PaktIQ!`;
+    const shareMessage = `I'm starting a new daily habit: "${habitName}"\n\nSchedule:\n${enabledDays}\n\nJoin me on resolviq!`;
 
     try {
       await Share.share({
@@ -216,7 +216,7 @@ export default function HabitCreateScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
+          <Text style={[styles.backButton, { color: colors.primary }]}>← {t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.text }]}>Create Daily Habit</Text>
         <TouchableOpacity onPress={handleShare}>

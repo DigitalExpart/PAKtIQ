@@ -4,13 +4,13 @@ import { Plus, Target, Flame, Trophy, TrendingUp, CheckCircle2, Circle, Edit, Se
 import { PaktData, Screen } from '../../App';
 
 type PaktDashboardProps = {
-  pakts: PaktData[];
+  Resolves: PaktData[];
   onNavigate: (screen: Screen) => void;
   isDarkMode: boolean;
 };
 
-export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDashboardProps) {
-  const [selectedPakt, setSelectedPakt] = useState(pakts[0] || null);
+export default function PaktDashboard({ Resolves, onNavigate, isDarkMode }: PaktDashboardProps) {
+  const [selectedPakt, setSelectedPakt] = useState(Resolves[0] || null);
   const [showConfetti, setShowConfetti] = useState(false);
 
   const completeMilestone = (paktIndex: number, milestoneId: string) => {
@@ -19,12 +19,12 @@ export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDas
   };
 
   const currentStreak = 7; // Mock data
-  const totalPakts = pakts.length;
-  const completedMilestones = pakts.reduce((acc, pakt) => 
-    acc + (pakt.milestones?.filter(m => m.completed).length || 0), 0
+  const totalPakts = Resolves.length;
+  const completedMilestones = Resolves.reduce((acc, Resolve) => 
+    acc + (Resolve.milestones?.filter(m => m.completed).length || 0), 0
   );
-  const totalMilestones = pakts.reduce((acc, pakt) => 
-    acc + (pakt.milestones?.length || 0), 0
+  const totalMilestones = Resolves.reduce((acc, Resolve) => 
+    acc + (Resolve.milestones?.length || 0), 0
   );
   const progressPercentage = totalMilestones > 0 
     ? Math.round((completedMilestones / totalMilestones) * 100) 
@@ -68,7 +68,7 @@ export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDas
         <div className="container mx-auto max-w-md">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl mb-1">PaktIQ</h1>
+              <h1 className="text-3xl mb-1">resolviq</h1>
               <p className="text-sm opacity-80">Your Commitment Hub</p>
             </div>
             <button
@@ -95,7 +95,7 @@ export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDas
             >
               <Target className="w-6 h-6 mx-auto mb-2 text-[#FFD88A]" />
               <div className="text-2xl mb-1">{totalPakts}</div>
-              <div className="text-xs opacity-80">Active Pakts</div>
+              <div className="text-xs opacity-80">Active Resolves</div>
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -120,7 +120,7 @@ export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDas
             <div className="bg-gradient-to-br from-[#9163F2] to-[#3C2B63] p-3 rounded-xl">
               <Plus className="w-5 h-5 text-white" />
             </div>
-            <span className={`text-xs ${textPrimary}`}>New Pakt</span>
+            <span className={`text-xs ${textPrimary}`}>New Resolve</span>
           </button>
           <button
             onClick={() => onNavigate('achievements')}
@@ -151,27 +151,27 @@ export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDas
           </button>
         </div>
 
-        {/* Active Pakts */}
-        {pakts.length === 0 ? (
+        {/* Active Resolves */}
+        {Resolves.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className={`${cardBg} rounded-3xl p-12 text-center shadow-lg`}
           >
             <Target className={`w-16 h-16 mx-auto mb-4 ${textSecondary}`} />
-            <h3 className={`text-xl ${textPrimary} mb-2`}>No Pakts Yet</h3>
+            <h3 className={`text-xl ${textPrimary} mb-2`}>No Resolves Yet</h3>
             <p className={`${textSecondary} mb-6`}>Create your first commitment to get started</p>
             <button
               onClick={() => onNavigate('categorySelection')}
               className="bg-gradient-to-r from-[#9163F2] to-[#3C2B63] text-white px-6 py-3 rounded-2xl hover:shadow-xl transition-all"
             >
-              Create Your First Pakt
+              Create Your First Resolve
             </button>
           </motion.div>
         ) : (
           <div className="space-y-4">
-            <h2 className={`text-xl ${textPrimary} mb-4`}>Your Active Pakts</h2>
-            {pakts.map((pakt, index) => (
+            <h2 className={`text-xl ${textPrimary} mb-4`}>Your Active Resolves</h2>
+            {Resolves.map((Resolve, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
@@ -179,7 +179,7 @@ export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDas
                 transition={{ delay: index * 0.1 }}
                 className={`${cardBg} rounded-3xl p-6 shadow-lg`}
               >
-                {/* Pakt Header */}
+                {/* Resolve Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className={`inline-block px-3 py-1 rounded-full text-xs mb-2 capitalize`}
@@ -188,10 +188,10 @@ export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDas
                         color: ['#FF6A6A', '#96E6B3', '#9163F2', '#FFD88A'][index % 4]
                       }}
                     >
-                      {pakt.category}
+                      {Resolve.category}
                     </div>
-                    <h3 className={`text-xl ${textPrimary} mb-2`}>{pakt.name}</h3>
-                    <p className={`text-sm ${textSecondary}`}>{pakt.targetOutcome}</p>
+                    <h3 className={`text-xl ${textPrimary} mb-2`}>{Resolve.name}</h3>
+                    <p className={`text-sm ${textSecondary}`}>{Resolve.targetOutcome}</p>
                   </div>
                   <button className={`p-2 ${textSecondary} hover:${textPrimary} transition-colors`}>
                     <Edit className="w-4 h-4" />
@@ -219,29 +219,29 @@ export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDas
                         fill="none"
                         strokeLinecap="round"
                         strokeDasharray={`${2 * Math.PI * 40}`}
-                        strokeDashoffset={`${2 * Math.PI * 40 * (1 - (pakt.milestones?.filter(m => m.completed).length || 0) / (pakt.milestones?.length || 1))}`}
+                        strokeDashoffset={`${2 * Math.PI * 40 * (1 - (Resolve.milestones?.filter(m => m.completed).length || 0) / (Resolve.milestones?.length || 1))}`}
                         initial={{ strokeDashoffset: 2 * Math.PI * 40 }}
-                        animate={{ strokeDashoffset: 2 * Math.PI * 40 * (1 - (pakt.milestones?.filter(m => m.completed).length || 0) / (pakt.milestones?.length || 1)) }}
+                        animate={{ strokeDashoffset: 2 * Math.PI * 40 * (1 - (Resolve.milestones?.filter(m => m.completed).length || 0) / (Resolve.milestones?.length || 1)) }}
                         transition={{ duration: 1 }}
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className={`text-sm ${textPrimary}`}>
-                        {Math.round(((pakt.milestones?.filter(m => m.completed).length || 0) / (pakt.milestones?.length || 1)) * 100)}%
+                        {Math.round(((Resolve.milestones?.filter(m => m.completed).length || 0) / (Resolve.milestones?.length || 1)) * 100)}%
                       </span>
                     </div>
                   </div>
                   <div>
                     <div className={`text-sm ${textSecondary} mb-1`}>Progress</div>
                     <div className={`text-lg ${textPrimary}`}>
-                      {pakt.milestones?.filter(m => m.completed).length || 0} of {pakt.milestones?.length || 0} milestones
+                      {Resolve.milestones?.filter(m => m.completed).length || 0} of {Resolve.milestones?.length || 0} milestones
                     </div>
                   </div>
                 </div>
 
                 {/* Milestones */}
                 <div className="space-y-2">
-                  {pakt.milestones?.slice(0, 3).map((milestone, mIndex) => (
+                  {Resolve.milestones?.slice(0, 3).map((milestone, mIndex) => (
                     <div
                       key={milestone.id}
                       className={`flex items-center gap-3 p-3 rounded-2xl ${isDarkMode ? 'bg-[#3a2f4d]' : 'bg-[#F4F4F6]'}`}
@@ -266,9 +266,9 @@ export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDas
                       </div>
                     </div>
                   ))}
-                  {(pakt.milestones?.length || 0) > 3 && (
+                  {(Resolve.milestones?.length || 0) > 3 && (
                     <button className={`text-sm ${textSecondary} hover:${textPrimary} transition-colors`}>
-                      +{(pakt.milestones?.length || 0) - 3} more milestones
+                      +{(Resolve.milestones?.length || 0) - 3} more milestones
                     </button>
                   )}
                 </div>

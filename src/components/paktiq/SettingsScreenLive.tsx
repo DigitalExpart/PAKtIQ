@@ -212,7 +212,7 @@ export default function SettingsScreenLive({ isDarkMode, onToggleDarkMode, onBac
           transition={{ delay: 0.7 }}
           className="text-center mt-6 text-white/50 text-sm"
         >
-          PaktIQ v1.0.0
+          resolviq v1.0.0
         </motion.div>
       </div>
     </div>

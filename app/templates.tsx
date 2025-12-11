@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
 import BottomTabBar from '../src/components/BottomTabBar';
 
 const templates = [
@@ -76,6 +77,7 @@ const templates = [
 
 export default function TemplateLibrary() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   const categories = ['All', 'Health & Fitness', 'Personal Growth', 'Finance', 'Career', 'Wellness'];
@@ -97,7 +99,7 @@ export default function TemplateLibrary() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backButton}>← Back</Text>
+          <Text style={styles.backButton}>← {t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Template Library</Text>
         <Text style={styles.subtitle}>Start with proven goal templates</Text>
@@ -165,7 +167,7 @@ export default function TemplateLibrary() {
 
             <TouchableOpacity 
               style={styles.useButton}
-              onPress={() => router.push('/pakt-naming')}
+              onPress={() => router.push('/resolve-naming')}
             >
               <Text style={styles.useButtonText}>Use This Template</Text>
             </TouchableOpacity>

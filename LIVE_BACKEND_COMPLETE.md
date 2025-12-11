@@ -4,7 +4,7 @@
 
 ### 1. **Real Backend Data** ✓
 - ✅ Removed all mock data
-- ✅ Dashboard now fetches pakts from Supabase
+- ✅ Dashboard now fetches Resolves from Supabase
 - ✅ Milestones loaded from database
 - ✅ Achievements from database
 - ✅ Real-time progress tracking
@@ -17,7 +17,7 @@
 - ✅ Weekly reminders supported
 - ✅ Custom day reminders supported
 - ✅ Milestone completion notifications
-- ✅ Pakt completion celebrations
+- ✅ Resolve completion celebrations
 
 ### 3. **New Components** ✓
 - ✅ `PaktDashboardLive.tsx` - Uses real backend data
@@ -38,7 +38,7 @@
 ### Daily Reminders
 - Set a specific time (e.g., 9:00 AM)
 - Notification fires every day at that time
-- "🎯 Pakt Reminder: Time to work on [Pakt Name]"
+- "🎯 Resolve Reminder: Time to work on [Resolve Name]"
 
 ### Weekly Reminders  
 - Choose specific days of the week
@@ -52,26 +52,26 @@
 
 ### Celebration Notifications
 - 🎉 When you complete a milestone
-- 🏆 When you complete a pakt (100% progress)
+- 🏆 When you complete a Resolve (100% progress)
 - Sent immediately
 
 ---
 
 ## 🎯 **How It Works**
 
-### When User Creates a Pakt:
+### When User Creates a Resolve:
 1. User goes through category → naming → milestones → **reminders**
 2. In ReminderSetup, user selects frequency and time
 3. App requests notification permission
 4. Reminder scheduled locally on device
 5. Reminder settings saved to Supabase database
-6. Pakt created with all data
+6. Resolve created with all data
 
 ### When User Completes Milestone:
 1. User taps checkbox on milestone
 2. App calls `MilestoneService.toggleMilestone()`
 3. Backend updates milestone.completed = true
-4. **Trigger fires** → Pakt progress auto-updates
+4. **Trigger fires** → Resolve progress auto-updates
 5. Achievement check runs
 6. 🎉 Celebration notification sent
 7. Activity logged
@@ -80,7 +80,7 @@
 ### When Reminder Fires:
 1. Device shows notification at scheduled time
 2. User taps notification
-3. App opens to that specific pakt
+3. App opens to that specific Resolve
 4. User can update progress
 
 ---
@@ -91,8 +91,8 @@
 ```bash
 1. Restart app: npm run dev
 2. Sign in with existing account
-3. Dashboard should show pakts from database
-4. Click on a pakt → see real milestones
+3. Dashboard should show Resolves from database
+4. Click on a Resolve → see real milestones
 5. Progress bars show actual data from backend
 ```
 
@@ -103,13 +103,13 @@
 ### Test 2: Milestone Completion with Notifications
 ```bash
 1. Go to dashboard
-2. Click on any pakt
+2. Click on any Resolve
 3. Tap checkbox on a milestone
 4. See confetti animation
 5. Check notification appears: "🎉 Milestone Completed!"
 6. Go to Supabase → milestones table
 7. Verify milestone.completed = true
-8. Go to Supabase → pakts table
+8. Go to Supabase → Resolves table
 9. Verify progress updated automatically
 ```
 
@@ -121,9 +121,9 @@
 
 ---
 
-### Test 3: Create Pakt with Reminders
+### Test 3: Create Resolve with Reminders
 ```bash
-1. Click "+ New Pakt"
+1. Click "+ New Resolve"
 2. Go through flow: category → naming → milestones
 3. At reminder screen:
    - Toggle "Enable Reminders" ON
@@ -150,21 +150,21 @@
 Option A - Wait for scheduled time
 Option B - Test immediately:
 1. In ReminderSetup, set time to 1 minute from now
-2. Complete pakt setup
+2. Complete Resolve setup
 3. Wait 1 minute
 4. Notification appears!
 ```
 
 **Expected:**
 - ✅ Notification shows at scheduled time
-- ✅ Title: "🎯 Pakt Reminder"
-- ✅ Body: "Time to work on: [Pakt Name]"
+- ✅ Title: "🎯 Resolve Reminder"
+- ✅ Body: "Time to work on: [Resolve Name]"
 
 ---
 
 ### Test 5: Custom Day Reminders
 ```bash
-1. Create new pakt
+1. Create new Resolve
 2. At reminder screen:
    - Select "Custom"
    - Choose Mon, Wed, Fri
@@ -203,7 +203,7 @@ Your `reminders` table stores:
 ```sql
 {
   id: UUID,
-  pakt_id: UUID,           -- Links to pakt
+  pakt_id: UUID,           -- Links to Resolve
   user_id: UUID,           -- Links to user
   frequency: 'daily' | 'weekly' | 'custom',
   time: '09:00',           -- HH:MM format
@@ -221,13 +221,13 @@ Your `reminders` table stores:
 ### Before (Mock Data):
 ```typescript
 const currentStreak = 7; // Hardcoded
-const pakts = [...]; // Local state
+const Resolves = [...]; // Local state
 // Data lost on refresh
 ```
 
 ### After (Real Backend):
 ```typescript
-const { pakts, loading } = usePakts(); // From database
+const { Resolves, loading } = usePakts(); // From database
 const { milestones, toggleMilestone } = useMilestones(paktId);
 // Data persists forever
 // Progress auto-calculates
@@ -285,11 +285,11 @@ npx expo run:ios --device
 
 ### When App is Open (Foreground):
 - Notification shows as in-app alert
-- User can dismiss or tap to view pakt
+- User can dismiss or tap to view Resolve
 
 ### When App is Closed (Background):
 - Notification shows in system tray
-- Tap opens app to specific pakt
+- Tap opens app to specific Resolve
 
 ### When Device is Locked:
 - Notification shows on lock screen
@@ -327,7 +327,7 @@ await NotificationService.sendImmediateNotification(
 ## 🎯 **What You Can Do Now**
 
 ### User Features:
-- ✅ Create pakts that persist in database
+- ✅ Create Resolves that persist in database
 - ✅ Set daily, weekly, or custom reminders
 - ✅ Receive push notifications on phone
 - ✅ Get celebrations for completions
@@ -350,7 +350,7 @@ await NotificationService.sendImmediateNotification(
 Your app now has:
 1. ✅ **Real backend data** - No more mock data!
 2. ✅ **Push notifications** - Daily, weekly, custom reminders
-3. ✅ **Celebration notifications** - For milestones & pakts
+3. ✅ **Celebration notifications** - For milestones & Resolves
 4. ✅ **Automatic progress** - Updates when milestones complete
 5. ✅ **Database persistence** - Everything saved to Supabase
 6. ✅ **Production ready** - Can deploy to app stores
@@ -363,7 +363,7 @@ Your app now has:
 2. **Sign in** with existing account
 3. **View dashboard** - see real data
 4. **Complete a milestone** - get notification
-5. **Create new pakt** - set up reminder
+5. **Create new Resolve** - set up reminder
 6. **Wait for reminder** or change time to test immediately
 7. **Check Supabase** - verify all data saved
 

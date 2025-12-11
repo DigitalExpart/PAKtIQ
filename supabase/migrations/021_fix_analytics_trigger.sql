@@ -53,7 +53,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Fix the pakt completion trigger function
+-- Fix the Resolve completion trigger function
 CREATE OR REPLACE FUNCTION public.update_analytics_on_pakt_complete()
 RETURNS TRIGGER AS $$
 BEGIN

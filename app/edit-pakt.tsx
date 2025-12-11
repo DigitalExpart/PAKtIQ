@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Calendar, Save, Trash2, Plus, X, Edit2 } from 'lucide-react-native';
 // import DateTimePicker from '@react-native-community/datetimepicker';
-import { PaktService } from '../src/services/pakt.service';
+import { PaktService } from '../src/services/resolve.service';
 import { MilestoneService } from '../src/services/milestone.service';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
@@ -57,21 +57,21 @@ export default function EditPaktScreen() {
   const loadPakt = async () => {
     try {
       setLoading(true);
-      const pakt = await PaktService.getPakt(paktId as string);
-      if (pakt) {
-        setPaktName(pakt.name);
-        setDescription(pakt.description);
-        setTargetOutcome(pakt.target_outcome);
-        setDeadline(new Date(pakt.deadline));
-        setCategory(pakt.category);
+      const Resolve = await PaktService.getPakt(paktId as string);
+      if (Resolve) {
+        setPaktName(resolve.name);
+        setDescription(resolve.description);
+        setTargetOutcome(resolve.target_outcome);
+        setDeadline(new Date(resolve.deadline));
+        setCategory(resolve.category);
         
         // Load milestones
         const paktMilestones = await MilestoneService.getPaktMilestones(paktId as string);
         setMilestones(paktMilestones.sort((a, b) => (a.order_index || 0) - (b.order_index || 0)));
       }
     } catch (error) {
-      console.error('Error loading pakt:', error);
-      Alert.alert('Error', 'Failed to load pakt');
+      console.error('Error loading Resolve:', error);
+      Alert.alert('Error', 'Failed to load Resolve');
     } finally {
       setLoading(false);
     }
@@ -79,13 +79,13 @@ export default function EditPaktScreen() {
 
   const handleSave = async () => {
     if (!paktName.trim()) {
-      Alert.alert('Error', 'Please enter a pakt name');
+      Alert.alert('Error', 'Please enter a Resolve name');
       return;
     }
 
     try {
       setSaving(true);
-      // Update pakt
+      // Update Resolve
       await PaktService.updatePakt(paktId as string, {
         name: paktName.trim(),
         description: description.trim(),
@@ -97,12 +97,12 @@ export default function EditPaktScreen() {
       // Milestone changes are saved in real-time, so we just need to reload
       await loadPakt();
       
-      Alert.alert('Success', 'Pakt updated successfully', [
+      Alert.alert('Success', 'Resolve updated successfully', [
         { text: 'OK', onPress: () => router.back() }
       ]);
     } catch (error) {
-      console.error('Error updating pakt:', error);
-      Alert.alert('Error', 'Failed to update pakt');
+      console.error('Error updating Resolve:', error);
+      Alert.alert('Error', 'Failed to update Resolve');
     } finally {
       setSaving(false);
     }
@@ -135,9 +135,9 @@ export default function EditPaktScreen() {
       return;
     }
 
-    // Validate milestone deadline doesn't exceed pakt deadline
+    // Validate milestone deadline doesn't exceed Resolve deadline
     if (milestoneDueDate > deadline) {
-      Alert.alert('Error', 'Milestone deadline cannot exceed pakt deadline');
+      Alert.alert('Error', 'Milestone deadline cannot exceed Resolve deadline');
       return;
     }
 
@@ -177,8 +177,8 @@ export default function EditPaktScreen() {
 
   const handleDeleteMilestone = (milestoneId: string) => {
     Alert.alert(
-      t('pakt.deleteMilestone'),
-      t('pakt.deleteMilestoneConfirm'),
+      t('resolve.deleteMilestone'),
+      t('resolve.deleteMilestoneConfirm'),
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
@@ -199,8 +199,8 @@ export default function EditPaktScreen() {
 
   const handleDelete = () => {
     Alert.alert(
-      'Delete Pakt',
-      'Are you sure you want to delete this pakt? This action cannot be undone.',
+      'Delete Resolve',
+      'Are you sure you want to delete this Resolve? This action cannot be undone.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -209,12 +209,12 @@ export default function EditPaktScreen() {
           onPress: async () => {
             try {
               await PaktService.deletePakt(paktId as string);
-              Alert.alert('Success', 'Pakt deleted successfully', [
+              Alert.alert('Success', 'Resolve deleted successfully', [
                 { text: 'OK', onPress: () => router.replace('/dashboard') }
               ]);
             } catch (error) {
-              console.error('Error deleting pakt:', error);
-              Alert.alert('Error', 'Failed to delete pakt');
+              console.error('Error deleting Resolve:', error);
+              Alert.alert('Error', 'Failed to delete Resolve');
             }
           },
         },
@@ -265,7 +265,7 @@ export default function EditPaktScreen() {
           <ArrowLeft size={24} color="#FFFFFF" />
         </TouchableOpacity>
         
-        <Text style={styles.headerTitle}>Edit Pakt</Text>
+        <Text style={styles.headerTitle}>Edit Resolve</Text>
         
         <TouchableOpacity 
           style={styles.deleteButton}
@@ -280,7 +280,7 @@ export default function EditPaktScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         <View style={styles.inputSection}>
-          <Text style={styles.label}>Pakt Name *</Text>
+          <Text style={styles.label}>Resolve Name *</Text>
           <TextInput
             style={dynamicStyles.input}
             placeholder="e.g., Run my first 5K"
@@ -326,7 +326,7 @@ export default function EditPaktScreen() {
         {/* Milestones Section */}
         <View style={styles.inputSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.label}>{t('pakt.milestones')}</Text>
+            <Text style={styles.label}>{t('resolve.milestones')}</Text>
             <TouchableOpacity
               style={styles.addButton}
               onPress={handleAddMilestone}
@@ -338,7 +338,7 @@ export default function EditPaktScreen() {
           {milestones.length === 0 ? (
             <View style={[styles.emptyState, { backgroundColor: colors.surface }]}>
               <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>
-                {t('pakt.noMilestones')}
+                {t('resolve.noMilestones')}
               </Text>
             </View>
           ) : (
@@ -392,7 +392,7 @@ export default function EditPaktScreen() {
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.text }]}>
-                {editingMilestone ? t('pakt.editMilestone') : t('pakt.addMilestone')}
+                {editingMilestone ? t('resolve.editMilestone') : t('resolve.addMilestone')}
               </Text>
               <TouchableOpacity onPress={() => setShowMilestoneModal(false)}>
                 <X size={24} color={colors.text} />
@@ -402,20 +402,20 @@ export default function EditPaktScreen() {
             <ScrollView style={styles.modalScroll}>
               <View style={styles.modalSection}>
                 <Text style={[styles.modalLabel, { color: colors.text }]}>
-                  {t('pakt.milestoneName')} *
+                  {t('resolve.milestoneName')} *
                 </Text>
                 <TextInput
                   style={[styles.modalInput, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
                   value={milestoneName}
                   onChangeText={setMilestoneName}
-                  placeholder={t('pakt.milestoneNamePlaceholder')}
+                  placeholder={t('resolve.milestoneNamePlaceholder')}
                   placeholderTextColor={colors.textSecondary}
                 />
               </View>
 
               <View style={styles.modalSection}>
                 <Text style={[styles.modalLabel, { color: colors.text }]}>
-                  {t('pakt.dueDate')} *
+                  {t('resolve.dueDate')} *
                 </Text>
           <TouchableOpacity
                   style={[styles.modalDateButton, { backgroundColor: colors.background, borderColor: colors.border }]}
@@ -430,13 +430,13 @@ export default function EditPaktScreen() {
 
               <View style={styles.modalSection}>
                 <Text style={[styles.modalLabel, { color: colors.text }]}>
-                  {t('pakt.notes')}
+                  {t('resolve.notes')}
                 </Text>
                 <TextInput
                   style={[styles.modalTextArea, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
                   value={milestoneNotes}
                   onChangeText={setMilestoneNotes}
-                  placeholder={t('pakt.notesPlaceholder')}
+                  placeholder={t('resolve.notesPlaceholder')}
                   placeholderTextColor={colors.textSecondary}
                   multiline
                   numberOfLines={3}
@@ -475,7 +475,7 @@ export default function EditPaktScreen() {
                   </Text>
                 </TouchableOpacity>
                 <Text style={[styles.datePickerTitle, { color: colors.text }]}>
-                  {t('pakt.selectDate')}
+                  {t('resolve.selectDate')}
                 </Text>
                 <TouchableOpacity onPress={() => setShowDatePicker(false)}>
                   <Text style={[styles.datePickerButton, { color: colors.primary }]}>

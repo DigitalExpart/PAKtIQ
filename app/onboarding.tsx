@@ -10,7 +10,7 @@ const slides = [
   {
     id: 1,
     title: 'Set Your Goals',
-    description: 'Create pakts that matter to you. Choose from categories like health, career, and personal growth.',
+    description: 'Create Resolves that matter to you. Choose from categories like health, career, and personal growth.',
     icon: '🎯',
     color: '#9163F2',
   },
@@ -31,7 +31,7 @@ const slides = [
   {
     id: 4,
     title: "Let's Get Started!",
-    description: 'Join thousands of achievers who are making their commitments count with PaktIQ.',
+    description: 'Join thousands of achievers who are making their commitments count with resolviq.',
     icon: '🚀',
     color: '#FF6B6B',
   },

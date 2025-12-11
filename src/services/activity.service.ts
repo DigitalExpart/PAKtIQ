@@ -35,7 +35,7 @@ export class ActivityService {
   }
 
   /**
-   * Get activity for a specific pakt
+   * Get activity for a specific Resolve
    */
   static async getPaktActivity(paktId: string, limit = 50): Promise<ActivityLog[]> {
     const { data, error } = await supabase
@@ -50,7 +50,7 @@ export class ActivityService {
   }
 
   /**
-   * Log pakt creation
+   * Log Resolve creation
    */
   static async logPaktCreated(
     userId: string,
@@ -61,12 +61,12 @@ export class ActivityService {
       user_id: userId,
       pakt_id: paktId,
       action_type: 'pakt_created',
-      description: `Created pakt: ${paktName}`,
+      description: `Created Resolve: ${paktName}`,
     });
   }
 
   /**
-   * Log pakt completion
+   * Log Resolve completion
    */
   static async logPaktCompleted(
     userId: string,
@@ -77,7 +77,7 @@ export class ActivityService {
       user_id: userId,
       pakt_id: paktId,
       action_type: 'pakt_completed',
-      description: `Completed pakt: ${paktName}`,
+      description: `Completed Resolve: ${paktName}`,
     });
   }
 

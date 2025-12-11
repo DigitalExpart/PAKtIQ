@@ -9,11 +9,11 @@ Error loading analytics: {"code": "23503", "details": "Key is not present in tab
 
 ## Root Cause
 
-The database triggers that automatically update analytics when milestones or pakts are completed were trying to INSERT into the `analytics` table **before** the profile was fully created. This caused foreign key constraint violations.
+The database triggers that automatically update analytics when milestones or Resolves are completed were trying to INSERT into the `analytics` table **before** the profile was fully created. This caused foreign key constraint violations.
 
 The triggers affected:
 1. `update_analytics_on_milestone_complete()` - Fires when milestones are completed
-2. `update_analytics_on_pakt_complete()` - Fires when pakts are completed
+2. `update_analytics_on_pakt_complete()` - Fires when Resolves are completed
 3. `get_or_create_analytics()` - Helper function to get/create analytics
 4. `update_user_streak()` - Updates user streak
 
@@ -84,7 +84,7 @@ After applying the fix, test these scenarios:
 
 1. ✅ **New user signup** - Should work without analytics errors
 2. ✅ **Complete milestone** - Analytics should update correctly
-3. ✅ **Complete pakt** - Analytics should update correctly
+3. ✅ **Complete Resolve** - Analytics should update correctly
 4. ✅ **View analytics** - Should load without errors
 5. ✅ **No console errors** - Check browser console for foreign key errors
 

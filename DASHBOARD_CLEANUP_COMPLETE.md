@@ -13,13 +13,13 @@ All mock data has been **removed** from the Expo mobile app. The dashboard now d
 **Before:**
 - ❌ Used hardcoded `mockPakts` array
 - ❌ Static stats (streak: 12, completedToday: 5)
-- ❌ Fake pakt data
+- ❌ Fake Resolve data
 
 **After:**
-- ✅ Uses `usePakts()` hook to fetch real pakts from Supabase
+- ✅ Uses `usePakts()` hook to fetch real Resolves from Supabase
 - ✅ Uses `useAnalytics()` hook for real streak and today's milestones
 - ✅ Displays user's actual name from profile
-- ✅ Calculates real progress for each pakt
+- ✅ Calculates real progress for each Resolve
 - ✅ Shows actual milestone completion counts
 - ✅ Displays accurate due dates
 
@@ -27,7 +27,7 @@ All mock data has been **removed** from the Expo mobile app. The dashboard now d
 ```typescript
 stats = {
   streak: insights?.current_streak || 0,              // From analytics table
-  totalPakts: pakts.filter(p => p.status === 'active').length, // From pakts table
+  totalPakts: Resolves.filter(p => p.status === 'active').length, // From Resolves table
   completedToday: insights?.milestones_completed_today || 0,  // From analytics table
 }
 ```
@@ -43,11 +43,11 @@ stats = {
 - ❌ Mock category breakdown
 
 **After:**
-- ✅ Calculates **real completion rate** from user's pakts
+- ✅ Calculates **real completion rate** from user's Resolves
 - ✅ Shows **actual milestones completed** from analytics
 - ✅ Displays **real day streak** from database
 - ✅ Shows **earned badges count** from achievements
-- ✅ Dynamic **category breakdown** based on user's pakts
+- ✅ Dynamic **category breakdown** based on user's Resolves
 
 **Real Data Displayed:**
 ```typescript
@@ -121,7 +121,7 @@ if (loading) {
 Screens handle cases where users have no data:
 
 **Dashboard:**
-- If no pakts: Shows "Create First Pakt" button
+- If no Resolves: Shows "Create First Resolve" button
 
 **Insights:**
 - If no categories: Shows "No Data" placeholder
@@ -140,7 +140,7 @@ AuthProvider stores user session
     ↓
 Dashboard mounts
     ↓
-usePakts() → fetches pakts from Supabase
+usePakts() → fetches Resolves from Supabase
 useAnalytics() → fetches analytics from Supabase
     ↓
 Real data displayed on screen ✅
@@ -160,15 +160,15 @@ npx expo start --clear
 
 ### 3. **Check the Dashboard**
 - **Day Streak:** Should show 0 (you just signed up)
-- **Active Pakts:** Should show 0 (no pakts created yet)
+- **Active Resolves:** Should show 0 (no Resolves created yet)
 - **Today:** Should show 0 (no milestones completed today)
 
-### 4. **Create a Pakt**
-- Click "New Pakt" → Select a category → Name it → Add milestones
-- Go back to dashboard → Your new pakt should appear!
+### 4. **Create a Resolve**
+- Click "New Resolve" → Select a category → Name it → Add milestones
+- Go back to dashboard → Your new Resolve should appear!
 
 ### 5. **Complete a Milestone**
-- Click on a pakt → Mark a milestone complete
+- Click on a Resolve → Mark a milestone complete
 - Go back to dashboard → "Today" should increase by 1!
 
 ### 6. **Check Insights**
@@ -185,7 +185,7 @@ npx expo start --clear
 
 ### ✅ **100% Live from Supabase:**
 - ✅ User authentication
-- ✅ Pakts (create, read, update, delete)
+- ✅ Resolves (create, read, update, delete)
 - ✅ Milestones
 - ✅ Day streak tracking
 - ✅ Today's completed milestones
@@ -204,17 +204,17 @@ npx expo start --clear
 ## 🚀 Next Steps
 
 1. **Test the Dashboard:**
-   - Create a few pakts
+   - Create a few Resolves
    - Complete some milestones
    - Watch the stats update in real-time!
 
 2. **Add More Data:**
-   - Create pakts in different categories
+   - Create Resolves in different categories
    - Complete milestones to increase streak
    - Unlock achievements
 
 3. **Test Reminders:**
-   - Set up reminders for your pakts
+   - Set up reminders for your Resolves
    - Check if notifications arrive on time
 
 ---
@@ -240,7 +240,7 @@ npx expo start --clear
 ## 🐛 Troubleshooting
 
 **Issue:** Dashboard shows all zeros
-- **Solution:** You need to create pakts first! Click "New Pakt" to get started.
+- **Solution:** You need to create Resolves first! Click "New Resolve" to get started.
 
 **Issue:** Loading forever
 - **Solution:** Check your internet connection. Restart Expo with `npx expo start --clear`.

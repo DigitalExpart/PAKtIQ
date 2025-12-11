@@ -5,14 +5,14 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Calendar, Clock, Target, CheckCircle, Circle, Edit, Trash2, Share2, MoreVertical } from 'lucide-react-native';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useAuth } from '../src/contexts/AuthContext';
-import { PaktService } from '../src/services/pakt.service';
+import { ResolveService } from '../src/services/resolve.service';
 import { MilestoneService } from '../src/services/milestone.service';
 import { NotificationService } from '../src/services/notification.service';
 import { AchievementService } from '../src/services/achievement.service';
-import { usePakts } from '../src/hooks/usePakts';
+import { useResolves } from '../src/hooks/useResolves';
 import { ShareService } from '../src/services/share.service';
 import { useLanguage } from '../src/contexts/LanguageContext';
-import { translateCategory, translatePaktName } from '../src/utils/translations';
+import { translateCategory, translateResolveName } from '../src/utils/translations';
 import { DeleteConfirmationModal } from '../src/components/DeleteConfirmationModal';
 import { SuccessModal } from '../src/components/SuccessModal';
 import { ErrorModal } from '../src/components/ErrorModal';
@@ -30,13 +30,13 @@ export default function PaktDetailScreen() {
   const params = useLocalSearchParams();
   const { colors } = useTheme();
   const { user } = useAuth();
-  const { pakts, refetch } = usePakts();
+  const { Resolves, refetch } = useResolves();
   const { t } = useLanguage();
   const [showMenu, setShowMenu] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [pakt, setPakt] = useState<any>(null);
+  const [Resolve, setPakt] = useState<any>(null);
   const [milestones, setMilestones] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [togglingMilestone, setTogglingMilestone] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export default function PaktDetailScreen() {
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showNotFoundModal, setShowNotFoundModal] = useState(false);
   
-  // Find pakt from params or use first pakt as fallback
+  // Find Resolve from params or use first Resolve as fallback
   useEffect(() => {
     const loadPakt = async () => {
       try {
@@ -54,7 +54,7 @@ export default function PaktDetailScreen() {
         const paktId = params.id as string;
         if (paktId) {
           try {
-            const fetchedPakt = await PaktService.getPakt(paktId);
+            const fetchedPakt = await ResolveService.getPakt(paktId);
             if (fetchedPakt) {
               setPakt(fetchedPakt);
               setSelectedDate(new Date(fetchedPakt.deadline));
@@ -63,7 +63,7 @@ export default function PaktDetailScreen() {
               // Sort by order_index
               setMilestones(paktMilestones.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0)));
             } else {
-              // Pakt not found, try to navigate back or show error
+              // Resolve not found, try to navigate back or show error
               setShowNotFoundModal(true);
             }
           } catch (paktError: any) {
@@ -74,9 +74,9 @@ export default function PaktDetailScreen() {
               throw paktError; // Re-throw other errors
             }
           }
-        } else if (pakts.length > 0) {
-          // Fallback to first pakt if no ID provided
-          const firstPakt = pakts[0];
+        } else if (Resolves.length > 0) {
+          // Fallback to first Resolve if no ID provided
+          const firstPakt = Resolves[0];
           setPakt(firstPakt);
           setSelectedDate(new Date(firstPakt.deadline));
           if (firstPakt.id) {
@@ -86,32 +86,32 @@ export default function PaktDetailScreen() {
           }
         }
       } catch (error) {
-        console.error('Error loading pakt:', error);
-        Alert.alert('Error', 'Failed to load pakt details');
+        console.error('Error loading Resolve:', error);
+        Alert.alert('Error', 'Failed to load Resolve details');
       } finally {
         setLoading(false);
       }
     };
 
-    if (pakts.length > 0 || params.id) {
+    if (Resolves.length > 0 || params.id) {
       loadPakt();
     }
-  }, [params.id, pakts]);
+  }, [params.id, Resolves]);
 
   const handleDateChange = async (event: any, date?: Date) => {
     if (Platform.OS === 'android') {
       setShowDatePicker(false);
     }
     
-    if (date && pakt && user) {
+    if (date && Resolve && user) {
       setSelectedDate(date);
       
       try {
         setSaving(true);
-        await PaktService.updatePakt(pakt.id, {
+        await ResolveService.updatePakt(resolve.id, {
           deadline: date.toISOString(),
         });
-        setPakt({ ...pakt, deadline: date.toISOString() });
+        setPakt({ ...Resolve, deadline: date.toISOString() });
         await refetch();
         
         if (Platform.OS === 'ios') {
@@ -126,12 +126,12 @@ export default function PaktDetailScreen() {
     }
   };
 
-  if (loading || !pakt) {
+  if (loading || !Resolve) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>{t('pakt.loadingDetails')}</Text>
+          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>{t('resolve.loadingDetails')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -140,33 +140,33 @@ export default function PaktDetailScreen() {
   const completedMilestones = milestones.filter((m: any) => m.completed).length;
   const totalMilestones = milestones.length;
 
-  // Handle share pakt
+  // Handle share Resolve
   const handleSharePakt = async () => {
-    if (!pakt) return;
+    if (!Resolve) return;
     
     try {
       await ShareService.sharePakt({
-        name: pakt.name,
-        description: pakt.description || '',
-        category: pakt.category,
-        progress: pakt.progress || 0,
+        name: resolve.name,
+        description: resolve.description || '',
+        category: resolve.category,
+        progress: resolve.progress || 0,
         milestones: milestones.map((m: any) => ({
           name: m.name,
           completed: m.completed,
         })),
       });
     } catch (error) {
-      console.error('Error sharing pakt:', error);
-      Alert.alert('Error', 'Failed to share pakt');
+      console.error('Error sharing Resolve:', error);
+      Alert.alert('Error', 'Failed to share Resolve');
     }
   };
 
   // Handle copy link
   const handleCopyLink = async () => {
-    if (!pakt) return;
+    if (!Resolve) return;
     
     try {
-      await ShareService.copyLink(pakt.id);
+      await ShareService.copyLink(resolve.id);
       Alert.alert('Success', t('share.copied'));
     } catch (error) {
       console.error('Error copying link:', error);
@@ -176,7 +176,7 @@ export default function PaktDetailScreen() {
   
   // Handle milestone toggle
   const handleToggleMilestone = async (milestoneId: string, currentStatus: boolean) => {
-    if (!user || !pakt) return;
+    if (!user || !Resolve) return;
     
     try {
       setTogglingMilestone(milestoneId);
@@ -190,26 +190,26 @@ export default function PaktDetailScreen() {
           : m
       ));
       
-      // Refresh pakt to get updated progress (database trigger should update it)
-      const updatedPakt = await PaktService.getPakt(pakt.id);
+      // Refresh Resolve to get updated progress (database trigger should update it)
+      const updatedPakt = await ResolveService.getPakt(resolve.id);
       if (updatedPakt) {
         setPakt(updatedPakt);
       }
       
-      // Refresh pakts list
+      // Refresh Resolves list
       await refetch();
       
       // Create notification for milestone achievement
       if (newStatus) {
         const milestone = milestones.find((m: any) => m.id === milestoneId);
-        if (milestone && pakt) {
+        if (milestone && Resolve) {
           try {
             await NotificationService.notifyMilestoneAchieved(
               user.id,
               milestone.name,
-              pakt.name,
+              resolve.name,
               milestoneId,
-              pakt.id
+              resolve.id
             );
             
             // Check for milestone-based achievements
@@ -233,12 +233,12 @@ export default function PaktDetailScreen() {
       if (newStatus && updatedPakt?.progress === 100) {
         setShowCompletionModal(true);
         
-        // Create notification for pakt completion
+        // Create notification for Resolve completion
         try {
-          await NotificationService.notifyPaktCompleted(user.id, pakt.name, pakt.id);
+          await NotificationService.notifyResolveCompleted(user.id, resolve.name, resolve.id);
           
-          // Check for pakt-based achievements
-          const allPakts = await PaktService.getUserPakts(user.id);
+          // Check for Resolve-based achievements
+          const allPakts = await ResolveService.getUserPakts(user.id);
           const completedPaktsCount = allPakts.filter((p: any) => p.progress === 100).length;
           const newAchievements = await AchievementService.checkPaktAchievements(
             user.id,
@@ -263,13 +263,13 @@ export default function PaktDetailScreen() {
 
   // Handle milestone deadline update
   const handleUpdateMilestoneDeadline = async (milestoneId: string, date: Date) => {
-    if (!user || !pakt) return;
+    if (!user || !Resolve) return;
     
-    // Validate milestone deadline doesn't exceed pakt deadline
-    if (pakt.deadline && date > new Date(pakt.deadline)) {
+    // Validate milestone deadline doesn't exceed Resolve deadline
+    if (resolve.deadline && date > new Date(resolve.deadline)) {
       Alert.alert(
         'Invalid Date',
-        `Milestone deadline cannot exceed the Pakt deadline of ${new Date(pakt.deadline).toLocaleDateString()}. Please select an earlier date.`
+        `Milestone deadline cannot exceed the Resolve deadline of ${new Date(resolve.deadline).toLocaleDateString()}. Please select an earlier date.`
       );
       return;
     }
@@ -312,28 +312,28 @@ export default function PaktDetailScreen() {
     });
   };
 
-  // Handle delete pakt
+  // Handle delete Resolve
   const handleDeletePakt = () => {
-    if (!user || !pakt) return;
+    if (!user || !Resolve) return;
     setShowMenu(false);
     setShowDeleteConfirm(true);
   };
 
   const confirmDeletePakt = async () => {
-    if (!user || !pakt) return;
+    if (!user || !Resolve) return;
     
     try {
       setShowDeleteConfirm(false);
-              await PaktService.deletePakt(pakt.id);
+              await ResolveService.deletePakt(resolve.id);
               
-              // Refresh pakts list
+              // Refresh Resolves list
               await refetch();
               
               // Navigate back
               router.back();
             } catch (error) {
-              console.error('Error deleting pakt:', error);
-      Alert.alert(t('common.error'), t('pakt.deleteError'));
+              console.error('Error deleting Resolve:', error);
+      Alert.alert(t('common.error'), t('resolve.deleteError'));
             }
   };
 
@@ -348,7 +348,7 @@ export default function PaktDetailScreen() {
           <ArrowLeft size={24} color="#FFFFFF" />
         </TouchableOpacity>
         
-        <Text style={styles.headerTitle}>Pakt Details</Text>
+        <Text style={styles.headerTitle}>Resolve Details</Text>
         
         <TouchableOpacity 
           style={styles.menuButton}
@@ -363,12 +363,12 @@ export default function PaktDetailScreen() {
         <View style={[styles.progressCard, { backgroundColor: colors.surface }]}>
           <View style={styles.progressHeader}>
             <View>
-              <Text style={[styles.paktName, { color: colors.text }]}>{translatePaktName(pakt.name)}</Text>
-              <Text style={[styles.paktCategory, { color: colors.textSecondary }]}>{translateCategory(pakt.category)}</Text>
+              <Text style={[styles.paktName, { color: colors.text }]}>{translateResolveName(resolve.name)}</Text>
+              <Text style={[styles.paktCategory, { color: colors.textSecondary }]}>{translateCategory(resolve.category)}</Text>
             </View>
-            <View style={[styles.progressCircle, { borderColor: getProgressColor(pakt.progress || 0) }]}>
-              <Text style={[styles.progressText, { color: getProgressColor(pakt.progress || 0) }]}>
-                {pakt.progress || 0}%
+            <View style={[styles.progressCircle, { borderColor: getProgressColor(resolve.progress || 0) }]}>
+              <Text style={[styles.progressText, { color: getProgressColor(resolve.progress || 0) }]}>
+                {resolve.progress || 0}%
               </Text>
             </View>
           </View>
@@ -379,8 +379,8 @@ export default function PaktDetailScreen() {
               style={[
                 styles.progressBar, 
                 { 
-                  width: `${pakt.progress || 0}%`,
-                  backgroundColor: getProgressColor(pakt.progress || 0)
+                  width: `${resolve.progress || 0}%`,
+                  backgroundColor: getProgressColor(resolve.progress || 0)
                 }
               ]} 
             />
@@ -395,7 +395,7 @@ export default function PaktDetailScreen() {
         {/* Description */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Description</Text>
-          <Text style={[styles.description, { color: colors.textSecondary }]}>{pakt.description || 'No description'}</Text>
+          <Text style={[styles.description, { color: colors.textSecondary }]}>{resolve.description || 'No description'}</Text>
         </View>
 
         {/* Target Outcome */}
@@ -403,7 +403,7 @@ export default function PaktDetailScreen() {
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Target Outcome</Text>
           <View style={[styles.infoCard, { backgroundColor: colors.surface }]}>
             <Target size={20} color={colors.primary} />
-            <Text style={[styles.infoText, { color: colors.text }]}>{pakt.target_outcome || 'No target outcome'}</Text>
+            <Text style={[styles.infoText, { color: colors.text }]}>{resolve.target_outcome || 'No target outcome'}</Text>
           </View>
         </View>
 
@@ -417,7 +417,7 @@ export default function PaktDetailScreen() {
           >
             <Calendar size={20} color="#FFD88A" />
             <Text style={[styles.infoText, { color: colors.text, flex: 1 }]}>
-              {formatDeadline(pakt.deadline)}
+              {formatDeadline(resolve.deadline)}
             </Text>
             {saving ? (
               <ActivityIndicator size="small" color={colors.primary} />
@@ -433,8 +433,8 @@ export default function PaktDetailScreen() {
           <View style={[styles.infoCard, { backgroundColor: colors.surface }]}>
             <Clock size={20} color="#96E6B3" />
             <Text style={[styles.infoText, { color: colors.text }]}>
-              {pakt.reminders?.frequency ? 
-                pakt.reminders.frequency.charAt(0).toUpperCase() + pakt.reminders.frequency.slice(1) + ' at ' + pakt.reminders.time
+              {resolve.reminders?.frequency ? 
+                resolve.reminders.frequency.charAt(0).toUpperCase() + resolve.reminders.frequency.slice(1) + ' at ' + resolve.reminders.time
                 : 'No reminders set'}
             </Text>
           </View>
@@ -500,17 +500,17 @@ export default function PaktDetailScreen() {
         <View style={styles.actionButtons}>
           <TouchableOpacity 
             style={styles.primaryButton}
-            onPress={() => router.push(`/milestone-builder?paktId=${pakt.id}`)}
+            onPress={() => router.push(`/milestone-builder?paktId=${resolve.id}`)}
           >
-            <Text style={styles.primaryButtonText}>{t('pakt.addMilestone')}</Text>
+            <Text style={styles.primaryButtonText}>{t('resolve.addMilestone')}</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
             style={styles.secondaryButton}
-            onPress={() => {/* Share pakt */}}
+            onPress={() => {/* Share Resolve */}}
           >
             <Share2 size={20} color="#9163F2" />
-            <Text style={styles.secondaryButtonText}>Share</Text>
+            <Text style={styles.secondaryButtonText}>{t('common.share')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -534,11 +534,11 @@ export default function PaktDetailScreen() {
               style={[styles.menuItem, { borderBottomColor: colors.border }]}
               onPress={() => {
                 setShowMenu(false);
-                router.push(`/edit-pakt?paktId=${pakt.id}`);
+                router.push(`/edit-pakt?paktId=${resolve.id}`);
               }}
             >
               <Edit size={20} color={colors.text} />
-              <Text style={[styles.menuItemText, { color: colors.text }]}>{t('pakt.edit')}</Text>
+              <Text style={[styles.menuItemText, { color: colors.text }]}>{t('resolve.edit')}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
@@ -549,7 +549,7 @@ export default function PaktDetailScreen() {
               }}
             >
               <Share2 size={20} color={colors.text} />
-              <Text style={[styles.menuItemText, { color: colors.text }]}>{t('pakt.sharePakt')}</Text>
+              <Text style={[styles.menuItemText, { color: colors.text }]}>{t('resolve.sharePakt')}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
@@ -557,7 +557,7 @@ export default function PaktDetailScreen() {
               onPress={handleDeletePakt}
             >
               <Trash2 size={20} color={colors.error} />
-              <Text style={[styles.menuItemText, { color: colors.error }]}>{t('pakt.delete')}</Text>
+              <Text style={[styles.menuItemText, { color: colors.error }]}>{t('resolve.delete')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
@@ -583,7 +583,7 @@ export default function PaktDetailScreen() {
               <View style={[styles.datePickerContainer, { backgroundColor: colors.surface }]}>
                 <View style={styles.datePickerHeader}>
                   <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                    <Text style={[styles.datePickerCancel, { color: colors.primary }]}>Cancel</Text>
+                    <Text style={[styles.datePickerCancel, { color: colors.primary }]}>{t('common.cancel')}</Text>
                   </TouchableOpacity>
                   <Text style={[styles.datePickerTitle, { color: colors.text }]}>Select Deadline</Text>
                   <TouchableOpacity onPress={async () => {
@@ -672,9 +672,9 @@ export default function PaktDetailScreen() {
               <View style={[styles.datePickerContainer, { backgroundColor: colors.surface }]}>
                 <View style={styles.datePickerHeader}>
                   <TouchableOpacity onPress={() => setEditingMilestoneDeadline(null)}>
-                    <Text style={[styles.datePickerCancel, { color: colors.primary }]}>Cancel</Text>
+                    <Text style={[styles.datePickerCancel, { color: colors.primary }]}>{t('common.cancel')}</Text>
                   </TouchableOpacity>
-                  <Text style={[styles.datePickerTitle, { color: colors.text }]}>Edit Milestone Deadline</Text>
+                  <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('resolve.editMilestoneDeadline')}</Text>
                   <TouchableOpacity onPress={() => {
                     if (editingMilestoneDeadline) {
                       handleUpdateMilestoneDeadline(editingMilestoneDeadline, milestoneDeadlineDate);
@@ -691,7 +691,7 @@ export default function PaktDetailScreen() {
                     if (date) setMilestoneDeadlineDate(date);
                   }}
                   minimumDate={new Date()}
-                  maximumDate={pakt?.deadline ? new Date(pakt.deadline) : undefined}
+                  maximumDate={Resolve?.deadline ? new Date(resolve.deadline) : undefined}
                   textColor={colors.text}
                 />
               </View>
@@ -709,7 +709,7 @@ export default function PaktDetailScreen() {
               }
             }}
             minimumDate={new Date()}
-            maximumDate={pakt?.deadline ? new Date(pakt.deadline) : undefined}
+            maximumDate={Resolve?.deadline ? new Date(resolve.deadline) : undefined}
           />
         ) : (
           <Modal
@@ -722,9 +722,9 @@ export default function PaktDetailScreen() {
               <View style={[styles.datePickerContainer, { backgroundColor: colors.surface }]}>
                 <View style={styles.datePickerHeader}>
                   <TouchableOpacity onPress={() => setEditingMilestoneDeadline(null)}>
-                    <Text style={[styles.datePickerCancel, { color: colors.primary }]}>Cancel</Text>
+                    <Text style={[styles.datePickerCancel, { color: colors.primary }]}>{t('common.cancel')}</Text>
                   </TouchableOpacity>
-                  <Text style={[styles.datePickerTitle, { color: colors.text }]}>Edit Milestone Deadline</Text>
+                  <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('resolve.editMilestoneDeadline')}</Text>
                   <TouchableOpacity onPress={() => {
                     if (editingMilestoneDeadline) {
                       handleUpdateMilestoneDeadline(editingMilestoneDeadline, milestoneDeadlineDate);
@@ -747,9 +747,9 @@ export default function PaktDetailScreen() {
                     placeholder="YYYY-MM-DD"
                     placeholderTextColor={colors.textSecondary}
                   />
-                  {pakt?.deadline && (
+                  {Resolve?.deadline && (
                     <Text style={[styles.fallbackHint, { color: colors.textSecondary }]}>
-                      Must be before {new Date(pakt.deadline).toISOString().split('T')[0]}
+                      Must be before {new Date(resolve.deadline).toISOString().split('T')[0]}
                     </Text>
                   )}
                 </View>
@@ -761,26 +761,26 @@ export default function PaktDetailScreen() {
 
       <DeleteConfirmationModal
         visible={showDeleteConfirm}
-        title={t('pakt.deletePakt')}
-        message={t('pakt.deleteConfirmMessage', { paktName: pakt?.name || '' })}
+        title={t('resolve.deletePakt')}
+        message={t('resolve.deleteConfirmMessage', { paktName: Resolve?.name || '' })}
         cancelText={t('common.cancel')}
-        deleteText={t('pakt.delete')}
+        deleteText={t('resolve.delete')}
         onCancel={() => setShowDeleteConfirm(false)}
         onDelete={confirmDeletePakt}
       />
 
       <SuccessModal
         visible={showCompletionModal}
-        title={t('pakt.completionTitle')}
-        message={t('pakt.completionMessage')}
+        title={t('resolve.completionTitle')}
+        message={t('resolve.completionMessage')}
         buttonText={t('common.done')}
         onButtonPress={() => setShowCompletionModal(false)}
       />
 
       <ErrorModal
         visible={showNotFoundModal}
-        title={t('pakt.notFoundTitle')}
-        message={t('pakt.notFoundMessage')}
+        title={t('resolve.notFoundTitle')}
+        message={t('resolve.notFoundMessage')}
         buttonText={t('common.done')}
         onButtonPress={() => {
           setShowNotFoundModal(false);

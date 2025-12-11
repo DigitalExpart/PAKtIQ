@@ -71,7 +71,7 @@ PAKtIQ/
 │   ├── index.tsx                # Welcome screen
 │   ├── onboarding.tsx           # Onboarding flow
 │   ├── category-selection.tsx   # Category picker
-│   ├── pakt-naming.tsx          # Goal naming
+│   ├── Resolve-naming.tsx          # Goal naming
 │   ├── milestone-builder.tsx    # Milestone creation
 │   ├── reminder-setup.tsx       # Reminder settings
 │   ├── dashboard.tsx            # Main dashboard
@@ -115,12 +115,12 @@ PAKtIQ/
 
 ### 2. Goal Creation Flow
 - **Category Selection** - Pick your focus area
-- **Pakt Naming** - Name your commitment
+- **Resolve Naming** - Name your commitment
 - **Milestone Builder** - Define your steps
 - **Reminder Setup** - Configure notifications
 
 ### 3. Main App
-- **Dashboard** - Overview with stats and active pakts
+- **Dashboard** - Overview with stats and active Resolves
 - **Achievements** - Track unlocked badges
 - **Insights** - View analytics and trends
 - **Templates** - Browse goal templates

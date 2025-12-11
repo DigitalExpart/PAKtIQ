@@ -19,8 +19,8 @@ import TemplateLibrary from './components/paktiq/TemplateLibrary';
 import PremiumFeatures from './components/paktiq/PremiumFeatures';
 import SettingsScreen from './components/paktiq/SettingsScreen';
 import SettingsScreenLive from './components/paktiq/SettingsScreenLive';
-import { usePakts } from './hooks';
-import { PaktService, MilestoneService, ReminderService } from './services';
+import { useResolves } from './hooks';
+import { ResolveService, MilestoneService, ReminderService } from './services';
 import type { Screen, PaktData } from './types';
 
 // Loading component
@@ -38,7 +38,7 @@ function LoadingScreen() {
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             className="w-12 h-12 border-4 border-white border-t-transparent rounded-full"
           />
-          <p>Loading PaktIQ...</p>
+          <p>Loading resolviq...</p>
         </div>
       </motion.div>
     </div>
@@ -47,10 +47,10 @@ function LoadingScreen() {
 
 function AppContent() {
   const { user, profile, loading: authLoading } = useAuth();
-  const { pakts, loading: paktsLoading, createPakt, refetch } = usePakts();
+  const { resolves, loading: resolvesLoading, createResolve, refetch } = useResolves();
   const [currentScreen, setCurrentScreen] = useState<Screen>('welcome');
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [currentPakt, setCurrentPakt] = useState<Partial<PaktData>>({});
+  const [currentResolve, setCurrentResolve] = useState<Partial<PaktData>>({});
 
   // Check if onboarding is completed
   useEffect(() => {
@@ -67,33 +67,33 @@ function AppContent() {
     setCurrentScreen(screen);
   };
 
-  const updatePaktData = (data: Partial<PaktData>) => {
-    setCurrentPakt({ ...currentPakt, ...data });
+  const updateResolveData = (data: Partial<PaktData>) => {
+    setCurrentResolve({ ...currentResolve, ...data });
   };
 
-  const completePakt = async () => {
-    if (!user || !currentPakt.name || !currentPakt.category) {
-      console.error('Missing required data to create pakt');
+  const completeResolve = async () => {
+    if (!user || !currentResolve.name || !currentResolve.category) {
+      console.error('Missing required data to create Resolve');
       return;
     }
 
     try {
-      // Create the pakt in the database
-      const newPakt = await createPakt({
+      // Create the Resolve in the database
+      const newResolve = await createResolve({
         user_id: user.id,
-        name: currentPakt.name,
-        description: currentPakt.description || '',
-        target_outcome: currentPakt.targetOutcome || '',
-        deadline: currentPakt.deadline || new Date().toISOString(),
-        category: currentPakt.category,
+        name: currentResolve.name,
+        description: currentResolve.description || '',
+        target_outcome: currentResolve.targetOutcome || '',
+        deadline: currentResolve.deadline || new Date().toISOString(),
+        category: currentResolve.category,
       });
 
       // Create milestones if any
-      if (currentPakt.milestones && currentPakt.milestones.length > 0) {
-        for (let i = 0; i < currentPakt.milestones.length; i++) {
-          const milestone = currentPakt.milestones[i];
+      if (currentResolve.milestones && currentResolve.milestones.length > 0) {
+        for (let i = 0; i < currentResolve.milestones.length; i++) {
+          const milestone = currentResolve.milestones[i];
           await MilestoneService.createMilestone({
-            pakt_id: newPakt.id,
+            pakt_id: newResolve.id,
             user_id: user.id,
             name: milestone.name,
             due_date: milestone.dueDate,
@@ -106,23 +106,23 @@ function AppContent() {
       }
 
       // Create reminders if configured
-      if (currentPakt.reminders) {
+      if (currentResolve.reminders) {
         await ReminderService.createReminder({
-          pakt_id: newPakt.id,
+          pakt_id: newResolve.id,
           user_id: user.id,
-          frequency: currentPakt.reminders.frequency,
-          time: currentPakt.reminders.time,
-          days: currentPakt.reminders.days || null,
+          frequency: currentResolve.reminders.frequency,
+          time: currentResolve.reminders.time,
+          days: currentResolve.reminders.days || null,
         });
       }
 
-      // Clear current pakt and navigate to dashboard
-      setCurrentPakt({});
-      await refetch(); // Refresh pakts list
+      // Clear current Resolve and navigate to dashboard
+      setCurrentResolve({});
+      await refetch(); // Refresh Resolves list
       navigate('dashboard');
     } catch (error) {
-      console.error('Error creating pakt:', error);
-      alert('Failed to create pakt. Please try again.');
+      console.error('Error creating Resolve:', error);
+      alert('Failed to create Resolve. Please try again.');
     }
   };
 
@@ -147,13 +147,13 @@ function AppContent() {
       case 'onboarding':
         return <OnboardingFlow onComplete={() => navigate('categorySelection')} onSkip={() => navigate('dashboard')} />;
       case 'categorySelection':
-        return <CategorySelection onSelect={(category) => { updatePaktData({ category }); navigate('paktNaming'); }} />;
+        return <CategorySelection onSelect={(category) => { updateResolveData({ category }); navigate('paktNaming'); }} />;
       case 'paktNaming':
-        return <PaktNaming currentPakt={currentPakt} onUpdate={updatePaktData} onContinue={() => navigate('milestoneBuilder')} onBack={() => navigate('categorySelection')} />;
+        return <PaktNaming currentPakt={currentResolve} onUpdate={updateResolveData} onContinue={() => navigate('milestoneBuilder')} onBack={() => navigate('categorySelection')} />;
       case 'milestoneBuilder':
-        return <MilestoneBuilder currentPakt={currentPakt} onUpdate={updatePaktData} onContinue={() => navigate('reminderSetup')} onBack={() => navigate('paktNaming')} />;
+        return <MilestoneBuilder currentPakt={currentResolve} onUpdate={updateResolveData} onContinue={() => navigate('reminderSetup')} onBack={() => navigate('paktNaming')} />;
       case 'reminderSetup':
-        return <ReminderSetupLive currentPakt={currentPakt} onUpdate={updatePaktData} onComplete={completePakt} onBack={() => navigate('milestoneBuilder')} />;
+        return <ReminderSetupLive currentPakt={currentResolve} onUpdate={updateResolveData} onComplete={completeResolve} onBack={() => navigate('milestoneBuilder')} />;
       case 'dashboard':
         return <PaktDashboardLive onNavigate={navigate} isDarkMode={isDarkMode} />;
       case 'achievements':
@@ -161,7 +161,7 @@ function AppContent() {
       case 'insights':
         return <InsightsOverviewLive onBack={() => navigate('dashboard')} isDarkMode={isDarkMode} />;
       case 'templates':
-        return <TemplateLibrary onUseTemplate={(template) => { updatePaktData(template); navigate('paktNaming'); }} onBack={() => navigate('dashboard')} />;
+        return <TemplateLibrary onUseTemplate={(template) => { updateResolveData(template); navigate('paktNaming'); }} onBack={() => navigate('dashboard')} />;
       case 'premium':
         return <PremiumFeatures onBack={() => navigate('dashboard')} onUpgrade={() => navigate('dashboard')} />;
       case 'settings':

@@ -21,7 +21,7 @@ BEGIN
   FOR reminder_record IN 
     SELECT r.*, p.name as pakt_name, p.status as pakt_status
     FROM reminders r
-    INNER JOIN pakts p ON r.pakt_id = p.id
+    INNER JOIN Resolves p ON r.pakt_id = p.id
     WHERE r.enabled = true
     AND p.status = 'active'
   LOOP
@@ -47,7 +47,7 @@ BEGIN
     
     -- If should send, create notification
     IF should_send THEN
-      -- Get upcoming/incomplete milestones for this pakt
+      -- Get upcoming/incomplete milestones for this Resolve
       SELECT 
         ARRAY_AGG(name ORDER BY due_date),
         COUNT(*)
@@ -59,7 +59,7 @@ BEGIN
       
       -- Create notification based on milestone count
       IF milestone_count > 0 THEN
-        notification_title := 'Pakt Reminder: ' || reminder_record.pakt_name;
+        notification_title := 'Resolve Reminder: ' || reminder_record.pakt_name;
         notification_message := 'You have ' || milestone_count || ' milestone' || 
           CASE WHEN milestone_count > 1 THEN 's' ELSE '' END || 
           ' to work on today in "' || reminder_record.pakt_name || '"';
@@ -97,7 +97,7 @@ DECLARE
     'Small progress is still progress. Celebrate every win! 🎉',
     'Your commitment to growth is inspiring. Keep it up! 🌱',
     'Every day is a chance to get better. Make today count! ⭐',
-    'You''re building the life you want, one Pakt at a time! 🏗️',
+    'You''re building the life you want, one Resolve at a time! 🏗️',
     'Believe in yourself. You have what it takes to succeed! 💎',
     'Consistency beats intensity. Keep showing up! 🔥',
     'Your goals are within reach. Keep moving forward! 🚀',
@@ -162,7 +162,7 @@ BEGIN
       p.user_id,
       (m.due_date::date - CURRENT_DATE) as days_until_due
     FROM milestones m
-    INNER JOIN pakts p ON m.pakt_id = p.id
+    INNER JOIN Resolves p ON m.pakt_id = p.id
     WHERE m.completed = false
     AND p.status = 'active'
     AND m.due_date::date >= CURRENT_DATE
@@ -243,7 +243,7 @@ BEGIN
       p.name as pakt_name,
       p.user_id
     FROM milestones m
-    INNER JOIN pakts p ON m.pakt_id = p.id
+    INNER JOIN Resolves p ON m.pakt_id = p.id
     WHERE m.completed = false
     AND p.status = 'active'
     AND m.due_date::date < CURRENT_DATE

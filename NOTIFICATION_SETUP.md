@@ -91,7 +91,7 @@ The system checks:
 - If the current time matches the reminder time (within 1 minute)
 - If the frequency matches (daily/weekly/custom)
 - If the day matches (for weekly/custom)
-- If there are active milestones in the Pakt
+- If there are active milestones in the Resolve
 
 ### Daily Motivation
 
@@ -193,7 +193,7 @@ Users can view all their notifications in the Notifications Feed screen (`/notif
 
 - **Time zone issues**: Ensure your Supabase instance timezone matches your users' timezone
 - **Cron not running**: If using pg_cron, ensure the extension is enabled
-- **No notifications created**: Check that reminders exist and are enabled, and that Pakts are active
+- **No notifications created**: Check that reminders exist and are enabled, and that Resolves are active
 
 ## Next Steps
 

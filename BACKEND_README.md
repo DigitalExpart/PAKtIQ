@@ -21,8 +21,8 @@ This backend setup provides everything you need to build a full-featured commitm
 - Secure token handling
 
 ### 📊 Features
-- **Pakts (Commitments)**: Create, track, and complete goals
-- **Milestones**: Break down pakts into actionable steps
+- **Resolves (Commitments)**: Create, track, and complete goals
+- **Milestones**: Break down Resolves into actionable steps
 - **Progress Tracking**: Automatic calculation based on milestone completion
 - **Reminders**: Flexible scheduling (daily, weekly, custom)
 - **Achievements**: Gamification with automatic badge awarding
@@ -99,7 +99,7 @@ import { AuthProvider } from './contexts/AuthContext';
 │   ├── services/                      # Business logic layer
 │   │   ├── auth.service.ts            # Authentication
 │   │   ├── profile.service.ts         # User profiles
-│   │   ├── pakt.service.ts            # Pakt operations
+│   │   ├── Resolve.service.ts            # Resolve operations
 │   │   ├── milestone.service.ts       # Milestone operations
 │   │   ├── reminder.service.ts        # Reminder management
 │   │   ├── achievement.service.ts     # Achievement system
@@ -142,7 +142,7 @@ function LoginForm() {
 }
 ```
 
-### Creating a Pakt
+### Creating a Resolve
 
 ```typescript
 import { usePakts } from './hooks';
@@ -162,7 +162,7 @@ function CreatePakt() {
     });
   };
   
-  return <button onClick={handleCreate}>Create Pakt</button>;
+  return <button onClick={handleCreate}>Create Resolve</button>;
 }
 ```
 
@@ -204,7 +204,7 @@ function Dashboard() {
   return (
     <div>
       <h2>Your Progress</h2>
-      <p>Total Pakts: {stats?.total}</p>
+      <p>Total Resolves: {stats?.total}</p>
       <p>Active: {stats?.active}</p>
       <p>Completed: {stats?.completed}</p>
       <p>Average Progress: {stats?.averageProgress}%</p>
@@ -217,13 +217,13 @@ function Dashboard() {
 
 ### Automatic Progress Tracking
 
-When you mark a milestone as complete, the pakt's progress automatically updates:
+When you mark a milestone as complete, the Resolve's progress automatically updates:
 
 ```typescript
 // Complete a milestone
 await MilestoneService.toggleMilestone(milestoneId, true);
 
-// Pakt progress updates automatically via database trigger!
+// Resolve progress updates automatically via database trigger!
 // No need to manually calculate or update
 ```
 
@@ -263,8 +263,8 @@ All data is automatically secured by user:
 
 ```sql
 -- Users can only see their own data
-CREATE POLICY "Users can view their own pakts"
-  ON pakts FOR SELECT
+CREATE POLICY "Users can view their own Resolves"
+  ON Resolves FOR SELECT
   USING (auth.uid() = user_id);
 ```
 
@@ -293,35 +293,35 @@ User accounts and settings
 - Auto-created on signup
 - Stores display name, avatar, premium status
 
-### pakts
+### Resolves
 Main commitments/goals
 - Belongs to a user
 - Has progress calculated from milestones
 - Can be active, completed, or archived
 
 ### milestones
-Sub-goals within a pakt
+Sub-goals within a Resolve
 - Ordered list of steps
 - Importance rating (1-5)
 - Completion tracking with timestamps
 
 ### reminders
 Notification settings
-- One per pakt
+- One per Resolve
 - Supports daily, weekly, custom schedules
 - Can be enabled/disabled
 
 ### achievements
 Gamification badges
 - Earned automatically
-- Includes milestone & pakt achievements
+- Includes milestone & Resolve achievements
 - Stores metadata about when earned
 
 ### activity_log
 User action history
 - Tracks all important events
 - Used for analytics and feed
-- Links to pakts and milestones
+- Links to Resolves and milestones
 
 ## 🧪 Testing
 
@@ -345,10 +345,10 @@ await AuthService.signIn({
 ### Test Database Operations
 
 ```typescript
-// Create a test pakt
-const pakt = await PaktService.createPakt({
+// Create a test Resolve
+const Resolve = await PaktService.createPakt({
   user_id: userId,
-  name: 'Test Pakt',
+  name: 'Test Resolve',
   description: 'Testing',
   target_outcome: 'Success',
   deadline: new Date().toISOString(),
@@ -356,8 +356,8 @@ const pakt = await PaktService.createPakt({
 });
 
 // Verify it was created
-const pakts = await PaktService.getUserPakts(userId);
-console.assert(pakts.length > 0, 'Pakt should be created');
+const Resolves = await PaktService.getUserPakts(userId);
+console.assert(Resolves.length > 0, 'Resolve should be created');
 ```
 
 ## 🐛 Troubleshooting
@@ -422,7 +422,7 @@ Now that your backend is set up:
 1. ✅ Build your UI components
 2. ✅ Connect components to hooks
 3. ✅ Add authentication screens
-4. ✅ Implement pakt creation flow
+4. ✅ Implement Resolve creation flow
 5. ✅ Build milestone tracking
 6. ✅ Add reminder notifications
 7. ✅ Display achievements

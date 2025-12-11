@@ -203,7 +203,7 @@ CREATE TRIGGER update_analytics_on_milestone
     FOR EACH ROW
     EXECUTE FUNCTION public.update_analytics_on_milestone_complete();
 
--- Trigger to update analytics when pakt is completed
+-- Trigger to update analytics when Resolve is completed
 CREATE OR REPLACE FUNCTION public.update_analytics_on_pakt_complete()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -228,9 +228,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create trigger for analytics update on pakt completion
+-- Create trigger for analytics update on Resolve completion
 CREATE TRIGGER update_analytics_on_pakt
-    AFTER UPDATE ON public.pakts
+    AFTER UPDATE ON public.Resolves
     FOR EACH ROW
     EXECUTE FUNCTION public.update_analytics_on_pakt_complete();
 

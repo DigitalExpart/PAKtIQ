@@ -1,9 +1,9 @@
-# Pakt Creation Error Fix - Complete ✅
+# Resolve Creation Error Fix - Complete ✅
 
 ## Problem
-When trying to create a pakt (with or without reminders), the app was showing:
+When trying to create a Resolve (with or without reminders), the app was showing:
 ```
-Error creating pakt: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'target_date' column of 'pakts' in the schema cache"}
+Error creating Resolve: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'target_date' column of 'Resolves' in the schema cache"}
 ```
 
 ## Root Cause
@@ -11,12 +11,12 @@ The code was using incorrect column names that didn't match the database schema:
 - Using `target_date` instead of `deadline`
 - Using `title` instead of `name` for milestones
 - Using `description` instead of `notes` for milestones
-- Missing required field `target_outcome` for pakts
+- Missing required field `target_outcome` for Resolves
 - Missing required field `due_date` for milestones
 
 ## Fixes Applied
 
-### 1. Fixed Pakt Creation (reminder-setup.tsx)
+### 1. Fixed Resolve Creation (reminder-setup.tsx)
 **Changed:**
 ```typescript
 // ❌ Before
@@ -34,7 +34,7 @@ The code was using incorrect column names that didn't match the database schema:
   user_id: user.id,
   name: paktData.name,
   description: paktData.description || '',
-  target_outcome: paktData.description || 'Complete this pakt successfully',  // Added required field
+  target_outcome: paktData.description || 'Complete this Resolve successfully',  // Added required field
   deadline: paktData.targetDate || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),  // Fixed column name
   category: paktData.category || 'other',
   status: 'active',
@@ -91,7 +91,7 @@ The code was using incorrect column names that didn't match the database schema:
 
 ## Database Schema Mapping
 
-### Pakts Table
+### Resolves Table
 | Code Variable | Database Column | Required |
 |--------------|----------------|----------|
 | name | name | ✅ |
@@ -123,21 +123,21 @@ The code was using incorrect column names that didn't match the database schema:
 ## Testing Results
 
 ✅ **All TypeScript errors resolved**
-✅ **Pakt creation now works with reminders**
-✅ **Pakt creation now works without reminders (skip)**
+✅ **Resolve creation now works with reminders**
+✅ **Resolve creation now works without reminders (skip)**
 ✅ **Milestones are created with proper fields**
 ✅ **Reminders are created with proper fields**
 
 ## Files Modified
-- `app/reminder-setup.tsx` - Fixed pakt, milestone, and reminder creation
+- `app/reminder-setup.tsx` - Fixed Resolve, milestone, and reminder creation
 
 ## Next Steps
 
-The pakt creation flow should now work correctly:
-1. Navigate through the pakt creation wizard
+The Resolve creation flow should now work correctly:
+1. Navigate through the Resolve creation wizard
 2. Set up reminders (or skip)
 3. Click "Complete Setup" or "Skip Reminders"
-4. Pakt, milestones, and reminders are created successfully
+4. Resolve, milestones, and reminders are created successfully
 5. Redirected to dashboard
 
 If you still encounter issues, they may be related to:

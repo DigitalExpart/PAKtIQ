@@ -85,7 +85,7 @@ END $$;
 -- Ensure milestones table has all necessary columns (should already exist, but verify)
 DO $$
 BEGIN
-    -- Ensure due_date constraint exists (milestone deadline should not exceed pakt deadline)
+    -- Ensure due_date constraint exists (milestone deadline should not exceed Resolve deadline)
     -- This is handled at application level, but we can add a check constraint if needed
     IF NOT EXISTS (
         SELECT 1 FROM pg_constraint 
@@ -300,13 +300,13 @@ CREATE INDEX IF NOT EXISTS idx_milestones_order_index ON public.milestones(order
 COMMENT ON TABLE public.habits IS 'Daily habits that users can track and edit';
 COMMENT ON TABLE public.habit_schedules IS 'Schedule for each day of the week for a habit. Users can add/remove days and change times.';
 COMMENT ON TABLE public.habit_completions IS 'Daily completion records for habits. Status can be edited between completed and missed.';
-COMMENT ON TABLE public.milestones IS 'Milestones for pakts. Users can edit name, due_date, notes, and order.';
+COMMENT ON TABLE public.milestones IS 'Milestones for Resolves. Users can edit name, due_date, notes, and order.';
 
 COMMENT ON COLUMN public.habit_schedules.day_of_week IS 'Day of week: 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday';
 COMMENT ON COLUMN public.habit_schedules.time IS 'Time in HH:MM format for the reminder on this day';
 COMMENT ON COLUMN public.habit_schedules.enabled IS 'Whether this schedule entry is active (can be toggled to add/remove days)';
 COMMENT ON COLUMN public.habit_completions.status IS 'Status: completed or missed. Can be edited to change completion status.';
-COMMENT ON COLUMN public.milestones.order_index IS 'Order of milestone within the pakt. Can be edited to reorder milestones.';
+COMMENT ON COLUMN public.milestones.order_index IS 'Order of milestone within the Resolve. Can be edited to reorder milestones.';
 
 -- ============================================
 -- VERIFICATION QUERIES (for testing)

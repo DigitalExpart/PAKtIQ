@@ -61,8 +61,8 @@ Please use 'react-native-safe-area-context' instead.
 - `app/milestone-builder.tsx`
 - `app/notifications.tsx`
 - `app/onboarding.tsx`
-- `app/pakt-detail.tsx`
-- `app/pakt-naming.tsx`
+- `app/Resolve-detail.tsx`
+- `app/Resolve-naming.tsx`
 - `app/premium.tsx`
 - `app/profile.tsx`
 - `app/reminder-setup.tsx`

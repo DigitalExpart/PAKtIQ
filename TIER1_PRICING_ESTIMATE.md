@@ -35,7 +35,7 @@
   - Create journal screen UI
   - Add journal entry form
   - Journal list/history view
-  - Link journal to resolutions/pakts
+  - Link journal to resolutions/Resolves
   - Search/filter journal entries
 - **Suggested Price:** $800 - $1,200
 

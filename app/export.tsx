@@ -6,9 +6,9 @@ import { ArrowLeft, FileText, CheckCircle } from 'lucide-react-native';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useAuth } from '../src/contexts/AuthContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
-import { usePakts } from '../src/hooks/usePakts';
+import { useResolves } from '../src/hooks/useResolves';
 import { ExportService, type PaktExportData } from '../src/services/export.service';
-import { translateCategory, translatePaktName } from '../src/utils/translations';
+import { translateCategory, translateResolveName } from '../src/utils/translations';
 import BottomTabBar from '../src/components/BottomTabBar';
 
 export default function ExportScreen() {
@@ -16,7 +16,7 @@ export default function ExportScreen() {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { pakts, loading: paktsLoading } = usePakts();
+  const { Resolves, loading: paktsLoading } = useResolves();
   const [selectedPakts, setSelectedPakts] = useState<Set<string>>(new Set());
   const [exporting, setExporting] = useState(false);
 
@@ -31,10 +31,10 @@ export default function ExportScreen() {
   };
 
   const selectAll = () => {
-    if (selectedPakts.size === pakts.length) {
+    if (selectedPakts.size === Resolves.length) {
       setSelectedPakts(new Set());
     } else {
-      setSelectedPakts(new Set(pakts.map(p => p.id)));
+      setSelectedPakts(new Set(Resolves.map(p => p.id)));
     }
   };
 
@@ -47,7 +47,7 @@ export default function ExportScreen() {
     try {
       setExporting(true);
       
-      const paktsToExport: PaktExportData[] = pakts
+      const paktsToExport: PaktExportData[] = Resolves
         .filter(p => selectedPakts.has(p.id))
         .map(p => ({
           id: p.id,
@@ -113,19 +113,19 @@ export default function ExportScreen() {
         </View>
 
         {/* Select All */}
-        {pakts.length > 0 && (
+        {Resolves.length > 0 && (
           <TouchableOpacity
             style={[styles.selectAllButton, { backgroundColor: colors.surface }]}
             onPress={selectAll}
           >
             <Text style={[styles.selectAllText, { color: colors.primary }]}>
-              {selectedPakts.size === pakts.length ? t('export.deselectAll') : t('export.selectAll')}
+              {selectedPakts.size === Resolves.length ? t('export.deselectAll') : t('export.selectAll')}
             </Text>
           </TouchableOpacity>
         )}
 
-        {/* Pakt List */}
-        {pakts.length === 0 ? (
+        {/* Resolve List */}
+        {Resolves.length === 0 ? (
           <View style={styles.emptyState}>
             <FileText size={64} color={colors.textSecondary} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
@@ -134,11 +134,11 @@ export default function ExportScreen() {
           </View>
         ) : (
           <View style={styles.paktsList}>
-            {pakts.map((pakt) => {
-              const isSelected = selectedPakts.has(pakt.id);
+            {Resolves.map((Resolve) => {
+              const isSelected = selectedPakts.has(resolve.id);
               return (
                 <TouchableOpacity
-                  key={pakt.id}
+                  key={resolve.id}
                   style={[
                     styles.paktCard,
                     {
@@ -147,7 +147,7 @@ export default function ExportScreen() {
                       borderWidth: isSelected ? 2 : 1,
                     },
                   ]}
-                  onPress={() => togglePaktSelection(pakt.id)}
+                  onPress={() => togglePaktSelection(resolve.id)}
                 >
                   <View style={styles.paktLeft}>
                     <View
@@ -162,9 +162,9 @@ export default function ExportScreen() {
                       {isSelected && <CheckCircle size={20} color="#FFFFFF" />}
                     </View>
                     <View style={styles.paktInfo}>
-                      <Text style={[styles.paktName, { color: colors.text }]}>{translatePaktName(pakt.name)}</Text>
+                      <Text style={[styles.paktName, { color: colors.text }]}>{translateResolveName(resolve.name)}</Text>
                       <Text style={[styles.paktDetails, { color: colors.textSecondary }]}>
-                        {translateCategory(pakt.category)} • {pakt.progress}% {t('common.complete') || 'complete'}
+                        {translateCategory(resolve.category)} • {resolve.progress}% {t('common.complete') || 'complete'}
                       </Text>
                     </View>
                   </View>
