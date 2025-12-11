@@ -349,6 +349,7 @@
     "resolveName": "Resolve Name *",
     "description": "Description (Optional)",
     "deadline": "Deadline",
+    "selectDeadline": "Select Deadline",
     "popularIdeas": "Popular Ideas",
     "tipsForGreatResolve": "Tips for a Great Resolve",
     "beSpecific": "Be specific and measurable",

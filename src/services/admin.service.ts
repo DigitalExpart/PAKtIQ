@@ -95,7 +95,7 @@ export class AdminService {
   }> {
     const [users, Resolves, milestones] = await Promise.all([
       supabase.from('profiles').select('id, created_at', { count: 'exact' }),
-      supabase.from('Resolves').select('id, status', { count: 'exact' }),
+      supabase.from('resolves').select('id, status', { count: 'exact' }),
       supabase.from('milestones').select('id, completed', { count: 'exact' }),
     ]);
 

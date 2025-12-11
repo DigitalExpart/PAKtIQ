@@ -18,21 +18,23 @@ export type Screen =
 
 // Database table types
 export type Profile = Database['public']['Tables']['profiles']['Row'];
-export type Resolve = Database['public']['Tables']['Resolves']['Row'];
+export type Resolve = Database['public']['Tables']['resolves']['Row'];
 export type Milestone = Database['public']['Tables']['milestones']['Row'];
 export type Reminder = Database['public']['Tables']['reminders']['Row'];
 export type Achievement = Database['public']['Tables']['achievements']['Row'];
 export type ActivityLog = Database['public']['Tables']['activity_log']['Row'];
 
 // Insert types (for creating new records)
-export type PaktInsert = Database['public']['Tables']['Resolves']['Insert'];
+export type PaktInsert = Database['public']['Tables']['resolves']['Insert'];
+export type ResolveInsert = Database['public']['Tables']['resolves']['Insert'];
 export type MilestoneInsert = Database['public']['Tables']['milestones']['Insert'];
 export type ReminderInsert = Database['public']['Tables']['reminders']['Insert'];
 export type AchievementInsert = Database['public']['Tables']['achievements']['Insert'];
 export type ActivityLogInsert = Database['public']['Tables']['activity_log']['Insert'];
 
 // Update types (for updating existing records)
-export type PaktUpdate = Database['public']['Tables']['Resolves']['Update'];
+export type PaktUpdate = Database['public']['Tables']['resolves']['Update'];
+export type ResolveUpdate = Database['public']['Tables']['resolves']['Update'];
 export type MilestoneUpdate = Database['public']['Tables']['milestones']['Update'];
 export type ReminderUpdate = Database['public']['Tables']['reminders']['Update'];
 export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];

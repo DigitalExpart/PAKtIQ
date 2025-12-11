@@ -1,9 +1,9 @@
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database';
 
-type Resolve = Database['public']['Tables']['Resolves']['Row'];
-type ResolveInsert = Database['public']['Tables']['Resolves']['Insert'];
-type ResolveUpdate = Database['public']['Tables']['Resolves']['Update'];
+type Resolve = Database['public']['Tables']['resolves']['Row'];
+type ResolveInsert = Database['public']['Tables']['resolves']['Insert'];
+type ResolveUpdate = Database['public']['Tables']['resolves']['Update'];
 
 export class ResolveService {
   /**

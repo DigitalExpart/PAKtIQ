@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert, Dimensions, Platform, Modal } from 'react-native';
 import { Share } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
@@ -631,9 +631,11 @@ export default function HabitDetailScreen() {
             <TouchableOpacity onPress={handleShare} style={styles.shareButton}>
               <Share2 size={20} color={colors.primary} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity onPress={async () => {
               setHabitName(habit.name);
               setDescription(habit.description || '');
+              // Reload schedules with updated locked status when entering edit mode
+              await loadHabit();
               setEditing(true);
             }}>
               <Text style={[styles.editButton, { color: colors.primary }]}>{t('common.edit')}</Text>
@@ -665,6 +667,65 @@ export default function HabitDetailScreen() {
                 multiline
                 numberOfLines={3}
               />
+            </View>
+
+            {/* Schedule Section in Edit Mode */}
+            <View style={styles.section}>
+              <Text style={[styles.label, { color: colors.text }]}>{t('habit.schedule')}</Text>
+              <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 12 }]}>
+                {t('habit.scheduleHint')}
+              </Text>
+              
+              <View style={styles.daysContainer}>
+                {daySchedules.map((schedule) => {
+                  const isLocked = schedule.isLocked || false;
+                  return (
+                    <View key={schedule.day} style={styles.scheduleRow}>
+                      {/* Day Button */}
+                      <TouchableOpacity
+                        style={[
+                          styles.dayToggle,
+                          schedule.enabled && { backgroundColor: colors.primary },
+                          { borderColor: colors.border },
+                          isLocked && { opacity: 0.5 }
+                        ]}
+                        onPress={() => handleDayToggle(schedule.day)}
+                        disabled={isLocked}
+                      >
+                        <Text style={[
+                          styles.dayToggleText,
+                          { color: schedule.enabled ? '#FFFFFF' : colors.text }
+                        ]}>
+                          {DAYS.find(d => d.id === schedule.day)?.short}
+                        </Text>
+                      </TouchableOpacity>
+                      
+                      {/* Time Button */}
+                      {schedule.enabled && (
+                        <TouchableOpacity
+                          style={[
+                            styles.timeButton, 
+                            { backgroundColor: colors.surface, borderColor: colors.border },
+                            isLocked && { opacity: 0.5 }
+                          ]}
+                          onPress={() => handleTimeSelect(schedule.day)}
+                          disabled={isLocked}
+                        >
+                          <Clock size={16} color={isLocked ? colors.textSecondary : colors.primary} />
+                          <Text style={[styles.timeText, { color: schedule.time ? colors.text : colors.textSecondary }]}>
+                            {formatTime(schedule.time)}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                      {isLocked && (
+                        <Text style={[styles.lockedLabel, { color: colors.textSecondary }]}>
+                          {t('habit.locked') || 'Locked'}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
             </View>
 
             <View style={styles.buttonRow}>
@@ -707,11 +768,11 @@ export default function HabitDetailScreen() {
               </View>
             )}
 
-            {/* Schedule Section with Status */}
+            {/* Schedule Section with Status - View Mode (Read Only) */}
             <View style={styles.section}>
               <Text style={[styles.label, { color: colors.text }]}>{t('habit.schedule')}</Text>
               <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 12 }]}>
-                {t('habit.scheduleHint')}
+                {t('habit.scheduleViewHint')}
               </Text>
               
               <View style={styles.daysContainer}>
@@ -719,13 +780,12 @@ export default function HabitDetailScreen() {
                   const dayInfo = getWeekDays().find(d => d.dayName === DAYS.find(day => day.id === schedule.day)?.label);
                   const dayDate = dayInfo?.date;
                   const dayStatus = dayDate ? weekCompletions.get(dayDate) : null;
-                  const isDayLocked = dayStatus === 'completed' || dayStatus === 'missed';
                   const isFuture = dayInfo?.isFuture || false;
                   const canMarkStatus = !isFuture; // Only allow marking today or past days
                   
                   return (
                     <View key={schedule.day} style={styles.scheduleRow}>
-                      {/* Status Icon at Front */}
+                      {/* Status Icon at Front - Only Interactive Element in View Mode */}
                       <TouchableOpacity
                         style={[styles.statusIconContainer, isFuture && { opacity: 0.4 }]}
                         onPress={() => {
@@ -784,25 +844,14 @@ export default function HabitDetailScreen() {
                         )}
                       </TouchableOpacity>
                       
-                      {/* Day Button */}
-                      <TouchableOpacity
+                      {/* Day Button - Read Only Display */}
+                      <View
                         style={[
                           styles.dayToggle,
                           schedule.enabled && { backgroundColor: colors.primary },
                           { borderColor: colors.border },
-                          isDayLocked && { opacity: 0.6 }
+                          { opacity: schedule.enabled ? 1 : 0.5 }
                         ]}
-                        onPress={() => {
-                          if (!isDayLocked) {
-                            handleDayToggle(schedule.day);
-                          } else {
-                            showErrorAlert(
-                              t('habit.dayLocked'),
-                              t('habit.dayLockedMessage')
-                            );
-                          }
-                        }}
-                        disabled={isDayLocked}
                       >
                         <Text style={[
                           styles.dayToggleText,
@@ -810,33 +859,21 @@ export default function HabitDetailScreen() {
                         ]}>
                           {DAYS.find(d => d.id === schedule.day)?.short}
                         </Text>
-                      </TouchableOpacity>
+                      </View>
                       
-                      {/* Time Button */}
+                      {/* Time Button - Read Only Display */}
                       {schedule.enabled && (
-                        <TouchableOpacity
+                        <View
                           style={[
                             styles.timeButton, 
-                            { backgroundColor: colors.surface, borderColor: colors.border },
-                            isDayLocked && { opacity: 0.6 }
+                            { backgroundColor: colors.surface, borderColor: colors.border }
                           ]}
-                          onPress={() => {
-                            if (!isDayLocked) {
-                              handleTimeSelect(schedule.day);
-                            } else {
-                              showErrorAlert(
-                                t('habit.dayLocked'),
-                                t('habit.dayLockedMessage')
-                              );
-                            }
-                          }}
-                          disabled={isDayLocked}
                         >
-                          <Clock size={16} color={colors.primary} />
+                          <Clock size={16} color={colors.textSecondary} />
                           <Text style={[styles.timeText, { color: schedule.time ? colors.text : colors.textSecondary }]}>
                             {formatTime(schedule.time)}
                           </Text>
-                        </TouchableOpacity>
+                        </View>
                       )}
                     </View>
                   );
@@ -844,7 +881,28 @@ export default function HabitDetailScreen() {
               </View>
             </View>
 
-            {/* Delete Button */}
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={[styles.saveButton, { backgroundColor: colors.primary }]}
+                onPress={handleSave}
+              >
+                <Save size={20} color="#FFFFFF" />
+                <Text style={styles.saveButtonText}>{t('common.save')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.cancelButton, { borderColor: colors.border }]}
+                onPress={() => {
+                  setEditing(false);
+                  setHabitName(habit.name);
+                  setDescription(habit.description || '');
+                  loadHabit();
+                }}
+              >
+                <Text style={[styles.cancelButtonText, { color: colors.text }]}>{t('common.cancel')}</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Delete Button - Only in Edit Mode */}
             <TouchableOpacity
               style={[styles.deleteButton, { borderColor: colors.error }]}
               onPress={handleDelete}
@@ -856,6 +914,53 @@ export default function HabitDetailScreen() {
         )}
       </ScrollView>
 
+      {/* Time Picker Modal */}
+      {showTimePicker && (
+        Platform.OS === 'ios' && DateTimePicker ? (
+          <Modal
+            visible={showTimePicker}
+            transparent
+            animationType="slide"
+            onRequestClose={() => setShowTimePicker(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+                <View style={styles.modalHeader}>
+                  <TouchableOpacity onPress={() => setShowTimePicker(false)}>
+                    <Text style={[styles.modalButton, { color: colors.primary }]}>{t('common.cancel')}</Text>
+                  </TouchableOpacity>
+                  <Text style={[styles.modalTitle, { color: colors.text }]}>{t('habit.selectTime')}</Text>
+                  <TouchableOpacity onPress={handleTimeConfirm}>
+                    <Text style={[styles.modalButton, { color: colors.primary }]}>{t('common.done')}</Text>
+                  </TouchableOpacity>
+                </View>
+                <DateTimePicker
+                  value={tempTime}
+                  mode="time"
+                  display="spinner"
+                  onChange={(event: any, date?: Date) => {
+                    if (date) setTempTime(date);
+                  }}
+                  textColor={colors.text}
+                />
+              </View>
+            </View>
+          </Modal>
+        ) : Platform.OS === 'android' && DateTimePicker ? (
+          <DateTimePicker
+            value={tempTime}
+            mode="time"
+            display="default"
+            onChange={(event: any, date?: Date) => {
+              setShowTimePicker(false);
+              if (date && selectedDay !== null) {
+                setTempTime(date);
+                handleTimeConfirm();
+              }
+            }}
+          />
+        ) : null
+      )}
 
       <BottomTabBar />
     </SafeAreaView>

@@ -72,24 +72,24 @@ export default function ResolveNaming() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.form}>
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.text }]}>{t('paktNaming.paktName')}</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t('resolveNaming.resolveName')}</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.border }]}
               value={resolveName}
               onChangeText={setResolveName}
-              placeholder={t('paktNaming.paktNamePlaceholder')}
+              placeholder={t('resolveNaming.resolveNamePlaceholder')}
               placeholderTextColor={colors.textSecondary}
               autoFocus
             />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.text }]}>Description (Optional)</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t('resolveNaming.description')}</Text>
             <TextInput
               style={[styles.textArea, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.border }]}
               value={description}
               onChangeText={setDescription}
-              placeholder="Add more details about your goal..."
+              placeholder={t('resolveNaming.descriptionPlaceholder')}
               placeholderTextColor={colors.textSecondary}
               multiline
               numberOfLines={4}
@@ -97,7 +97,7 @@ export default function ResolveNaming() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.text }]}>{t('paktNaming.deadline')}</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t('resolveNaming.deadline')}</Text>
             <TouchableOpacity
               style={[styles.dateButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
               onPress={() => setShowDatePicker(true)}
@@ -110,7 +110,7 @@ export default function ResolveNaming() {
           {suggestions.length > 0 && (
             <View style={styles.suggestionsContainer}>
               <Text style={[styles.suggestionsTitle, { color: colors.textSecondary }]}>
-                {t('paktNaming.popularIdeas')}
+                {t('resolveNaming.popularIdeas')}
               </Text>
               <View style={styles.suggestionsGrid}>
                 {suggestions.map((suggestion, index) => (
@@ -153,7 +153,7 @@ export default function ResolveNaming() {
                   <TouchableOpacity onPress={() => setShowDatePicker(false)}>
                     <Text style={[styles.modalButton, { color: colors.primary }]}>{t('common.cancel')}</Text>
                   </TouchableOpacity>
-                  <Text style={[styles.modalTitle, { color: colors.text }]}>Select Deadline</Text>
+                  <Text style={[styles.modalTitle, { color: colors.text }]}>{t('resolveNaming.selectDeadline')}</Text>
                   <TouchableOpacity
                     onPress={() => {
                       setDeadline(tempDate);

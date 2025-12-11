@@ -92,7 +92,7 @@ export default function ReminderSetup() {
             : (paktData.targetDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString());
           
           await MilestoneService.createMilestone({
-            pakt_id: newResolve.id,
+            resolve_id: newResolve.id,
             user_id: user.id,
             name: milestone.title,
             due_date: milestoneDueDate,
@@ -122,7 +122,7 @@ export default function ReminderSetup() {
       // 3. Create reminder if enabled
       if (remindersEnabled) {
         await ReminderService.createReminder({
-          pakt_id: newResolve.id,
+          resolve_id: newResolve.id,
           user_id: user.id,
           frequency: selectedFrequency,
           time: times.find(t => t.id === selectedTime)?.time || '8:00 AM',

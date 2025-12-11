@@ -342,6 +342,7 @@
     "resolveName": "Nombre de la Resolución *",
     "description": "Descripción (Opcional)",
     "deadline": "Fecha Límite",
+    "selectDeadline": "Seleccionar Fecha Límite",
     "popularIdeas": "Ideas Populares",
     "tipsForGreatResolve": "Consejos para una Gran Resolución",
     "beSpecific": "Sé específico y medible",

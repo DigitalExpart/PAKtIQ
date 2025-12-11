@@ -41,7 +41,7 @@ export class ActivityService {
     const { data, error } = await supabase
       .from('activity_log')
       .select('*')
-      .eq('pakt_id', paktId)
+      .eq('resolve_id', paktId)
       .order('created_at', { ascending: false })
       .limit(limit);
 
@@ -59,7 +59,7 @@ export class ActivityService {
   ): Promise<ActivityLog> {
     return this.logActivity({
       user_id: userId,
-      pakt_id: paktId,
+      resolve_id: paktId,
       action_type: 'pakt_created',
       description: `Created Resolve: ${paktName}`,
     });
@@ -75,7 +75,7 @@ export class ActivityService {
   ): Promise<ActivityLog> {
     return this.logActivity({
       user_id: userId,
-      pakt_id: paktId,
+      resolve_id: paktId,
       action_type: 'pakt_completed',
       description: `Completed Resolve: ${paktName}`,
     });
@@ -92,7 +92,7 @@ export class ActivityService {
   ): Promise<ActivityLog> {
     return this.logActivity({
       user_id: userId,
-      pakt_id: paktId,
+      resolve_id: paktId,
       milestone_id: milestoneId,
       action_type: 'milestone_completed',
       description: `Completed milestone: ${milestoneName}`,
@@ -110,7 +110,7 @@ export class ActivityService {
   ): Promise<ActivityLog> {
     return this.logActivity({
       user_id: userId,
-      pakt_id: paktId,
+      resolve_id: paktId,
       milestone_id: milestoneId,
       action_type: 'milestone_created',
       description: `Created milestone: ${milestoneName}`,

@@ -41,7 +41,7 @@ export interface Database {
           updated_at?: string
         }
       }
-      Resolves: {
+      resolves: {
         Row: {
           id: string
           user_id: string
@@ -85,7 +85,7 @@ export interface Database {
       milestones: {
         Row: {
           id: string
-          pakt_id: string
+          resolve_id: string
           user_id: string
           name: string
           due_date: string
@@ -99,7 +99,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          pakt_id: string
+          resolve_id: string
           user_id: string
           name: string
           due_date: string
@@ -113,7 +113,7 @@ export interface Database {
         }
         Update: {
           id?: string
-          pakt_id?: string
+          resolve_id?: string
           user_id?: string
           name?: string
           due_date?: string
@@ -129,7 +129,7 @@ export interface Database {
       reminders: {
         Row: {
           id: string
-          pakt_id: string
+          resolve_id: string
           user_id: string
           frequency: 'daily' | 'weekly' | 'custom'
           time: string
@@ -140,7 +140,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          pakt_id: string
+          resolve_id: string
           user_id: string
           frequency: 'daily' | 'weekly' | 'custom'
           time: string
@@ -151,7 +151,7 @@ export interface Database {
         }
         Update: {
           id?: string
-          pakt_id?: string
+          resolve_id?: string
           user_id?: string
           frequency?: 'daily' | 'weekly' | 'custom'
           time?: string
@@ -197,7 +197,7 @@ export interface Database {
         Row: {
           id: string
           user_id: string
-          pakt_id: string | null
+          resolve_id: string | null
           milestone_id: string | null
           action_type: string
           description: string
@@ -207,7 +207,7 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
-          pakt_id?: string | null
+          resolve_id?: string | null
           milestone_id?: string | null
           action_type: string
           description: string
@@ -217,7 +217,7 @@ export interface Database {
         Update: {
           id?: string
           user_id?: string
-          pakt_id?: string | null
+          resolve_id?: string | null
           milestone_id?: string | null
           action_type?: string
           description?: string

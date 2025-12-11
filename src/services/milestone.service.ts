@@ -13,7 +13,7 @@ export class MilestoneService {
     const { data, error } = await supabase
       .from('milestones')
       .select('*')
-      .eq('pakt_id', paktId)
+      .eq('resolve_id', paktId)
       .order('order_index', { ascending: true });
 
     if (error) throw error;

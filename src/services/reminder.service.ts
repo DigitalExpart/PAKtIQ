@@ -13,7 +13,7 @@ export class ReminderService {
     const { data, error } = await supabase
       .from('reminders')
       .select('*')
-      .eq('pakt_id', paktId)
+      .eq('resolve_id', paktId)
       .single();
 
     if (error) {
@@ -94,7 +94,7 @@ export class ReminderService {
   static async upsertPaktReminder(
     paktId: string,
     userId: string,
-    reminderData: Omit<ReminderInsert, 'pakt_id' | 'user_id'>
+    reminderData: Omit<ReminderInsert, 'resolve_id' | 'user_id'>
   ): Promise<Reminder> {
     const existing = await this.getPaktReminder(paktId);
 
@@ -103,7 +103,7 @@ export class ReminderService {
     } else {
       return this.createReminder({
         ...reminderData,
-        pakt_id: paktId,
+        resolve_id: paktId,
         user_id: userId,
       });
     }

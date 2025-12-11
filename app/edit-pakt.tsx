@@ -156,7 +156,7 @@ export default function EditPaktScreen() {
           : -1;
         
         await MilestoneService.createMilestone({
-          pakt_id: paktId as string,
+          resolve_id: paktId as string,
           user_id: user.id,
           name: milestoneName.trim(),
           due_date: milestoneDueDate.toISOString(),
