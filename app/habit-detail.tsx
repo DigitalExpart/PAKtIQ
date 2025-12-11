@@ -8,6 +8,7 @@ import { HabitService, Habit, HabitSchedule } from '../src/services/habit.servic
 import { supabase } from '../src/lib/supabase';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
+import { SuccessModal } from '../src/components/SuccessModal';
 import BottomTabBar from '../src/components/BottomTabBar';
 
 // Conditional import for DateTimePicker
@@ -57,6 +58,7 @@ export default function HabitDetailScreen() {
   const [loadingCompletion, setLoadingCompletion] = useState(false);
   const [weekCompletions, setWeekCompletions] = useState<Map<string, 'completed' | 'missed'>>(new Map());
   const [errorModal, setErrorModal] = useState<{ visible: boolean; title: string; message: string }>({ visible: false, title: '', message: '' });
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     loadHabit();
@@ -365,8 +367,12 @@ export default function HabitDetailScreen() {
   const handleTimeSelect = (dayId: number) => {
     const schedule = daySchedules.find(s => s.day === dayId);
     
-    // Check if day is locked
-    if (schedule?.isLocked) {
+    if (!schedule || !schedule.enabled) {
+      return; // Can't set time for disabled days
+    }
+    
+    // Check if day is locked - locked days cannot be edited
+    if (schedule.isLocked) {
       // Determine the reason for locking
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -430,10 +436,13 @@ export default function HabitDetailScreen() {
         setDaySchedules(prev =>
           prev.map(s =>
             s.day === selectedDay
-              ? { ...s, time: timeString, enabled: true }
+              ? { ...s, time: timeString, enabled: true, scheduleId: schedule.scheduleId }
               : s
           )
         );
+        
+        // Reload habit to ensure UI is in sync
+        await loadHabit();
       } else {
         // Check if a schedule already exists for this habit_id and day_of_week
         // This can happen if the UI state is out of sync with the database
@@ -468,6 +477,9 @@ export default function HabitDetailScreen() {
                 : s
             )
           );
+          
+          // Reload habit to ensure UI is in sync
+          await loadHabit();
       } else {
         // Create new schedule
         const { data: { user } } = await supabase.auth.getUser();
@@ -495,6 +507,9 @@ export default function HabitDetailScreen() {
             : s
         )
       );
+      
+      // Reload habit to ensure UI is in sync
+      await loadHabit();
         }
       }
       
@@ -514,9 +529,10 @@ export default function HabitDetailScreen() {
       });
       
       setEditing(false);
-      Alert.alert(t('common.success'), t('habit.habitUpdated'));
       // Reload habit to refresh locked status
       await loadHabit();
+      // Show success modal
+      setShowSuccessModal(true);
     } catch (error: any) {
       showErrorAlert(t('common.error'), error.message || t('habit.failedToUpdate'));
     }
@@ -679,6 +695,8 @@ export default function HabitDetailScreen() {
               <View style={styles.daysContainer}>
                 {daySchedules.map((schedule) => {
                   const isLocked = schedule.isLocked || false;
+                  // Locked days cannot be edited at all (no day toggle, no time change)
+                  // Only unlocked days can be edited
                   return (
                     <View key={schedule.day} style={styles.scheduleRow}>
                       {/* Day Button */}
@@ -951,16 +969,126 @@ export default function HabitDetailScreen() {
             value={tempTime}
             mode="time"
             display="default"
-            onChange={(event: any, date?: Date) => {
-              setShowTimePicker(false);
-              if (date && selectedDay !== null) {
+            onChange={async (event: any, date?: Date) => {
+              if (event.type === 'set' && date && selectedDay !== null) {
+                // Update tempTime first
                 setTempTime(date);
-                handleTimeConfirm();
+                // Wait a bit for state to update, then confirm
+                setTimeout(async () => {
+                  const hours = date.getHours().toString().padStart(2, '0');
+                  const minutes = date.getMinutes().toString().padStart(2, '0');
+                  const timeString = `${hours}:${minutes}`;
+                  
+                  const schedule = daySchedules.find(s => s.day === selectedDay);
+                  
+                  try {
+                    if (schedule?.scheduleId) {
+                      // Update existing schedule
+                      const { error } = await (supabase
+                        .from('habit_schedules') as any)
+                        .update({ time: timeString })
+                        .eq('id', schedule.scheduleId);
+                      
+                      if (error) throw error;
+                      
+                      // Update UI state
+                      setDaySchedules(prev =>
+                        prev.map(s =>
+                          s.day === selectedDay
+                            ? { ...s, time: timeString, enabled: true, scheduleId: schedule.scheduleId }
+                            : s
+                        )
+                      );
+                      
+                      // Reload habit to ensure UI is in sync
+                      await loadHabit();
+                    } else {
+                      // Check if a schedule already exists
+                      const { data: existingSchedule, error: checkError } = await (supabase
+                        .from('habit_schedules') as any)
+                        .select('id')
+                        .eq('habit_id', habitId)
+                        .eq('day_of_week', selectedDay)
+                        .maybeSingle();
+                      
+                      if (checkError && checkError.code !== 'PGRST116') {
+                        throw checkError;
+                      }
+                      
+                      if (existingSchedule?.id) {
+                        // Update existing schedule
+                        const { error } = await (supabase
+                          .from('habit_schedules') as any)
+                          .update({ 
+                            time: timeString,
+                            enabled: true 
+                          })
+                          .eq('id', existingSchedule.id);
+                        
+                        if (error) throw error;
+                        
+                        setDaySchedules(prev =>
+                          prev.map(s =>
+                            s.day === selectedDay
+                              ? { ...s, time: timeString, enabled: true, scheduleId: existingSchedule.id }
+                              : s
+                          )
+                        );
+                      } else {
+                        // Create new schedule
+                        const { data: { user } } = await supabase.auth.getUser();
+                        if (!user) throw new Error('User not authenticated');
+                        
+                        const { data: newSchedule, error } = await (supabase
+                          .from('habit_schedules') as any)
+                          .insert({
+                            habit_id: habitId,
+                            day_of_week: selectedDay,
+                            time: timeString,
+                            enabled: true,
+                          })
+                          .select()
+                          .single();
+                        
+                        if (error) throw error;
+                        if (!newSchedule?.id) throw new Error('Failed to create schedule');
+                        
+                        setDaySchedules(prev =>
+                          prev.map(s =>
+                            s.day === selectedDay
+                              ? { ...s, time: timeString, enabled: true, scheduleId: newSchedule.id }
+                              : s
+                          )
+                        );
+                      }
+                      
+                      // Reload habit to ensure UI is in sync
+                      await loadHabit();
+                    }
+                    
+                    setShowTimePicker(false);
+                    setSelectedDay(null);
+                  } catch (error: any) {
+                    console.error('Error updating schedule:', error);
+                    showErrorAlert(t('common.error'), error.message || t('habit.failedToUpdateTime'));
+                  }
+                }, 100);
+              } else if (event.type === 'dismissed') {
+                setShowTimePicker(false);
               }
             }}
           />
         ) : null
       )}
+
+      {/* Success Modal */}
+      <SuccessModal
+        visible={showSuccessModal}
+        title={t('common.success')}
+        message={t('habit.habitUpdated')}
+        buttonText={t('common.ok') || 'OK'}
+        onButtonPress={() => setShowSuccessModal(false)}
+      />
 
       <BottomTabBar />
     </SafeAreaView>
