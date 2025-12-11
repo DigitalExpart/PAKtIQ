@@ -316,9 +316,9 @@ export default function HabitDetailScreen() {
     try {
       if (schedule?.scheduleId) {
         // Update existing schedule
-        const { error } = await supabase
-          .from('habit_schedules')
-          .update({ time: timeString } as any)
+        const { error } = await (supabase
+          .from('habit_schedules') as any)
+          .update({ time: timeString })
           .eq('id', schedule.scheduleId);
         
         if (error) throw error;
@@ -334,8 +334,8 @@ export default function HabitDetailScreen() {
       } else {
         // Check if a schedule already exists for this habit_id and day_of_week
         // This can happen if the UI state is out of sync with the database
-        const { data: existingSchedule, error: checkError } = await supabase
-          .from('habit_schedules')
+        const { data: existingSchedule, error: checkError } = await (supabase
+          .from('habit_schedules') as any)
           .select('id')
           .eq('habit_id', habitId)
           .eq('day_of_week', selectedDay)
@@ -345,14 +345,14 @@ export default function HabitDetailScreen() {
           throw checkError;
         }
         
-        if (existingSchedule) {
+        if (existingSchedule?.id) {
           // Update existing schedule instead of inserting
-          const { error } = await supabase
-            .from('habit_schedules')
+          const { error } = await (supabase
+            .from('habit_schedules') as any)
             .update({ 
               time: timeString,
               enabled: true 
-            } as any)
+            })
             .eq('id', existingSchedule.id);
           
           if (error) throw error;
@@ -370,18 +370,19 @@ export default function HabitDetailScreen() {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('User not authenticated');
         
-          const { data: newSchedule, error } = await supabase
-          .from('habit_schedules')
+          const { data: newSchedule, error } = await (supabase
+          .from('habit_schedules') as any)
           .insert({
             habit_id: habitId,
             day_of_week: selectedDay,
             time: timeString,
             enabled: true,
-            } as any)
+            })
             .select()
             .single();
         
         if (error) throw error;
+        if (!newSchedule?.id) throw new Error('Failed to create schedule');
       
           // Update UI state with the new schedule ID
       setDaySchedules(prev =>
@@ -556,6 +557,55 @@ export default function HabitDetailScreen() {
               />
             </View>
 
+            {/* Schedule Section in Edit Mode */}
+            <View style={styles.section}>
+              <Text style={[styles.label, { color: colors.text }]}>{t('habit.schedule')}</Text>
+              <Text style={[styles.hint, { color: colors.textSecondary, marginBottom: 12 }]}>
+                {t('habit.scheduleHint')}
+              </Text>
+              
+              <View style={styles.daysContainer}>
+                {daySchedules.map((schedule) => {
+                  return (
+                    <View key={schedule.day} style={styles.scheduleRow}>
+                      {/* Day Button */}
+                      <TouchableOpacity
+                        style={[
+                          styles.dayToggle,
+                          schedule.enabled && { backgroundColor: colors.primary },
+                          { borderColor: colors.border }
+                        ]}
+                        onPress={() => handleDayToggle(schedule.day)}
+                      >
+                        <Text style={[
+                          styles.dayToggleText,
+                          { color: schedule.enabled ? '#FFFFFF' : colors.text }
+                        ]}>
+                          {DAYS.find(d => d.id === schedule.day)?.short}
+                        </Text>
+                      </TouchableOpacity>
+                      
+                      {/* Time Button */}
+                      {schedule.enabled && (
+                        <TouchableOpacity
+                          style={[
+                            styles.timeButton, 
+                            { backgroundColor: colors.surface, borderColor: colors.border }
+                          ]}
+                          onPress={() => handleTimeSelect(schedule.day)}
+                        >
+                          <Clock size={16} color={colors.primary} />
+                          <Text style={[styles.timeText, { color: schedule.time ? colors.text : colors.textSecondary }]}>
+                            {formatTime(schedule.time)}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+
             <View style={styles.buttonRow}>
               <TouchableOpacity
                 style={[styles.saveButton, { backgroundColor: colors.primary }]}
@@ -570,6 +620,8 @@ export default function HabitDetailScreen() {
                   setEditing(false);
                   setHabitName(habit.name);
                   setDescription(habit.description || '');
+                  // Reload habit to get latest schedule state
+                  loadHabit();
                 }}
               >
                 <Text style={[styles.cancelButtonText, { color: colors.text }]}>{t('common.cancel')}</Text>

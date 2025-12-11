@@ -324,17 +324,17 @@ export default function PaktDetailScreen() {
     
     try {
       setShowDeleteConfirm(false);
-      await PaktService.deletePakt(pakt.id);
-      
-      // Refresh pakts list
-      await refetch();
-      
-      // Navigate back
-      router.back();
-    } catch (error) {
-      console.error('Error deleting pakt:', error);
+              await PaktService.deletePakt(pakt.id);
+              
+              // Refresh pakts list
+              await refetch();
+              
+              // Navigate back
+              router.back();
+            } catch (error) {
+              console.error('Error deleting pakt:', error);
       Alert.alert(t('common.error'), t('pakt.deleteError'));
-    }
+            }
   };
 
   return (

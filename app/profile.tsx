@@ -30,8 +30,8 @@ export default function ProfileScreen() {
   };
 
   const confirmSignOut = async () => {
-    await signOut();
-    router.replace('/auth');
+            await signOut();
+            router.replace('/auth');
   };
   
   // Use profile from context or fallback to defaults
@@ -357,39 +357,6 @@ export default function ProfileScreen() {
               {feature.available && <ChevronRight size={20} color={colors.textSecondary} />}
             </TouchableOpacity>
           ))}
-        </View>
-
-        {/* My Pakts Section */}
-        <View style={styles.paktsSection}>
-          <View style={[styles.paktsSectionCard, { backgroundColor: colors.surface }]}>
-            <View style={styles.paktsHeader}>
-              <Text style={[styles.paktsTitle, { color: colors.text }]}>{t('profile.myPakts')}</Text>
-              <Text style={[styles.paktsTotal, { color: colors.textSecondary }]}>
-                {paktStats?.total || 0} {t('profile.total')}
-              </Text>
-            </View>
-
-            {/* Tabs */}
-            <View style={styles.tabsContainer}>
-              <TouchableOpacity style={[styles.tab, styles.activeTab]}>
-                <Text style={styles.activeTabText}>Active ({paktStats?.active || 0})</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.tab, { backgroundColor: colors.background }]}>
-                <Text style={[styles.tabText, { color: colors.textSecondary }]}>Done ({paktStats?.completed || 0})</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.tab, { backgroundColor: colors.background }]}>
-                <Text style={[styles.tabText, { color: colors.textSecondary }]}>All ({paktStats?.total || 0})</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Empty State */}
-            <View style={styles.emptyState}>
-              <View style={styles.emptyIconContainer}>
-                <Target size={48} color={colors.textSecondary} strokeWidth={1.5} />
-              </View>
-              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>{t('profile.noPaktsInCategory')}</Text>
-            </View>
-          </View>
         </View>
 
         {/* Logout Button at Bottom */}
@@ -718,73 +685,6 @@ const styles = StyleSheet.create({
   menuSubtitle: {
     fontSize: 13,
     color: '#666',
-  },
-  paktsSection: {
-    paddingHorizontal: 24,
-    marginBottom: 24,
-  },
-  paktsSectionCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  paktsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  paktsTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1a1625',
-  },
-  paktsTotal: {
-    fontSize: 14,
-    color: '#666',
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#F4F4F6',
-    borderRadius: 12,
-    padding: 4,
-    marginBottom: 24,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  activeTab: {
-    backgroundColor: '#9163F2',
-  },
-  tabText: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
-  },
-  activeTabText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: 48,
-  },
-  emptyIconContainer: {
-    marginBottom: 16,
-  },
-  emptyText: {
-    fontSize: 15,
-    color: '#999',
-    textAlign: 'center',
   },
   comingSoon: {
     fontSize: 12,

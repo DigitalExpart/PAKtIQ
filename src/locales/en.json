@@ -23,6 +23,7 @@
     "welcomeBack": "Welcome back! 👋",
     "streak": "Day Streak",
     "activePakts": "Active Pakts",
+    "activeHabits": "Active Habits",
     "todaysTasks": "Today's Tasks",
     "today": "Today",
     "viewAll": "View All",
@@ -55,7 +56,16 @@
     "completionTitle": "🎉 Congratulations!",
     "completionMessage": "You've completed this pakt!",
     "notFoundTitle": "Pakt Not Found",
-    "notFoundMessage": "This pakt may have been deleted."
+    "notFoundMessage": "This pakt may have been deleted.",
+    "noMilestones": "No milestones yet. Add your first milestone to get started.",
+    "editMilestone": "Edit Milestone",
+    "deleteMilestone": "Delete Milestone",
+    "deleteMilestoneConfirm": "Are you sure you want to delete this milestone?",
+    "milestoneNamePlaceholder": "Enter milestone name",
+    "dueDate": "Due Date",
+    "notes": "Notes",
+    "notesPlaceholder": "Add notes (optional)",
+    "selectDate": "Select Date"
   },
   "journal": {
     "title": "Reflection Journal",
@@ -401,6 +411,7 @@
     "welcomeBack": "Welcome back! 👋",
     "streak": "Day Streak",
     "activePakts": "Active Pakts",
+    "activeHabits": "Active Habits",
     "todaysTasks": "Today's Tasks",
     "today": "Today",
     "viewAll": "View All",

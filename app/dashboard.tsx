@@ -9,6 +9,7 @@ import { useTheme } from '../src/contexts/ThemeContext';
 import { useLanguage } from '../src/contexts/LanguageContext';
 import { translateCategory, translatePaktName } from '../src/utils/translations';
 import { rp, wp, isSmallScreen } from '../src/utils/responsive';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 export default function DashboardScreen() {
   const router = useRouter();
@@ -193,15 +194,6 @@ export default function DashboardScreen() {
     emptyState: { ...styles.emptyState, backgroundColor: colors.surface },
     emptyTitle: { ...styles.emptyTitle, color: colors.text },
     emptyText: { ...styles.emptyText, color: colors.textSecondary },
-    bottomNav: { 
-      ...styles.bottomNav, 
-      backgroundColor: colors.surface, 
-      borderTopColor: colors.border,
-      paddingHorizontal: Math.max(rp(8), insets.left),
-      paddingBottom: Math.max(rp(8), insets.bottom),
-      paddingTop: rp(8),
-      minHeight: 60 + Math.max(rp(8), insets.bottom),
-    },
     progressBar: { ...styles.progressBar, backgroundColor: colors.border },
     progressValue: { ...styles.progressValue, color: colors.primary },
   };
@@ -374,7 +366,7 @@ export default function DashboardScreen() {
             <Text style={styles.statIcon}>📅</Text>
             <Text style={dynamicStyles.statValue}>{stats.activeHabits}</Text>
             <Text style={dynamicStyles.statLabel}>{t('dashboard.activeHabits')}</Text>
-          </View>
+        </View>
         </ScrollView>
 
 
@@ -472,76 +464,7 @@ export default function DashboardScreen() {
         </View>
       </Animated.ScrollView>
 
-      <View style={dynamicStyles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIconActive}>🏠</Text>
-          <Text 
-            style={styles.navLabelActive}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {t('navigation.home')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.navItem}
-          onPress={() => router.push('/insights')}
-        >
-          <Text style={styles.navIcon}>📊</Text>
-          <Text 
-            style={[styles.navLabel, { color: colors.textSecondary }]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {t('navigation.insights')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.navItemCenter}
-          onPress={() => router.push('/create-choice')}
-        >
-          <View style={[
-            styles.fabButton,
-            {
-              width: isSmallScreen ? 48 : 56,
-              height: isSmallScreen ? 48 : 56,
-              borderRadius: isSmallScreen ? 24 : 28,
-            }
-          ]}>
-            <Text style={[styles.fabIcon, { fontSize: isSmallScreen ? 28 : 32 }]}>+</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.navItem}
-          onPress={() => router.push('/daily')}
-        >
-          <Text style={styles.navIcon}>📅</Text>
-          <Text 
-            style={[styles.navLabel, { color: colors.textSecondary }]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {t('navigation.daily')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.navItem}
-          onPress={() => router.push('/profile')}
-        >
-          <Text style={styles.navIcon}>👤</Text>
-          <Text 
-            style={[styles.navLabel, { color: colors.textSecondary }]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {t('navigation.profile')}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <BottomTabBar />
     </SafeAreaView>
   );
 }
@@ -816,65 +739,6 @@ const styles = StyleSheet.create({
   premiumArrow: {
     fontSize: 32,
     color: '#FFFFFF',
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 4,
-    maxWidth: '20%',
-    minWidth: wp(15),
-  },
-  navItemCenter: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: -24,
-    maxWidth: '20%',
-  },
-  navIcon: {
-    fontSize: isSmallScreen ? 20 : 24,
-    marginBottom: 2,
-    opacity: 0.5,
-  },
-  navIconActive: {
-    fontSize: isSmallScreen ? 20 : 24,
-    marginBottom: 2,
-  },
-  navLabel: {
-    fontSize: isSmallScreen ? 10 : 11,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  navLabelActive: {
-    fontSize: isSmallScreen ? 10 : 11,
-    color: '#9163F2',
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  fabButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#9163F2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#9163F2',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  fabIcon: {
-    fontSize: 32,
-    color: '#FFFFFF',
-    fontWeight: '300',
   },
 });
 

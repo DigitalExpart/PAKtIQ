@@ -1,16 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert, ActivityIndicator, Platform, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Calendar, Save, Trash2 } from 'lucide-react-native';
+import { ArrowLeft, Calendar, Save, Trash2, Plus, X, Edit2 } from 'lucide-react-native';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 import { PaktService } from '../src/services/pakt.service';
+import { MilestoneService } from '../src/services/milestone.service';
 import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
+import { useAuth } from '../src/contexts/AuthContext';
+
+// Conditional import for DateTimePicker
+let DateTimePicker: any = null;
+try {
+  DateTimePicker = require('@react-native-community/datetimepicker').default;
+} catch (e) {
+  console.warn('DateTimePicker not available, using fallback');
+}
+
+interface Milestone {
+  id: string;
+  name: string;
+  due_date: string;
+  notes: string | null;
+  importance: number;
+  completed: boolean;
+  order_index: number;
+}
 
 export default function EditPaktScreen() {
   const router = useRouter();
   const { paktId } = useLocalSearchParams();
   const { colors } = useTheme();
+  const { t } = useLanguage();
+  const { user } = useAuth();
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -19,7 +42,13 @@ export default function EditPaktScreen() {
   const [targetOutcome, setTargetOutcome] = useState('');
   const [deadline, setDeadline] = useState(new Date());
   const [category, setCategory] = useState('');
-  // const [showDatePicker, setShowDatePicker] = useState(false);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null);
+  const [showMilestoneModal, setShowMilestoneModal] = useState(false);
+  const [milestoneName, setMilestoneName] = useState('');
+  const [milestoneDueDate, setMilestoneDueDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [milestoneNotes, setMilestoneNotes] = useState('');
 
   useEffect(() => {
     loadPakt();
@@ -35,6 +64,10 @@ export default function EditPaktScreen() {
         setTargetOutcome(pakt.target_outcome);
         setDeadline(new Date(pakt.deadline));
         setCategory(pakt.category);
+        
+        // Load milestones
+        const paktMilestones = await MilestoneService.getPaktMilestones(paktId as string);
+        setMilestones(paktMilestones.sort((a, b) => (a.order_index || 0) - (b.order_index || 0)));
       }
     } catch (error) {
       console.error('Error loading pakt:', error);
@@ -52,6 +85,7 @@ export default function EditPaktScreen() {
 
     try {
       setSaving(true);
+      // Update pakt
       await PaktService.updatePakt(paktId as string, {
         name: paktName.trim(),
         description: description.trim(),
@@ -59,6 +93,9 @@ export default function EditPaktScreen() {
         deadline: deadline.toISOString(),
         category: category || 'other',
       });
+      
+      // Milestone changes are saved in real-time, so we just need to reload
+      await loadPakt();
       
       Alert.alert('Success', 'Pakt updated successfully', [
         { text: 'OK', onPress: () => router.back() }
@@ -69,6 +106,95 @@ export default function EditPaktScreen() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleAddMilestone = () => {
+    setEditingMilestone(null);
+    setMilestoneName('');
+    setMilestoneDueDate(new Date());
+    setMilestoneNotes('');
+    setShowMilestoneModal(true);
+  };
+
+  const handleEditMilestone = (milestone: Milestone) => {
+    setEditingMilestone(milestone);
+    setMilestoneName(milestone.name);
+    setMilestoneDueDate(new Date(milestone.due_date));
+    setMilestoneNotes(milestone.notes || '');
+    setShowMilestoneModal(true);
+  };
+
+  const handleSaveMilestone = async () => {
+    if (!milestoneName.trim()) {
+      Alert.alert('Error', 'Please enter a milestone name');
+      return;
+    }
+
+    if (!user) {
+      Alert.alert('Error', 'User not authenticated');
+      return;
+    }
+
+    // Validate milestone deadline doesn't exceed pakt deadline
+    if (milestoneDueDate > deadline) {
+      Alert.alert('Error', 'Milestone deadline cannot exceed pakt deadline');
+      return;
+    }
+
+    try {
+      if (editingMilestone) {
+        // Update existing milestone
+        await MilestoneService.updateMilestone(editingMilestone.id, {
+          name: milestoneName.trim(),
+          due_date: milestoneDueDate.toISOString(),
+          notes: milestoneNotes.trim() || null,
+        });
+      } else {
+        // Create new milestone
+        const maxOrderIndex = milestones.length > 0 
+          ? Math.max(...milestones.map(m => m.order_index || 0))
+          : -1;
+        
+        await MilestoneService.createMilestone({
+          pakt_id: paktId as string,
+          user_id: user.id,
+          name: milestoneName.trim(),
+          due_date: milestoneDueDate.toISOString(),
+          notes: milestoneNotes.trim() || null,
+          importance: 3,
+          completed: false,
+          order_index: maxOrderIndex + 1,
+        });
+      }
+      
+      setShowMilestoneModal(false);
+      await loadPakt(); // Reload to get updated milestones
+    } catch (error: any) {
+      console.error('Error saving milestone:', error);
+      Alert.alert('Error', error.message || 'Failed to save milestone');
+    }
+  };
+
+  const handleDeleteMilestone = (milestoneId: string) => {
+    Alert.alert(
+      t('pakt.deleteMilestone'),
+      t('pakt.deleteMilestoneConfirm'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await MilestoneService.deleteMilestone(milestoneId);
+              await loadPakt(); // Reload to get updated milestones
+            } catch (error: any) {
+              Alert.alert('Error', error.message || 'Failed to delete milestone');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const handleDelete = () => {
@@ -195,26 +321,195 @@ export default function EditPaktScreen() {
             <Calendar size={20} color={colors.primary} />
             <Text style={dynamicStyles.dateButtonText}>{formatDate(deadline)}</Text>
           </View>
-          {/* Date picker will be available after package installation
+        </View>
+
+        {/* Milestones Section */}
+        <View style={styles.inputSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.label}>{t('pakt.milestones')}</Text>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={handleAddMilestone}
+            >
+              <Plus size={20} color={colors.primary} />
+            </TouchableOpacity>
+          </View>
+          
+          {milestones.length === 0 ? (
+            <View style={[styles.emptyState, { backgroundColor: colors.surface }]}>
+              <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>
+                {t('pakt.noMilestones')}
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.milestonesList}>
+              {milestones.map((milestone, index) => (
+                <View key={milestone.id} style={[styles.milestoneCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                  <View style={styles.milestoneHeader}>
+                    <View style={styles.milestoneNumber}>
+                      <Text style={[styles.milestoneNumberText, { color: colors.primary }]}>
+                        {index + 1}
+                      </Text>
+                    </View>
+                    <View style={styles.milestoneContent}>
+                      <Text style={[styles.milestoneName, { color: colors.text }]}>
+                        {milestone.name}
+                      </Text>
+                      <Text style={[styles.milestoneDate, { color: colors.textSecondary }]}>
+                        {formatDate(new Date(milestone.due_date))}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.milestoneActions}>
+                    <TouchableOpacity
+                      style={styles.milestoneActionButton}
+                      onPress={() => handleEditMilestone(milestone)}
+                    >
+                      <Edit2 size={18} color={colors.primary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.milestoneActionButton}
+                      onPress={() => handleDeleteMilestone(milestone.id)}
+                    >
+                      <Trash2 size={18} color={colors.error} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+      </ScrollView>
+
+      {/* Milestone Edit Modal */}
+      <Modal
+        visible={showMilestoneModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowMilestoneModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>
+                {editingMilestone ? t('pakt.editMilestone') : t('pakt.addMilestone')}
+              </Text>
+              <TouchableOpacity onPress={() => setShowMilestoneModal(false)}>
+                <X size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalScroll}>
+              <View style={styles.modalSection}>
+                <Text style={[styles.modalLabel, { color: colors.text }]}>
+                  {t('pakt.milestoneName')} *
+                </Text>
+                <TextInput
+                  style={[styles.modalInput, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
+                  value={milestoneName}
+                  onChangeText={setMilestoneName}
+                  placeholder={t('pakt.milestoneNamePlaceholder')}
+                  placeholderTextColor={colors.textSecondary}
+                />
+              </View>
+
+              <View style={styles.modalSection}>
+                <Text style={[styles.modalLabel, { color: colors.text }]}>
+                  {t('pakt.dueDate')} *
+                </Text>
           <TouchableOpacity
-            style={dynamicStyles.dateButton}
+                  style={[styles.modalDateButton, { backgroundColor: colors.background, borderColor: colors.border }]}
             onPress={() => setShowDatePicker(true)}
           >
             <Calendar size={20} color={colors.primary} />
-            <Text style={dynamicStyles.dateButtonText}>{formatDate(deadline)}</Text>
+                  <Text style={[styles.modalDateText, { color: colors.text }]}>
+                    {formatDate(milestoneDueDate)}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.modalSection}>
+                <Text style={[styles.modalLabel, { color: colors.text }]}>
+                  {t('pakt.notes')}
+                </Text>
+                <TextInput
+                  style={[styles.modalTextArea, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
+                  value={milestoneNotes}
+                  onChangeText={setMilestoneNotes}
+                  placeholder={t('pakt.notesPlaceholder')}
+                  placeholderTextColor={colors.textSecondary}
+                  multiline
+                  numberOfLines={3}
+                  textAlignVertical="top"
+                />
+              </View>
+
+              <View style={styles.modalButtonRow}>
+                <TouchableOpacity
+                  style={[styles.modalCancelButton, { borderColor: colors.border }]}
+                  onPress={() => setShowMilestoneModal(false)}
+                >
+                  <Text style={[styles.modalCancelText, { color: colors.text }]}>
+                    {t('common.cancel')}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalSaveButton, { backgroundColor: colors.primary }]}
+                  onPress={handleSaveMilestone}
+                >
+                  <Text style={styles.modalSaveText}>{t('common.save')}</Text>
           </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={deadline}
-              mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={onDateChange}
-              minimumDate={new Date()}
-            />
-          )}
-          */}
+              </View>
+            </ScrollView>
+          </View>
         </View>
-      </ScrollView>
+
+        {/* Date Picker for Milestone */}
+          {showDatePicker && (
+          Platform.OS === 'ios' && DateTimePicker ? (
+            <View style={styles.datePickerContainer}>
+              <View style={[styles.datePickerHeader, { backgroundColor: colors.surface }]}>
+                <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                  <Text style={[styles.datePickerButton, { color: colors.primary }]}>
+                    {t('common.cancel')}
+                  </Text>
+                </TouchableOpacity>
+                <Text style={[styles.datePickerTitle, { color: colors.text }]}>
+                  {t('pakt.selectDate')}
+                </Text>
+                <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                  <Text style={[styles.datePickerButton, { color: colors.primary }]}>
+                    {t('common.done')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <DateTimePicker
+                value={milestoneDueDate}
+                mode="date"
+                display="spinner"
+                onChange={(event: any, date?: Date) => {
+                  if (date) setMilestoneDueDate(date);
+                }}
+                minimumDate={new Date()}
+                maximumDate={deadline}
+                textColor={colors.text}
+              />
+            </View>
+          ) : Platform.OS === 'android' && DateTimePicker ? (
+            <DateTimePicker
+              value={milestoneDueDate}
+              mode="date"
+              display="default"
+              onChange={(event: any, date?: Date) => {
+                setShowDatePicker(false);
+                if (date) setMilestoneDueDate(date);
+              }}
+              minimumDate={new Date()}
+              maximumDate={deadline}
+            />
+          ) : null
+          )}
+      </Modal>
 
       <View style={styles.footer}>
         <TouchableOpacity
@@ -328,6 +623,191 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#FFFFFF',
     fontSize: 18,
+    fontWeight: '600',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  addButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(145, 99, 242, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyState: {
+    padding: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 100,
+  },
+  emptyStateText: {
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  milestonesList: {
+    gap: 12,
+  },
+  milestoneCard: {
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  milestoneHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 12,
+  },
+  milestoneNumber: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(145, 99, 242, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  milestoneNumberText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  milestoneContent: {
+    flex: 1,
+  },
+  milestoneName: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  milestoneDate: {
+    fontSize: 14,
+  },
+  milestoneActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  milestoneActionButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '90%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  modalScroll: {
+    padding: 20,
+  },
+  modalSection: {
+    marginBottom: 20,
+  },
+  modalLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  modalInput: {
+    borderWidth: 2,
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+  },
+  modalTextArea: {
+    borderWidth: 2,
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  modalDateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderRadius: 12,
+    padding: 16,
+    gap: 12,
+  },
+  modalDateText: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  modalButtonRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 20,
+  },
+  modalCancelButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+  },
+  modalCancelText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalSaveButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+  },
+  modalSaveText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  datePickerContainer: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  datePickerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  datePickerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  datePickerButton: {
+    fontSize: 16,
     fontWeight: '600',
   },
 });
