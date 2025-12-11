@@ -151,9 +151,9 @@ export default function InsightsScreen() {
   const categoryMap = new Map<string, number>();
   if (resolves && Array.isArray(resolves)) {
     resolves.filter(p => p.status === 'active').forEach(resolve => {
-      const category = resolve.category || 'Other';
-      categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
-    });
+    const category = resolve.category || 'Other';
+    categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
+  });
   }
 
   const totalResolves = resolves && Array.isArray(resolves) ? resolves.filter(p => p.status === 'active').length : 0;

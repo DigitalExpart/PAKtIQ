@@ -8,6 +8,7 @@ import { useLanguage } from '../src/contexts/LanguageContext';
 import { useAuth } from '../src/contexts/AuthContext';
 import { HabitService } from '../src/services/habit.service';
 import BottomTabBar from '../src/components/BottomTabBar';
+import { SuccessModal } from '../src/components/SuccessModal';
 
 // Conditional import for DateTimePicker
 let DateTimePicker: any = null;
@@ -52,6 +53,7 @@ export default function HabitCreateScreen() {
   const [showTimeInput, setShowTimeInput] = useState(false);
   const [customTime, setCustomTime] = useState('');
   const [tempTime, setTempTime] = useState(new Date());
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   
   const durationOptions = [4, 8, 12, 16, 20, null]; // null = no limit
 
@@ -177,9 +179,8 @@ export default function HabitCreateScreen() {
         schedules,
       });
 
-      Alert.alert(t('common.success'), t('habit.habitCreated'), [
-        { text: t('common.done'), onPress: () => router.back() }
-      ]);
+      // Show success modal
+      setShowSuccessModal(true);
     } catch (error: any) {
       console.error('Error creating habit:', error);
       Alert.alert(t('common.error'), error.message || t('habit.failedToCreate'));
@@ -514,6 +515,18 @@ export default function HabitCreateScreen() {
           />
         ) : null
       )}
+
+      {/* Success Modal */}
+      <SuccessModal
+        visible={showSuccessModal}
+        title={t('common.success')}
+        message={t('habit.habitCreated')}
+        buttonText={t('common.done') || 'Done'}
+        onButtonPress={() => {
+          setShowSuccessModal(false);
+          router.back();
+        }}
+      />
 
       <BottomTabBar />
     </SafeAreaView>

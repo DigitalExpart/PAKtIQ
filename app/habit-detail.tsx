@@ -921,13 +921,13 @@ export default function HabitDetailScreen() {
             </View>
 
             {/* Delete Button - Only in Edit Mode */}
-            <TouchableOpacity
-              style={[styles.deleteButton, { borderColor: colors.error }]}
-              onPress={handleDelete}
-            >
-              <Trash2 size={20} color={colors.error} />
-              <Text style={[styles.deleteButtonText, { color: colors.error }]}>{t('habit.deleteHabit')}</Text>
-            </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.deleteButton, { borderColor: colors.error }]}
+          onPress={handleDelete}
+        >
+          <Trash2 size={20} color={colors.error} />
+          <Text style={[styles.deleteButtonText, { color: colors.error }]}>{t('habit.deleteHabit')}</Text>
+        </TouchableOpacity>
           </>
         )}
       </ScrollView>
