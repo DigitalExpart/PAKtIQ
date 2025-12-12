@@ -1,4 +1,4 @@
-# PaktIQ - Smart Commitment Tracking
+# Resolute Plan - Smart Commitment Tracking
 
 <div align="center">
   <h3>🎯 Make commitments. Track progress. Achieve your goals with intelligence.</h3>
@@ -8,9 +8,9 @@
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 </div>
 
-## 📱 About PaktIQ
+## 📱 About Resolute Plan
 
-PaktIQ is a beautiful, feature-rich mobile application for setting goals, tracking progress, and achieving your commitments. Built with React Native and Expo, it offers an intuitive interface and comprehensive features to help users stay motivated and on track.
+Resolute Plan is a beautiful, feature-rich mobile application for setting goals, tracking progress, and achieving your commitments. Built with React Native and Expo, it offers an intuitive interface and comprehensive features to help users stay motivated and on track.
 
 ## ✨ Features
 
@@ -71,7 +71,7 @@ PAKtIQ/
 │   ├── index.tsx                # Welcome screen
 │   ├── onboarding.tsx           # Onboarding flow
 │   ├── category-selection.tsx   # Category picker
-│   ├── pakt-naming.tsx          # Goal naming
+│   ├── Resolve-naming.tsx          # Goal naming
 │   ├── milestone-builder.tsx    # Milestone creation
 │   ├── reminder-setup.tsx       # Reminder settings
 │   ├── dashboard.tsx            # Main dashboard
@@ -115,12 +115,12 @@ PAKtIQ/
 
 ### 2. Goal Creation Flow
 - **Category Selection** - Pick your focus area
-- **Pakt Naming** - Name your commitment
+- **Resolve Naming** - Name your commitment
 - **Milestone Builder** - Define your steps
 - **Reminder Setup** - Configure notifications
 
 ### 3. Main App
-- **Dashboard** - Overview with stats and active pakts
+- **Dashboard** - Overview with stats and active Resolves
 - **Achievements** - Track unlocked badges
 - **Insights** - View analytics and trends
 - **Templates** - Browse goal templates
@@ -166,5 +166,5 @@ For questions or support, please open an issue on GitHub.
 <div align="center">
   Made with ❤️ for achievers
   
-  **PaktIQ** - Smart Commitment Tracking
+  **Resolute Plan** - Smart Commitment Tracking
 </div>

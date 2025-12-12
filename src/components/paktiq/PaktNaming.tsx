@@ -32,7 +32,7 @@ export default function PaktNaming({ currentPakt, onUpdate, onContinue, onBack }
           animate={{ opacity: 1, y: 0 }}
           className="mb-12"
         >
-          <h1 className="text-4xl text-[#3C2B63] mb-3">Name Your Pakt</h1>
+          <h1 className="text-4xl text-[#3C2B63] mb-3">Name Your Resolve</h1>
           <p className="text-lg text-[#3C2B63]/70">Give your commitment a clear identity</p>
         </motion.div>
 
@@ -55,9 +55,9 @@ export default function PaktNaming({ currentPakt, onUpdate, onContinue, onBack }
           transition={{ delay: 0.2 }}
           className="space-y-6 mb-8"
         >
-          {/* Pakt Name */}
+          {/* Resolve Name */}
           <div className="bg-white rounded-3xl p-6 shadow-lg">
-            <label className="block text-sm text-[#3C2B63]/70 mb-2">Pakt Name*</label>
+            <label className="block text-sm text-[#3C2B63]/70 mb-2">Resolve Name*</label>
             <input
               type="text"
               value={name}

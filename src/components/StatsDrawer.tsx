@@ -197,7 +197,7 @@ export function StatsDrawer({ resolutions, achievements, stats, onClose }: Stats
             <Zap className="w-8 h-8 mx-auto mb-2" />
             <p className="text-sm mb-1">Keep pushing forward!</p>
             <p className="text-xs opacity-90">
-              You're making great progress on your Pakts.
+              You're making great progress on your Resolves.
             </p>
           </div>
         </div>

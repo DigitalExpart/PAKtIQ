@@ -11,7 +11,7 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome to PaktIQ</Text>
+        <Text style={styles.title}>Welcome to resolviq</Text>
         <Text style={styles.description}>
           Track your commitments and achieve your goals with intelligence.
         </Text>

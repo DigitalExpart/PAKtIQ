@@ -160,7 +160,7 @@ export default function SettingsScreen({ isDarkMode, onToggleDarkMode, onBack }:
           transition={{ delay: 0.6 }}
           className="text-center pt-6"
         >
-          <div className={`text-sm ${textSecondary} mb-2`}>PaktIQ Pro</div>
+          <div className={`text-sm ${textSecondary} mb-2`}>resolviq Pro</div>
           <div className={`text-xs ${textSecondary}`}>Version 1.0.0</div>
         </motion.div>
       </div>

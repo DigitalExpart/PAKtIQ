@@ -1,105 +1,171 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import AuthScreen from './components/paktiq/AuthScreen';
 import WelcomeScreen from './components/paktiq/WelcomeScreen';
 import OnboardingFlow from './components/paktiq/OnboardingFlow';
 import CategorySelection from './components/paktiq/CategorySelection';
 import PaktNaming from './components/paktiq/PaktNaming';
 import MilestoneBuilder from './components/paktiq/MilestoneBuilder';
 import ReminderSetup from './components/paktiq/ReminderSetup';
+import ReminderSetupLive from './components/paktiq/ReminderSetupLive';
 import PaktDashboard from './components/paktiq/PaktDashboard';
+import PaktDashboardLive from './components/paktiq/PaktDashboardLive';
 import AchievementBoard from './components/paktiq/AchievementBoard';
+import AchievementBoardLive from './components/paktiq/AchievementBoardLive';
 import InsightsOverview from './components/paktiq/InsightsOverview';
+import InsightsOverviewLive from './components/paktiq/InsightsOverviewLive';
 import TemplateLibrary from './components/paktiq/TemplateLibrary';
 import PremiumFeatures from './components/paktiq/PremiumFeatures';
 import SettingsScreen from './components/paktiq/SettingsScreen';
+import SettingsScreenLive from './components/paktiq/SettingsScreenLive';
+import { useResolves } from './hooks';
+import { ResolveService, MilestoneService, ReminderService } from './services';
+import type { Screen, PaktData } from './types';
 
-export type Screen = 
-  | 'welcome'
-  | 'onboarding'
-  | 'categorySelection'
-  | 'paktNaming'
-  | 'milestoneBuilder'
-  | 'reminderSetup'
-  | 'dashboard'
-  | 'achievements'
-  | 'insights'
-  | 'templates'
-  | 'premium'
-  | 'settings';
+// Loading component
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#3C2B63] via-[#9163F2] to-[#3C2B63] flex items-center justify-center">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-white text-2xl"
+      >
+        <div className="flex flex-col items-center gap-4">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="w-12 h-12 border-4 border-white border-t-transparent rounded-full"
+          />
+          <p>Loading resolviq...</p>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
-export type PaktData = {
-  name: string;
-  description: string;
-  targetOutcome: string;
-  deadline: string;
-  category: string;
-  milestones: Milestone[];
-  reminders: ReminderSettings;
-};
-
-export type Milestone = {
-  id: string;
-  name: string;
-  dueDate: string;
-  notes: string;
-  importance: number;
-  completed: boolean;
-};
-
-export type ReminderSettings = {
-  frequency: 'daily' | 'weekly' | 'custom';
-  time: string;
-  days?: string[];
-};
-
-function App() {
+function AppContent() {
+  const { user, profile, loading: authLoading } = useAuth();
+  const { resolves, loading: resolvesLoading, createResolve, refetch } = useResolves();
   const [currentScreen, setCurrentScreen] = useState<Screen>('welcome');
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [currentPakt, setCurrentPakt] = useState<Partial<PaktData>>({});
-  const [pakts, setPakts] = useState<PaktData[]>([]);
+  const [currentResolve, setCurrentResolve] = useState<Partial<PaktData>>({});
+
+  // Check if onboarding is completed
+  useEffect(() => {
+    if (user && profile) {
+      if (!profile.onboarding_completed) {
+        setCurrentScreen('onboarding');
+      } else {
+        setCurrentScreen('dashboard');
+      }
+    }
+  }, [user, profile]);
 
   const navigate = (screen: Screen) => {
     setCurrentScreen(screen);
   };
 
-  const updatePaktData = (data: Partial<PaktData>) => {
-    setCurrentPakt({ ...currentPakt, ...data });
+  const updateResolveData = (data: Partial<PaktData>) => {
+    setCurrentResolve({ ...currentResolve, ...data });
   };
 
-  const completePakt = () => {
-    if (currentPakt.name && currentPakt.category) {
-      setPakts([...pakts, currentPakt as PaktData]);
-      setCurrentPakt({});
+  const completeResolve = async () => {
+    if (!user || !currentResolve.name || !currentResolve.category) {
+      console.error('Missing required data to create Resolve');
+      return;
+    }
+
+    try {
+      // Create the Resolve in the database
+      const newResolve = await createResolve({
+        user_id: user.id,
+        name: currentResolve.name,
+        description: currentResolve.description || '',
+        target_outcome: currentResolve.targetOutcome || '',
+        deadline: currentResolve.deadline || new Date().toISOString(),
+        category: currentResolve.category,
+      });
+
+      // Create milestones if any
+      if (currentResolve.milestones && currentResolve.milestones.length > 0) {
+        for (let i = 0; i < currentResolve.milestones.length; i++) {
+          const milestone = currentResolve.milestones[i];
+          await MilestoneService.createMilestone({
+            pakt_id: newResolve.id,
+            user_id: user.id,
+            name: milestone.name,
+            due_date: milestone.dueDate,
+            notes: milestone.notes || '',
+            importance: milestone.importance || 3,
+            completed: false,
+            order_index: i,
+          });
+        }
+      }
+
+      // Create reminders if configured
+      if (currentResolve.reminders) {
+        await ReminderService.createReminder({
+          pakt_id: newResolve.id,
+          user_id: user.id,
+          frequency: currentResolve.reminders.frequency,
+          time: currentResolve.reminders.time,
+          days: currentResolve.reminders.days || null,
+        });
+      }
+
+      // Clear current Resolve and navigate to dashboard
+      setCurrentResolve({});
+      await refetch(); // Refresh Resolves list
       navigate('dashboard');
+    } catch (error) {
+      console.error('Error creating Resolve:', error);
+      alert('Failed to create Resolve. Please try again.');
     }
   };
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return <LoadingScreen />;
+  }
+
+  // Show authentication screen if not authenticated
+  if (!user) {
+    // You can show welcome screen first, then auth screen
+    if (currentScreen === 'welcome') {
+      return <WelcomeScreen onGetStarted={() => setCurrentScreen('auth')} onExplore={() => setCurrentScreen('auth')} />;
+    }
+    return <AuthScreen onSuccess={() => setCurrentScreen('dashboard')} />;
+  }
 
   const renderScreen = () => {
     switch (currentScreen) {
       case 'welcome':
-        return <WelcomeScreen onGetStarted={() => navigate('onboarding')} onExplore={() => navigate('templates')} />;
+        return <WelcomeScreen onGetStarted={() => setCurrentScreen('auth')} onExplore={() => setCurrentScreen('auth')} />;
       case 'onboarding':
         return <OnboardingFlow onComplete={() => navigate('categorySelection')} onSkip={() => navigate('dashboard')} />;
       case 'categorySelection':
-        return <CategorySelection onSelect={(category) => { updatePaktData({ category }); navigate('paktNaming'); }} />;
+        return <CategorySelection onSelect={(category) => { updateResolveData({ category }); navigate('paktNaming'); }} />;
       case 'paktNaming':
-        return <PaktNaming currentPakt={currentPakt} onUpdate={updatePaktData} onContinue={() => navigate('milestoneBuilder')} onBack={() => navigate('categorySelection')} />;
+        return <PaktNaming currentPakt={currentResolve} onUpdate={updateResolveData} onContinue={() => navigate('milestoneBuilder')} onBack={() => navigate('categorySelection')} />;
       case 'milestoneBuilder':
-        return <MilestoneBuilder currentPakt={currentPakt} onUpdate={updatePaktData} onContinue={() => navigate('reminderSetup')} onBack={() => navigate('paktNaming')} />;
+        return <MilestoneBuilder currentPakt={currentResolve} onUpdate={updateResolveData} onContinue={() => navigate('reminderSetup')} onBack={() => navigate('paktNaming')} />;
       case 'reminderSetup':
-        return <ReminderSetup currentPakt={currentPakt} onUpdate={updatePaktData} onComplete={completePakt} onBack={() => navigate('milestoneBuilder')} />;
+        return <ReminderSetupLive currentPakt={currentResolve} onUpdate={updateResolveData} onComplete={completeResolve} onBack={() => navigate('milestoneBuilder')} />;
       case 'dashboard':
-        return <PaktDashboard pakts={pakts} onNavigate={navigate} isDarkMode={isDarkMode} />;
+        return <PaktDashboardLive onNavigate={navigate} isDarkMode={isDarkMode} />;
       case 'achievements':
-        return <AchievementBoard onBack={() => navigate('dashboard')} isDarkMode={isDarkMode} />;
+        return <AchievementBoardLive onBack={() => navigate('dashboard')} isDarkMode={isDarkMode} />;
       case 'insights':
-        return <InsightsOverview pakts={pakts} onBack={() => navigate('dashboard')} isDarkMode={isDarkMode} />;
+        return <InsightsOverviewLive onBack={() => navigate('dashboard')} isDarkMode={isDarkMode} />;
       case 'templates':
-        return <TemplateLibrary onUseTemplate={(template) => { updatePaktData(template); navigate('paktNaming'); }} onBack={() => navigate('dashboard')} />;
+        return <TemplateLibrary onUseTemplate={(template) => { updateResolveData(template); navigate('paktNaming'); }} onBack={() => navigate('dashboard')} />;
       case 'premium':
         return <PremiumFeatures onBack={() => navigate('dashboard')} onUpgrade={() => navigate('dashboard')} />;
       case 'settings':
-        return <SettingsScreen isDarkMode={isDarkMode} onToggleDarkMode={() => setIsDarkMode(!isDarkMode)} onBack={() => navigate('dashboard')} />;
+        return <SettingsScreenLive isDarkMode={isDarkMode} onToggleDarkMode={() => setIsDarkMode(!isDarkMode)} onBack={() => navigate('dashboard')} />;
       default:
         return <WelcomeScreen onGetStarted={() => navigate('onboarding')} onExplore={() => navigate('templates')} />;
     }
@@ -122,4 +188,11 @@ function App() {
   );
 }
 
-export default App;
+// Main App component with AuthProvider wrapper
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}

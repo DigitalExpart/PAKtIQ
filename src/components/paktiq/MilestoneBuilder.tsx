@@ -51,16 +51,16 @@ export default function MilestoneBuilder({ currentPakt, onUpdate, onContinue, on
           className="mb-8"
         >
           <h1 className="text-4xl text-[#3C2B63] mb-3">Build Milestones</h1>
-          <p className="text-lg text-[#3C2B63]/70">Break your Pakt into achievable steps</p>
+          <p className="text-lg text-[#3C2B63]/70">Break your Resolve into achievable steps</p>
         </motion.div>
 
-        {/* Pakt Name Display */}
+        {/* Resolve Name Display */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           className="bg-gradient-to-r from-[#9163F2] to-[#3C2B63] text-white rounded-2xl p-4 mb-8"
         >
-          <div className="text-sm opacity-80 mb-1">Your Pakt:</div>
+          <div className="text-sm opacity-80 mb-1">Your Resolve:</div>
           <div className="text-xl">{currentPakt.name}</div>
         </motion.div>
 

@@ -13,7 +13,7 @@ export default function PaktNaming({ currentPakt, onUpdate, onContinue, onBack }
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Name Your Pakt</Text>
+        <Text style={styles.title}>Name Your Resolve</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter name"

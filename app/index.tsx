@@ -1,10 +1,17 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Animated } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated, Modal } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Svg, { Circle } from 'react-native-svg';
+import { Globe, ChevronDown, Check, X } from 'lucide-react-native';
+import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const { t, currentLanguage, changeLanguage } = useLanguage();
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const insets = useSafeAreaInsets();
   
   // Animation values matching web version
   const glowAnim1 = useRef(new Animated.Value(1)).current;
@@ -186,7 +193,23 @@ export default function WelcomeScreen() {
         ]} 
       />
 
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+        {/* Language Selector - Upper Right */}
+        <View style={[styles.headerContainer, { paddingTop: Math.max(insets.top, 16) }]}>
+          <View style={{ flex: 1 }} />
+          <TouchableOpacity
+            style={styles.languageButton}
+            onPress={() => setShowLanguageDropdown(true)}
+            activeOpacity={0.7}
+          >
+            <Globe size={20} color="#FFFFFF" />
+            <Text style={styles.languageText}>
+              {currentLanguage === 'en' ? 'EN' : currentLanguage === 'fr' ? 'FR' : 'ES'}
+            </Text>
+            <ChevronDown size={16} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
+
         <ScrollView 
           contentContainerStyle={styles.scrollContent} 
           showsVerticalScrollIndicator={false}
@@ -229,10 +252,10 @@ export default function WelcomeScreen() {
               }
             ]}
           >
-            <Text style={styles.title}>PaktIQ</Text>
-            <Text style={styles.subtitle}>Smart Commitment Tracking</Text>
+            <Text style={styles.title}>{t('welcome.title')}</Text>
+            <Text style={styles.subtitle}>{t('welcome.subtitle')}</Text>
             <Text style={styles.description}>
-              Make commitments. Track progress. Achieve your goals with intelligence.
+              {t('welcome.description')}
             </Text>
           </Animated.View>
 
@@ -248,15 +271,15 @@ export default function WelcomeScreen() {
           >
             <View style={styles.statCard}>
               <Text style={styles.statValue}>10K+</Text>
-              <Text style={styles.statLabel}>Active Users</Text>
+              <Text style={styles.statLabel}>{t('welcome.activeUsers')}</Text>
             </View>
             <View style={styles.statCard}>
               <Text style={styles.statValue}>50K+</Text>
-              <Text style={styles.statLabel}>Pakts Achieved</Text>
+              <Text style={styles.statLabel}>{t('welcome.paktsAchieved')}</Text>
             </View>
             <View style={styles.statCard}>
               <Text style={styles.statValue}>95%</Text>
-              <Text style={styles.statLabel}>Success Rate</Text>
+              <Text style={styles.statLabel}>{t('welcome.successRate')}</Text>
             </View>
           </Animated.View>
 
@@ -315,19 +338,19 @@ export default function WelcomeScreen() {
           >
             <TouchableOpacity 
               style={styles.primaryButton} 
-              onPress={() => router.push('/onboarding')}
+              onPress={() => router.push('/auth')}
               activeOpacity={0.8}
             >
-              <Text style={styles.primaryButtonText}>Start My First Pakt</Text>
+              <Text style={styles.primaryButtonText}>{t('welcome.startFirstResolve')}</Text>
               <Text style={styles.arrow}>→</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
               style={styles.secondaryButton} 
-              onPress={() => router.push('/templates')}
+              onPress={() => router.push('/auth')}
               activeOpacity={0.8}
             >
-              <Text style={styles.secondaryButtonText}>Explore Features</Text>
+              <Text style={styles.secondaryButtonText}>{t('welcome.exploreFeatures')}</Text>
             </TouchableOpacity>
           </Animated.View>
 
@@ -340,18 +363,81 @@ export default function WelcomeScreen() {
           >
             <View style={styles.featureItem}>
               <Text style={[styles.featureIcon, { color: '#96E6B3' }]}>📈</Text>
-              <Text style={styles.featureText}>Track Progress</Text>
+              <Text style={styles.featureText}>{t('welcome.trackProgress')}</Text>
             </View>
             <View style={styles.featureItem}>
               <Text style={[styles.featureIcon, { color: '#FFD88A' }]}>🏆</Text>
-              <Text style={styles.featureText}>Earn Badges</Text>
+              <Text style={styles.featureText}>{t('welcome.earnBadges')}</Text>
             </View>
             <View style={styles.featureItem}>
               <Text style={[styles.featureIcon, { color: '#FF6A6A' }]}>🎯</Text>
-              <Text style={styles.featureText}>Hit Goals</Text>
+              <Text style={styles.featureText}>{t('welcome.hitGoals')}</Text>
             </View>
           </Animated.View>
         </ScrollView>
+
+        {/* Language Selection Modal */}
+        <Modal
+          visible={showLanguageDropdown}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowLanguageDropdown(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setShowLanguageDropdown(false)}
+          >
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>{t('language.selectLanguage')}</Text>
+                <TouchableOpacity
+                  onPress={() => setShowLanguageDropdown(false)}
+                  style={styles.closeButton}
+                >
+                  <X size={24} color="#FFFFFF" />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.languageList}>
+                {[
+                  { code: 'en' as const, name: 'English', flag: '🇺🇸' },
+                  { code: 'fr' as const, name: 'Français', flag: '🇫🇷' },
+                  { code: 'es' as const, name: 'Español', flag: '🇪🇸' },
+                ].map((lang) => {
+                  const isSelected = currentLanguage === lang.code;
+                  return (
+                    <TouchableOpacity
+                      key={lang.code}
+                      style={[
+                        styles.languageItem,
+                        isSelected && styles.languageItemSelected
+                      ]}
+                      onPress={async () => {
+                        await changeLanguage(lang.code);
+                        setShowLanguageDropdown(false);
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.languageItemLeft}>
+                        <Text style={styles.languageFlag}>{lang.flag}</Text>
+                        <Text style={[
+                          styles.languageItemName,
+                          isSelected && styles.languageItemNameSelected
+                        ]}>
+                          {lang.name}
+                        </Text>
+                      </View>
+                      {isSelected && (
+                        <Check size={20} color="#FFFFFF" />
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </SafeAreaView>
     </View>
   );
@@ -382,6 +468,99 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingBottom: 8,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+  },
+  languageButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  languageText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: '#3C2B63',
+    borderRadius: 24,
+    padding: 24,
+    width: '100%',
+    maxWidth: 320,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  languageList: {
+    gap: 12,
+  },
+  languageItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  languageItemSelected: {
+    backgroundColor: '#9163F2',
+    borderColor: '#FFD88A',
+  },
+  languageItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  languageFlag: {
+    fontSize: 24,
+  },
+  languageItemName: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '500',
+  },
+  languageItemNameSelected: {
+    fontWeight: '600',
   },
   scrollContent: {
     flexGrow: 1,

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 
 type InsightsOverviewProps = {
-  pakts: any[];
+  Resolves: any[];
   onBack: () => void;
   isDarkMode: boolean;
   navigation?: any;

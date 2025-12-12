@@ -49,7 +49,7 @@ export default function WelcomeScreen({ onGetStarted, onExplore }: WelcomeScreen
           transition={{ delay: 0.2 }}
           className="text-center mb-12"
         >
-          <h1 className="text-5xl mb-4">PaktIQ</h1>
+          <h1 className="text-5xl mb-4">resolviq</h1>
           <h2 className="text-2xl mb-4 text-[#FFD88A]">Smart Commitment Tracking</h2>
           <p className="text-lg opacity-90 leading-relaxed">
             Make commitments. Track progress. Achieve your goals with intelligence.
@@ -69,7 +69,7 @@ export default function WelcomeScreen({ onGetStarted, onExplore }: WelcomeScreen
           </div>
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 text-center border border-white/20">
             <div className="text-2xl mb-1">50K+</div>
-            <div className="text-xs opacity-80">Pakts Achieved</div>
+            <div className="text-xs opacity-80">Resolves Achieved</div>
           </div>
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 text-center border border-white/20">
             <div className="text-2xl mb-1">95%</div>
@@ -133,7 +133,7 @@ export default function WelcomeScreen({ onGetStarted, onExplore }: WelcomeScreen
             onClick={onGetStarted}
             className="w-full bg-gradient-to-r from-[#FFD88A] to-[#96E6B3] text-[#3C2B63] py-4 rounded-2xl flex items-center justify-center gap-3 hover:shadow-2xl hover:scale-105 transition-all"
           >
-            <span className="text-lg">Start My First Pakt</span>
+            <span className="text-lg">Start My First Resolve</span>
             <ArrowRight className="w-5 h-5" />
           </button>
           

@@ -3,26 +3,26 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } fr
 import { Screen } from '../../types';
 
 type PaktDashboardProps = {
-  pakts: any[];
+  Resolves: any[];
   onNavigate: (screen: Screen) => void;
   isDarkMode: boolean;
   navigation?: any;
 };
 
-export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDashboardProps) {
+export default function PaktDashboard({ Resolves, onNavigate, isDarkMode }: PaktDashboardProps) {
   return (
     <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
       <ScrollView style={styles.content}>
-        <Text style={[styles.title, isDarkMode && styles.darkText]}>My Pakts</Text>
-        {pakts.length === 0 ? (
+        <Text style={[styles.title, isDarkMode && styles.darkText]}>My Resolves</Text>
+        {Resolves.length === 0 ? (
           <Text style={[styles.emptyText, isDarkMode && styles.darkText]}>
-            No pakts yet. Create one to get started!
+            No Resolves yet. Create one to get started!
           </Text>
         ) : (
-          pakts.map((pakt, index) => (
+          Resolves.map((Resolve, index) => (
             <View key={index} style={styles.paktCard}>
-              <Text style={styles.paktName}>{pakt.name}</Text>
-              <Text style={styles.paktCategory}>{pakt.category}</Text>
+              <Text style={styles.paktName}>{Resolve.name}</Text>
+              <Text style={styles.paktCategory}>{Resolve.category}</Text>
             </View>
           ))
         )}
@@ -30,7 +30,7 @@ export default function PaktDashboard({ pakts, onNavigate, isDarkMode }: PaktDas
           style={styles.button}
           onPress={() => onNavigate('categorySelection')}
         >
-          <Text style={styles.buttonText}>Create New Pakt</Text>
+          <Text style={styles.buttonText}>Create New Resolve</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuButton}

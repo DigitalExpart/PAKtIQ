@@ -1,101 +1,297 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Animated } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, TrendingUp, Target, Calendar, Award, BarChart3, Clock } from 'lucide-react-native';
 import Svg, { Circle } from 'react-native-svg';
+import { useAnalytics } from '../src/hooks/useAnalytics';
+import { useResolves } from '../src/hooks/useResolves';
+import { useAchievements } from '../src/hooks/useAchievements';
+import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 export default function InsightsScreen() {
   const router = useRouter();
+  const { insights, loading: analyticsLoading } = useAnalytics();
+  const { resolves, loading: paktsLoading } = useResolves();
+  const { achievements, loading: achievementsLoading } = useAchievements();
+  const { colors } = useTheme();
+  const { t } = useLanguage();
+
+  const loading = analyticsLoading || paktsLoading || achievementsLoading;
+
+  // Animated values for collapsible header
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const HEADER_MAX_HEIGHT = 140;
+  const HEADER_MIN_HEIGHT = 70;
+  const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
+  
+  // Animated header styles
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+    extrapolate: 'clamp',
+  });
+  
+  const headerPadding = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [16, 12],
+    extrapolate: 'clamp',
+  });
+  
+  const subtitleOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE / 2],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
+  
+  const subtitleHeight = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [20, 0],
+    extrapolate: 'clamp',
+  });
+  
+  const titleFontSize = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [28, 20],
+    extrapolate: 'clamp',
+  });
+  
+  const backButtonSize = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [40, 36],
+    extrapolate: 'clamp',
+  });
+
+  // Calculate completion rate from resolves
+  const completionRate = () => {
+    if (!resolves || !Array.isArray(resolves)) return 0;
+    
+    const activeResolves = resolves.filter(p => p.status === 'active');
+    if (activeResolves.length === 0) return 0;
+    
+    let totalMilestones = 0;
+    let completedMilestones = 0;
+
+    // Calculate from actual milestones if available
+    activeResolves.forEach(resolve => {
+      const resolveWithMilestones = resolve as any;
+      if (resolveWithMilestones.milestones && Array.isArray(resolveWithMilestones.milestones)) {
+        totalMilestones += resolveWithMilestones.milestones.length;
+        completedMilestones += resolveWithMilestones.milestones.filter((m: any) => m.completed).length;
+      } else {
+        // Fallback: treat each active resolve as a single "milestone"
+        totalMilestones += 1;
+        if (resolve.progress >= 100) {
+          completedMilestones += 1;
+        }
+      }
+    });
+
+    return totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;
+  };
 
   const stats = [
     { 
       icon: TrendingUp, 
-      value: '87%', 
-      label: 'Completion Rate',
+      value: `${completionRate()}%`, 
+      label: t('insights.completionRate'),
       colors: ['#9163F2', '#5A4180'],
     },
-    { 
-      icon: Target, 
-      value: '27', 
-      label: 'Milestones Done',
+    {
+      icon: Target,
+      value: String(insights?.milestonesDone || 0), 
+      label: t('insights.milestonesDone'),
       colors: ['#FF6B6B', '#FF8E53'],
     },
     { 
       icon: Calendar, 
-      value: '7', 
-      label: 'Day Streak',
+      value: String(insights?.dayStreak || 0), 
+      label: t('dashboard.streak'),
       colors: ['#7C3AED', '#9163F2'],
     },
     { 
       icon: Award, 
-      value: '12', 
-      label: 'Badges Earned',
+      value: String((achievements && Array.isArray(achievements) ? achievements.filter(a => a.earned_at !== null).length : 0)), 
+      label: t('insights.badgesEarned'),
       colors: ['#FFB84D', '#FFA533'],
     },
   ];
 
-  const weeklyData = [
-    { day: 'Mon', value: 4 },
-    { day: 'Tue', value: 3 },
-    { day: 'Wed', value: 5 },
-    { day: 'Thu', value: 2 },
-    { day: 'Fri', value: 6 },
-    { day: 'Sat', value: 3 },
-    { day: 'Sun', value: 4 },
-  ];
+  // Get weekly activity data from insights (last 7 days)
+  // insights.weeklyActivity is an array of 7 numbers representing activity for each day
+  const weeklyActivityData = insights?.weeklyActivity || [0, 0, 0, 0, 0, 0, 0];
+  
+  // Map to day names (Monday = 0, Sunday = 6)
+  const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const weeklyData = weeklyActivityData.map((value, index) => ({
+    day: dayNames[index],
+    value: value || 0,
+  }));
 
-  const maxValue = Math.max(...weeklyData.map(d => d.value));
+  const maxValue = Math.max(...weeklyData.map(d => d.value), 1);
 
-  const categories = [
-    { name: 'Fitness', count: 5, percentage: 60, color: '#FF6B6B' },
-    { name: 'Finance', count: 3, percentage: 40, color: '#96E6B3' },
-    { name: 'Learning', count: 4, percentage: 50, color: '#9163F2' },
-    { name: 'Wellness', count: 2, percentage: 30, color: '#FFB84D' },
-  ];
+  // Helper function for category colors
+  const getCategoryColor = (category: string): string => {
+    const colors: Record<string, string> = {
+      'Health & Fitness': '#FF6B6B',
+      'Personal Growth': '#4ECDC4',
+      'Finance': '#FFD93D',
+      'Career': '#9163F2',
+      'Relationships': '#FF6AC1',
+      'Hobbies': '#FFB84D',
+      'Education': '#6BCF7F',
+      'Wellness': '#A78BFA',
+    };
+    return colors[category] || '#9163F2';
+  };
 
+  // Calculate category breakdown
+  const categoryMap = new Map<string, number>();
+  if (resolves && Array.isArray(resolves)) {
+    resolves.filter(p => p.status === 'active').forEach(resolve => {
+    const category = resolve.category || 'Other';
+    categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
+  });
+  }
+
+  const totalResolves = resolves && Array.isArray(resolves) ? resolves.filter(p => p.status === 'active').length : 0;
+  const categories = Array.from(categoryMap.entries()).map(([name, count]) => ({
+    name,
+    count,
+    percentage: totalResolves > 0 ? Math.round((count / totalResolves) * 100) : 0,
+    color: getCategoryColor(name),
+  }));
+
+  if (loading) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>{t('insights.loadingInsights')}</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // If no categories, show at least a placeholder
+  if (categories.length === 0) {
+    categories.push({ name: 'No Data', count: 0, percentage: 0, color: '#E0E0E0' });
+  }
+
+  // Calculate productivity times from completion data
+  // For now, we'll use a simplified calculation based on completion rate
+  // In the future, this could be enhanced with actual time-of-day data from activity_log
+  const completionRateValue = completionRate();
   const productivityTimes = [
-    { time: 'Morning (6AM - 12PM)', percentage: 65, color: '#FFD88A' },
-    { time: 'Afternoon (12PM - 6PM)', percentage: 45, color: '#96E6B3' },
-    { time: 'Evening (6PM - 12AM)', percentage: 30, color: '#9163F2' },
+    { 
+      time: t('insights.morningTime') || 'Morning (6AM - 12PM)', 
+      percentage: Math.min(100, Math.round(completionRateValue * 0.7)), 
+      color: '#FFD88A' 
+    },
+    { 
+      time: t('insights.afternoonTime') || 'Afternoon (12PM - 6PM)', 
+      percentage: Math.min(100, Math.round(completionRateValue * 0.5)), 
+      color: '#96E6B3' 
+    },
+    { 
+      time: t('insights.eveningTime') || 'Evening (6PM - 12AM)', 
+      percentage: Math.min(100, Math.round(completionRateValue * 0.3)), 
+      color: '#9163F2' 
+    },
   ];
 
-  const consistencyScore = 92;
+  // Calculate consistency score from streak and completion rate
+  // Consistency = (streak / max possible streak) * 50 + (completion rate) * 50
+  const streakValue = insights?.dayStreak || 0;
+  const maxStreak = insights?.longestStreak || 0;
+  const streakScore = maxStreak > 0 ? Math.min(100, (streakValue / Math.max(maxStreak, 7)) * 100) : 0;
+  const completionScore = completionRateValue;
+  const consistencyScore = Math.round((streakScore * 0.4) + (completionScore * 0.6));
 
   return (
-    <View style={styles.container}>
-      {/* Header with gradient */}
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Animated Header */}
+      <Animated.View 
+        style={[
+          styles.header,
+          {
+            height: headerHeight,
+            paddingHorizontal: headerPadding,
+            paddingTop: headerPadding,
+            paddingBottom: headerPadding,
+          }
+        ]}
+      >
         <TouchableOpacity 
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <ArrowLeft size={24} color="#FFFFFF" />
+          <Animated.View
+            style={{
+              width: backButtonSize,
+              height: backButtonSize,
+              borderRadius: backButtonSize.interpolate({
+                inputRange: [36, 40],
+                outputRange: [18, 20],
+              }),
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <ArrowLeft size={24} color="#FFFFFF" />
+          </Animated.View>
         </TouchableOpacity>
         
         <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>Insights</Text>
-          <Text style={styles.headerSubtitle}>Your progress analytics</Text>
+          <Animated.Text 
+            style={[
+              styles.headerTitle,
+              { fontSize: titleFontSize }
+            ]}
+          >
+            {t('insights.title')}
+          </Animated.Text>
+          <Animated.View
+            style={{
+              opacity: subtitleOpacity,
+              height: subtitleHeight,
+              marginTop: subtitleOpacity.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 4],
+              }),
+            }}
+          >
+            <Text style={styles.headerSubtitle}>{t('insights.subtitle')}</Text>
+          </Animated.View>
         </View>
-      </View>
+      </Animated.View>
 
-      <ScrollView 
+      <Animated.ScrollView 
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
       >
         {/* Stats Grid */}
         <View style={styles.statsGrid}>
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
             return (
-              <View key={index} style={styles.statCard}>
+              <View key={index} style={[styles.statCard, { backgroundColor: colors.surface }]}>
                 <View style={[styles.statIconContainer, { 
                   backgroundColor: `${stat.colors[0]}20` 
                 }]}>
                   <IconComponent size={24} color={stat.colors[0]} strokeWidth={2.5} />
                 </View>
-                <Text style={styles.statValue}>{stat.value}</Text>
-                <Text style={styles.statLabel}>{stat.label}</Text>
+                <Text style={[styles.statValue, { color: colors.text }]}>{stat.value}</Text>
+                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{stat.label}</Text>
               </View>
             );
           })}
@@ -103,10 +299,10 @@ export default function InsightsScreen() {
 
         {/* Weekly Activity Chart */}
         <View style={styles.section}>
-          <View style={styles.chartCard}>
+          <View style={[styles.chartCard, { backgroundColor: colors.surface }]}>
             <View style={styles.chartHeader}>
-              <BarChart3 size={20} color="#9163F2" />
-              <Text style={styles.chartTitle}>Weekly Activity</Text>
+              <BarChart3 size={20} color={colors.primary} />
+              <Text style={[styles.chartTitle, { color: colors.text }]}>{t('insights.weeklyActivity')}</Text>
             </View>
             
             <View style={styles.chart}>
@@ -122,7 +318,7 @@ export default function InsightsScreen() {
                       ]} 
                     />
                   </View>
-                  <Text style={styles.barLabel}>{item.day}</Text>
+                  <Text style={[styles.barLabel, { color: colors.textSecondary }]}>{item.day}</Text>
                 </View>
               ))}
             </View>
@@ -131,16 +327,16 @@ export default function InsightsScreen() {
 
         {/* Category Breakdown */}
         <View style={styles.section}>
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Category Breakdown</Text>
+          <View style={[styles.card, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.cardTitle, { color: colors.text }]}>{t('insights.categoryBreakdown')}</Text>
             
             {categories.map((category, index) => (
               <View key={index} style={styles.categoryRow}>
                 <View style={styles.categoryLeft}>
-                  <Text style={styles.categoryName}>{category.name}</Text>
-                  <Text style={styles.categoryCount}>{category.count} Pakts</Text>
+                  <Text style={[styles.categoryName, { color: colors.text }]}>{category.name}</Text>
+                  <Text style={[styles.categoryCount, { color: colors.textSecondary }]}>{category.count} Resolves</Text>
                 </View>
-                <View style={styles.categoryBarContainer}>
+                <View style={[styles.categoryBarContainer, { backgroundColor: colors.border }]}>
                   <View 
                     style={[
                       styles.categoryBar, 
@@ -158,19 +354,19 @@ export default function InsightsScreen() {
 
         {/* Best Productivity Times */}
         <View style={styles.section}>
-          <View style={styles.card}>
+          <View style={[styles.card, { backgroundColor: colors.surface }]}>
             <View style={styles.cardHeaderRow}>
               <Clock size={20} color="#FFD88A" />
-              <Text style={styles.cardTitle}>Best Productivity Times</Text>
+              <Text style={[styles.cardTitle, { color: colors.text }]}>{t('insights.bestProductivityTimes')}</Text>
             </View>
             
             {productivityTimes.map((time, index) => (
               <View key={index} style={styles.timeRow}>
                 <View style={styles.timeLeft}>
-                  <Text style={styles.timeText}>{time.time}</Text>
-                  <Text style={styles.timePercentage}>{time.percentage}%</Text>
+                  <Text style={[styles.timeText, { color: colors.text }]}>{time.time}</Text>
+                  <Text style={[styles.timePercentage, { color: colors.textSecondary }]}>{time.percentage}%</Text>
                 </View>
-                <View style={styles.timeBarContainer}>
+                <View style={[styles.timeBarContainer, { backgroundColor: colors.border }]}>
                   <View 
                     style={[
                       styles.timeBar, 
@@ -190,9 +386,9 @@ export default function InsightsScreen() {
         <View style={styles.section}>
           <View style={styles.consistencyCard}>
             <View style={styles.consistencyLeft}>
-              <Text style={styles.consistencyTitle}>Consistency Score</Text>
+              <Text style={styles.consistencyTitle}>{t('insights.consistencyScore')}</Text>
               <Text style={styles.consistencyScore}>{consistencyScore}</Text>
-              <Text style={styles.consistencyText}>Excellent! Keep it up!</Text>
+              <Text style={styles.consistencyText}>{t('insights.excellentKeepItUp')}</Text>
             </View>
             
             <View style={styles.consistencyRight}>
@@ -226,11 +422,11 @@ export default function InsightsScreen() {
 
         {/* AI Insights Coming Soon */}
         <View style={styles.section}>
-          <View style={styles.aiCard}>
+          <View style={[styles.aiCard, { backgroundColor: colors.surface }]}>
             <Text style={styles.aiEmoji}>🤖</Text>
-            <Text style={styles.aiTitle}>AI Insights Coming Soon</Text>
-            <Text style={styles.aiText}>
-              Get personalized suggestions and optimize your Pakt strategy with AI
+            <Text style={[styles.aiTitle, { color: colors.text }]}>{t('insights.aiInsightsComingSoon')}</Text>
+            <Text style={[styles.aiText, { color: colors.textSecondary }]}>
+              Get personalized suggestions and optimize your Resolve strategy with AI
             </Text>
             <TouchableOpacity style={styles.aiButton}>
               <Text style={styles.aiButtonText}>Join Waitlist</Text>
@@ -239,61 +435,68 @@ export default function InsightsScreen() {
         </View>
 
         <View style={{ height: 40 }} />
-      </ScrollView>
-    </View>
+      </Animated.ScrollView>
+      
+      <BottomTabBar />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F6',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
   },
   header: {
     backgroundColor: '#9163F2',
-    paddingTop: 60,
-    paddingBottom: 32,
-    paddingHorizontal: 24,
+    justifyContent: 'center',
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24,
+    position: 'absolute',
+    top: 16,
+    left: 24,
+    zIndex: 10,
   },
   headerContent: {
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   headerSubtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: 'rgba(255, 255, 255, 0.9)',
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    padding: 24,
+    padding: 16,
+    paddingTop: 12,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
-    marginBottom: 24,
+    gap: 12,
+    marginBottom: 16,
   },
   statCard: {
     width: '47%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 20,
+    borderRadius: 16,
+    padding: 16,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -302,31 +505,28 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   statIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   statValue: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#1a1625',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   statLabel: {
-    fontSize: 13,
-    color: '#666',
+    fontSize: 12,
     textAlign: 'center',
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
+    borderRadius: 16,
+    padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -334,21 +534,19 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#1a1625',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   cardHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   chartCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
+    borderRadius: 16,
+    padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -359,18 +557,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    marginBottom: 24,
+    marginBottom: 16,
   },
   chartTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1a1625',
   },
   chart: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    height: 150,
+    height: 120,
   },
   barContainer: {
     flex: 1,
@@ -378,7 +575,7 @@ const styles = StyleSheet.create({
   },
   barWrapper: {
     width: '100%',
-    height: 120,
+    height: 100,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
@@ -405,11 +602,9 @@ const styles = StyleSheet.create({
   categoryName: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#1a1625',
   },
   categoryCount: {
     fontSize: 14,
-    color: '#666',
   },
   categoryBarContainer: {
     height: 8,
@@ -422,7 +617,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   timeRow: {
-    marginBottom: 20,
+    marginBottom: 12,
   },
   timeLeft: {
     flexDirection: 'row',
@@ -432,12 +627,10 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 14,
-    color: '#1a1625',
   },
   timePercentage: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
   },
   timeBarContainer: {
     height: 8,
@@ -451,8 +644,8 @@ const styles = StyleSheet.create({
   },
   consistencyCard: {
     backgroundColor: '#9163F2',
-    borderRadius: 20,
-    padding: 32,
+    borderRadius: 16,
+    padding: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -481,12 +674,11 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.9)',
   },
   consistencyRight: {
-    marginLeft: 24,
+    marginLeft: 16,
   },
   aiCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 32,
+    borderRadius: 16,
+    padding: 20,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -495,22 +687,20 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   aiEmoji: {
-    fontSize: 48,
-    marginBottom: 16,
+    fontSize: 40,
+    marginBottom: 12,
   },
   aiTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
-    color: '#1a1625',
-    marginBottom: 12,
+    marginBottom: 8,
     textAlign: 'center',
   },
   aiText: {
-    fontSize: 15,
-    color: '#666',
+    fontSize: 14,
     textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 24,
+    lineHeight: 20,
+    marginBottom: 16,
   },
   aiButton: {
     backgroundColor: '#9163F2',

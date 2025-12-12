@@ -1,17 +1,34 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Switch } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { usePaktCreation } from '../src/contexts/PaktCreationContext';
+import { useAuth } from '../src/contexts/AuthContext';
+import { ResolveService } from '../src/services/resolve.service';
+import { MilestoneService } from '../src/services/milestone.service';
+import { ReminderService } from '../src/services/reminder.service';
+import { NotificationService } from '../src/services/notification.service';
+import { useTheme } from '../src/contexts/ThemeContext';
+import { useLanguage } from '../src/contexts/LanguageContext';
+import { SuccessModal } from '../src/components/SuccessModal';
 
 export default function ReminderSetup() {
   const router = useRouter();
+  const { user } = useAuth();
+  const { paktData, resetPaktData } = usePaktCreation();
+  const { colors } = useTheme();
+  const { t } = useLanguage();
   const [remindersEnabled, setRemindersEnabled] = useState(true);
-  const [selectedFrequency, setSelectedFrequency] = useState('daily');
+  const [selectedFrequency, setSelectedFrequency] = useState<'daily' | 'weekly' | 'custom'>('daily');
   const [selectedTime, setSelectedTime] = useState('morning');
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const frequencies = [
-    { id: 'daily', label: 'Daily', icon: '📅' },
-    { id: 'weekly', label: 'Weekly', icon: '📆' },
-    { id: 'custom', label: 'Custom', icon: '⚙️' },
+    { id: 'daily' as const, label: 'Daily', icon: '📅' },
+    { id: 'weekly' as const, label: 'Weekly', icon: '📆' },
+    { id: 'custom' as const, label: 'Custom', icon: '⚙️' },
   ];
 
   const times = [
@@ -20,32 +37,134 @@ export default function ReminderSetup() {
     { id: 'evening', label: 'Evening', time: '7:00 PM', icon: '🌙' },
   ];
 
-  const handleComplete = () => {
-    router.push('/dashboard');
+  const weekDays = [
+    { id: 'Monday', short: 'Mon' },
+    { id: 'Tuesday', short: 'Tue' },
+    { id: 'Wednesday', short: 'Wed' },
+    { id: 'Thursday', short: 'Thu' },
+    { id: 'Friday', short: 'Fri' },
+    { id: 'Saturday', short: 'Sat' },
+    { id: 'Sunday', short: 'Sun' },
+  ];
+
+  const toggleDay = (dayShort: string) => {
+    if (selectedDays.includes(dayShort)) {
+      setSelectedDays(selectedDays.filter(d => d !== dayShort));
+    } else {
+      setSelectedDays([...selectedDays, dayShort]);
+    }
+  };
+
+  const handleComplete = async () => {
+    if (!user) {
+      Alert.alert('Error', 'You must be logged in to create a Resolve');
+      return;
+    }
+
+    if (!paktData.name) {
+      Alert.alert('Error', 'Please provide a name for your Resolve');
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      // 1. Create the Resolve
+      const newResolve = await ResolveService.createResolve({
+        user_id: user.id,
+        name: paktData.name,
+        description: paktData.description || '',
+        target_outcome: paktData.description || 'Complete this Resolve successfully',
+        deadline: paktData.targetDate || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // Default to 90 days from now
+        category: paktData.category || 'other',
+        status: 'active',
+      });
+
+      console.log('✅ Resolve created:', newResolve.id);
+
+      // 2. Create milestones
+      let milestoneCount = 0;
+      if (paktData.milestones && paktData.milestones.length > 0) {
+        for (const milestone of paktData.milestones) {
+          // Use milestone's own dueDate if provided, otherwise use Resolve deadline
+          const milestoneDueDate = milestone.dueDate 
+            ? new Date(milestone.dueDate).toISOString()
+            : (paktData.targetDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString());
+          
+          await MilestoneService.createMilestone({
+            resolve_id: newResolve.id,
+            user_id: user.id,
+            name: milestone.title,
+            due_date: milestoneDueDate,
+            notes: milestone.description || null,
+            importance: 3,
+            completed: false,
+            order_index: milestone.order_index,
+          });
+          milestoneCount++;
+        }
+        console.log(`✅ Created ${milestoneCount} milestones`);
+      }
+
+      // Create notification for Resolve creation with milestone info
+      try {
+        await NotificationService.notifyResolveCreated(
+          user.id, 
+          paktData.name || 'New Resolve', 
+          newResolve.id,
+          milestoneCount
+        );
+      } catch (notifError) {
+        console.error('Error creating notification:', notifError);
+        // Don't fail Resolve creation if notification fails
+      }
+
+      // 3. Create reminder if enabled
+      if (remindersEnabled) {
+        await ReminderService.createReminder({
+          resolve_id: newResolve.id,
+          user_id: user.id,
+          frequency: selectedFrequency,
+          time: times.find(t => t.id === selectedTime)?.time || '8:00 AM',
+          days: selectedFrequency === 'custom' ? selectedDays : null,
+          enabled: true,
+        });
+        console.log('✅ Reminder created');
+      }
+
+      // Reset context and show success modal
+      resetPaktData();
+      setShowSuccessModal(true);
+    } catch (error: any) {
+      console.error('Error creating Resolve:', error);
+      Alert.alert('Error', error.message || 'Failed to create resolve. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backButton}>← Back</Text>
+          <Text style={[styles.backButton, { color: colors.primary }]}>← {t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Set Reminders</Text>
-        <Text style={styles.subtitle}>Stay on track with smart notifications</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Set Reminders</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Stay on track with smart notifications</Text>
       </View>
 
       <ScrollView style={styles.content}>
-        <View style={styles.toggleSection}>
+        <View style={[styles.toggleSection, { backgroundColor: colors.surface }]}>
           <View style={styles.toggleHeader}>
-            <Text style={styles.toggleTitle}>Enable Reminders</Text>
+            <Text style={[styles.toggleTitle, { color: colors.text }]}>Enable Reminders</Text>
             <Switch
               value={remindersEnabled}
               onValueChange={setRemindersEnabled}
-              trackColor={{ false: '#CCC', true: '#9163F2' }}
+              trackColor={{ false: colors.border, true: colors.primary }}
               thumbColor="#FFFFFF"
             />
           </View>
-          <Text style={styles.toggleSubtitle}>
+          <Text style={[styles.toggleSubtitle, { color: colors.textSecondary }]}>
             Get notified to check in on your progress
           </Text>
         </View>
@@ -53,21 +172,23 @@ export default function ReminderSetup() {
         {remindersEnabled && (
           <>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Frequency</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Frequency</Text>
               <View style={styles.optionsGrid}>
                 {frequencies.map((freq) => (
                   <TouchableOpacity
                     key={freq.id}
                     style={[
                       styles.optionCard,
-                      selectedFrequency === freq.id && styles.selectedCard,
+                      { backgroundColor: colors.surface, borderColor: colors.border },
+                      selectedFrequency === freq.id && { borderColor: colors.primary, backgroundColor: colors.primaryLight },
                     ]}
                     onPress={() => setSelectedFrequency(freq.id)}
                   >
                     <Text style={styles.optionIcon}>{freq.icon}</Text>
                     <Text style={[
                       styles.optionLabel,
-                      selectedFrequency === freq.id && styles.selectedLabel,
+                      { color: colors.textSecondary },
+                      selectedFrequency === freq.id && { color: colors.primary, fontWeight: '600' },
                     ]}>
                       {freq.label}
                     </Text>
@@ -76,14 +197,54 @@ export default function ReminderSetup() {
               </View>
             </View>
 
+            {selectedFrequency === 'custom' && (
+              <View style={styles.section}>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>Select Days</Text>
+                <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
+                  Choose which days of the week you want to receive notifications
+                </Text>
+                <View style={styles.daysGrid}>
+                  {weekDays.map((day) => {
+                    const isSelected = selectedDays.includes(day.short);
+                    return (
+                      <TouchableOpacity
+                        key={day.id}
+                        style={[
+                          styles.dayButton,
+                          { 
+                            backgroundColor: isSelected ? colors.primary : colors.surface,
+                            borderColor: isSelected ? colors.primary : colors.border,
+                          },
+                        ]}
+                        onPress={() => toggleDay(day.short)}
+                      >
+                        <Text style={[
+                          styles.dayButtonText,
+                          { color: isSelected ? '#FFFFFF' : colors.text },
+                        ]}>
+                          {day.short}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+                {selectedDays.length === 0 && selectedFrequency === 'custom' && (
+                  <Text style={[styles.errorText, { color: colors.error }]}>
+                    Please select at least one day
+                  </Text>
+                )}
+              </View>
+            )}
+
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Preferred Time</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Preferred Time</Text>
               {times.map((time) => (
                 <TouchableOpacity
                   key={time.id}
                   style={[
                     styles.timeCard,
-                    selectedTime === time.id && styles.selectedTimeCard,
+                    { backgroundColor: colors.surface, borderColor: colors.border },
+                    selectedTime === time.id && { borderColor: colors.primary, backgroundColor: colors.primaryLight },
                   ]}
                   onPress={() => setSelectedTime(time.id)}
                 >
@@ -91,14 +252,15 @@ export default function ReminderSetup() {
                   <View style={styles.timeInfo}>
                     <Text style={[
                       styles.timeLabel,
-                      selectedTime === time.id && styles.selectedTimeLabel,
+                      { color: colors.text },
+                      selectedTime === time.id && { color: colors.primary, fontWeight: '600' },
                     ]}>
                       {time.label}
                     </Text>
-                    <Text style={styles.timeValue}>{time.time}</Text>
+                    <Text style={[styles.timeValue, { color: colors.textSecondary }]}>{time.time}</Text>
                   </View>
                   {selectedTime === time.id && (
-                    <View style={styles.checkmark}>
+                    <View style={[styles.checkmark, { backgroundColor: colors.primary }]}>
                       <Text style={styles.checkmarkText}>✓</Text>
                     </View>
                   )}
@@ -106,8 +268,8 @@ export default function ReminderSetup() {
               ))}
             </View>
 
-            <View style={styles.infoBox}>
-              <Text style={styles.infoText}>
+            <View style={[styles.infoBox, { backgroundColor: colors.primaryLight }]}>
+              <Text style={[styles.infoText, { color: colors.textSecondary }]}>
                 💡 You can always adjust these settings later in your dashboard
               </Text>
             </View>
@@ -115,16 +277,35 @@ export default function ReminderSetup() {
         )}
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: colors.surface }]}>
         <TouchableOpacity
-          style={styles.completeButton}
+          style={[
+            styles.completeButton, 
+            (saving || (selectedFrequency === 'custom' && selectedDays.length === 0)) && styles.completeButtonDisabled
+          ]}
           onPress={handleComplete}
+          disabled={saving || (selectedFrequency === 'custom' && selectedDays.length === 0)}
         >
-          <Text style={styles.completeButtonText}>
-            {remindersEnabled ? 'Complete Setup' : 'Skip Reminders'}
-          </Text>
+          {saving ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.completeButtonText}>
+              {remindersEnabled ? 'Complete Setup' : 'Skip Reminders'}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
+
+      <SuccessModal
+        visible={showSuccessModal}
+        title={t('resolveCreation.successTitle')}
+        message={t('resolveCreation.successMessage', { resolveName: paktData.name })}
+        buttonText={t('resolveCreation.viewDashboard')}
+        onButtonPress={() => {
+          setShowSuccessModal(false);
+          router.push('/dashboard');
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -285,10 +466,39 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
   },
+  completeButtonDisabled: {
+    opacity: 0.6,
+  },
   completeButtonText: {
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '600',
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  daysGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  dayButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 2,
+    minWidth: 70,
+    alignItems: 'center',
+  },
+  dayButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  errorText: {
+    fontSize: 12,
+    marginTop: 8,
+    fontStyle: 'italic',
   },
 });
 

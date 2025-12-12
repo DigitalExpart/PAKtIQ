@@ -27,13 +27,13 @@ export default function AchievementBoard({ onBack, isDarkMode }: AchievementBoar
     {
       id: '1',
       name: 'First Step',
-      description: 'Created your first Pakt',
+      description: 'Created your first Resolve',
       icon: Target,
       color: '#9163F2',
       gradient: 'from-[#9163F2] to-[#3C2B63]',
       earned: true,
       earnedDate: '2025-01-15',
-      requirement: 'Create 1 Pakt',
+      requirement: 'Create 1 Resolve',
       category: 'Consistency',
     },
     {
@@ -63,12 +63,12 @@ export default function AchievementBoard({ onBack, isDarkMode }: AchievementBoar
     {
       id: '4',
       name: 'Fitness Achiever',
-      description: 'Complete a fitness Pakt',
+      description: 'Complete a fitness Resolve',
       icon: TrendingUp,
       color: '#96E6B3',
       gradient: 'from-[#96E6B3] to-[#B6F6D3]',
       earned: false,
-      requirement: 'Complete 1 fitness Pakt',
+      requirement: 'Complete 1 fitness Resolve',
       category: 'Fitness Achiever',
     },
     {
@@ -85,12 +85,12 @@ export default function AchievementBoard({ onBack, isDarkMode }: AchievementBoar
     {
       id: '6',
       name: 'Finance Warrior',
-      description: 'Complete a finance Pakt',
+      description: 'Complete a finance Resolve',
       icon: Award,
       color: '#96E6B3',
       gradient: 'from-[#96E6B3] to-[#B6F6D3]',
       earned: false,
-      requirement: 'Complete 1 finance Pakt',
+      requirement: 'Complete 1 finance Resolve',
       category: 'Finance Warrior',
     },
   ];
