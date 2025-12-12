@@ -298,13 +298,29 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Update update_analytics_on_pakt_complete function to use resolves table
+-- Note: Keeping function name and column name for backward compatibility with existing analytics table
 CREATE OR REPLACE FUNCTION public.update_analytics_on_pakt_complete()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.analytics (user_id, total_pakts_completed)
-    VALUES (NEW.user_id, 1)
-    ON CONFLICT (user_id) DO UPDATE SET
-        total_pakts_completed = public.analytics.total_pakts_completed + 1;
+    -- Check if profile exists before trying to insert analytics
+    IF NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = NEW.user_id) THEN
+        -- Profile doesn't exist yet, skip analytics update
+        RETURN NEW;
+    END IF;
+
+    IF NEW.status = 'completed' AND OLD.status != 'completed' THEN
+        -- Update today's analytics
+        BEGIN
+            INSERT INTO public.analytics (user_id, date, total_pakts_completed)
+            VALUES (NEW.user_id, CURRENT_DATE, 1)
+            ON CONFLICT (user_id, date) DO UPDATE SET
+                total_pakts_completed = public.analytics.total_pakts_completed + 1;
+        EXCEPTION
+            WHEN foreign_key_violation THEN
+                -- Profile might still be creating, skip silently
+                NULL;
+        END;
+    END IF;
     
     RETURN NEW;
 END;
